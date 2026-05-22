@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Whorse: Wild Steed Forest Survival</title>
-  <meta name="description" content="Control a legendary wild steed in an atmospheric daytime forest clearing. Shoot enemies, gather magical XP gold stones, and level up to survive.">
-  
+  <title>Whorse</title>
+  <meta name="description" content="NIGGA HORSES DONT STOP!!!">
+
   <!-- Premium Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;600;700&family=Special+Elite&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;600;700&family=Special+Elite&display=swap"
+    rel="stylesheet">
+
   <!-- Styling -->
   <link rel="stylesheet" href="/src/style.css">
 </head>
+
 <body>
   <!-- Canvas container for Three.js -->
   <canvas id="game-canvas"></canvas>
- 
+
   <!-- Start Screen Overlay -->
   <div id="start-screen" class="overlay active">
     <div class="glow-container">
@@ -25,36 +29,36 @@
       <h1 class="game-title">WHORSE</h1>
       <p class="subtitle">NIGGA HORSES DONT STOP THEY KEEP RUNNING</p>
     </div>
-    
+
     <div class="start-card glass-panel">
       <div class="high-score-container">
         BEST SURVIVAL TIME: <span id="best-time-val">00:00</span>
       </div>
- 
+
       <button id="start-btn" class="btn primary-btn pulse-glow">
         PLAY
       </button>
     </div>
   </div>
- 
+
   <!-- HUD HUD (Heads-Up Display) Overlay -->
   <div id="hud-overlay" class="overlay">
     <div class="hud-top">
       <!-- Player Info & Health -->
       <div class="hud-item health-hud glass-panel-sm">
         <div class="hud-label">
-          <span>STEED VITALITY</span>
+          <span>HORSE HEALTH</span>
           <span id="hp-text">100/100</span>
         </div>
         <div class="progress-bar-container">
           <div id="health-fill" class="progress-bar-fill health-fill" style="width: 100%;"></div>
         </div>
       </div>
- 
+
       <!-- Level & XP -->
       <div class="hud-item xp-hud glass-panel-sm">
         <div class="hud-label">
-          <span>RESONANCE LEVEL (LVL <span id="level-val">1</span>)</span>
+          <span></span>LEVEL (LVL <span id="level-val">1</span>)</span>
           <span id="xp-text">0/10</span>
         </div>
         <div class="progress-bar-container">
@@ -62,7 +66,7 @@
         </div>
       </div>
     </div>
- 
+
     <div class="hud-bottom">
       <div class="hud-stats-group">
         <!-- Stats counters -->
@@ -75,41 +79,41 @@
           <span id="kill-val">0</span>
         </div>
       </div>
- 
+
       <!-- Active Upgrades HUD Container -->
       <div id="active-upgrades-hud" class="active-upgrades-list">
         <!-- Will be dynamically populated with badges -->
       </div>
     </div>
   </div>
- 
+
   <!-- Level Up Modal Dialog -->
   <dialog id="level-up-dialog" class="game-dialog glass-panel">
     <div class="dialog-header">
       <h2 class="dialog-title animate-neon">CHOOSE AN UPGRADE</h2>
-      <p class="dialog-subtitle">Select a playing card to enhance the steed's abilities</p>
+      <p class="dialog-subtitle">Select a card to enhance the NIGGA HORSE</p>
     </div>
-    
+
     <!-- Dynamic Cards Container -->
     <div id="upgrade-cards-container" class="cards-grid">
       <!-- 3 dynamically generated upgrade cards will be inserted here -->
     </div>
   </dialog>
- 
+
   <!-- Game Over Modal Dialog -->
   <dialog id="game-over-dialog" class="game-dialog glass-panel">
     <div class="dialog-header">
-      <h2 class="dialog-title game-over-title animate-red-neon">STEED DEFEATED</h2>
-      <p class="dialog-subtitle">Your spirit returns to the fertile earth...</p>
+      <h2 class="dialog-title game-over-title animate-red-neon">NIGGA HORSE DEAD</h2>
+      <p class="dialog-subtitle">sanatate numai bile!</p>
     </div>
-    
+
     <div class="game-over-stats glass-panel-sm">
       <div class="end-stat-row">
         <span>TIME SURVIVED</span>
         <span id="end-time" class="stat-highlight">01:45</span>
       </div>
       <div class="end-stat-row">
-        <span>BEASTS BANISHED</span>
+        <span>PIZDE FUTUTE</span>
         <span id="end-kills" class="stat-highlight">42</span>
       </div>
       <div class="end-stat-row">
@@ -121,9 +125,9 @@
         <span id="end-xp" class="stat-highlight">325 XP</span>
       </div>
     </div>
- 
+
     <button id="restart-btn" class="btn primary-btn pulse-glow-red">
-      RE-AWAKEN SPIRIT
+      NIGGA HORSES KEEP GOING!!!
     </button>
   </dialog>
 
@@ -131,16 +135,16 @@
   <dialog id="pause-dialog" class="game-dialog glass-panel">
     <div class="dialog-header">
       <h2 class="dialog-title animate-neon">GAME PAUSED</h2>
-      <p class="dialog-subtitle">The run is frozen. Take a breath.</p>
+      <p class="dialog-subtitle">NIGGA HORSE is taking a break</p>
     </div>
-    
+
     <div class="pause-stats glass-panel-sm">
       <div class="end-stat-row">
         <span>TIME SURVIVED</span>
         <span id="pause-time" class="stat-highlight">00:00</span>
       </div>
       <div class="end-stat-row">
-        <span>BEASTS BANISHED</span>
+        <span>PIZDE FUTUTE</span>
         <span id="pause-kills" class="stat-highlight">0</span>
       </div>
     </div>
@@ -158,4 +162,5 @@
   <!-- Main JS entry script -->
   <script type="module" src="/src/main.js"></script>
 </body>
+
 </html>

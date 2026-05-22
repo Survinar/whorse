@@ -10,13 +10,13 @@ const keysPressed = {};
 
 // Upgrade Pool Definitions
 const UPGRADE_POOL = [
-  { type: 'speed', title: 'WILD RUNNER', desc: 'Increases steed movement speed by 15%.', icon: '🏇', suit: '♠', rank: 'A' },
-  { type: 'damage', title: 'HEAVY EMBERS', desc: 'Infuses warm sunlit fire, raising bullet damage by 25%.', icon: '🔥', suit: '♣', rank: 'A' },
-  { type: 'fireRate', title: 'PRIMAL FRENZY', desc: 'Primal adrenaline increases rate of fire by 20%.', icon: '🏹', suit: '♠', rank: 'J' },
-  { type: 'pierce', title: 'SHARP FLINT', desc: 'Ember projectiles pierce through an additional target.', icon: '☄', suit: '♦', rank: 'J' },
-  { type: 'magnet', title: 'GOLDEN RESONANCE', desc: 'Extends magnet pull radius for gold sunstones by 30%.', icon: '🧲', suit: '♦', rank: 'Q' },
-  { type: 'vitality', title: 'EARTH RECOVERY', desc: 'Primal soil recovery raises Max Health by 20 and heals fully.', icon: '♥', suit: '♥', rank: 'K' },
-  { type: 'nova', title: 'SPLIT EMBER', desc: 'Fires an additional reverse ember bullet at 80% damage.', icon: '🌀', suit: '♣', rank: '10' },
+  { type: 'speed', title: 'DAI TALPA', desc: 'NIGGA HORSE NEVER STOPS!! Incrase speed by 15%.', icon: '🏇', suit: '♠', rank: 'A' },
+  { type: 'damage', title: 'BILE GRELE', desc: 'Raises bullet damage by 25%.', icon: '🔥', suit: '♣', rank: 'A' },
+  { type: 'fireRate', title: 'BINE AZI', desc: 'Shoot faster.', icon: '🏹', suit: '♠', rank: 'J' },
+  { type: 'pierce', title: 'SHARP FLINT', desc: 'Projectiles pierce through an additional target.', icon: '☄', suit: '♦', rank: 'J' },
+  { type: 'magnet', title: 'GOLDEN RESONANCE', desc: 'Extends magnet pull radius by 30%.', icon: '🧲', suit: '♦', rank: 'Q' },
+  { type: 'vitality', title: 'BEER', desc: 'Your blood becomes stronger. Maximum health increases by 20 and fully heals.', icon: '♥', suit: '♥', rank: 'K' },
+  { type: 'nova', title: 'SPLIT EMBER', desc: 'Fires an additional bullet backwards at 80% damage.', icon: '🌀', suit: '♣', rank: '10' },
 ];
 
 // Initialize DOM hooks
@@ -42,7 +42,7 @@ updateHighScoreDisplay();
 // Initialize Three.js Boilerplate
 function initThree() {
   clock = new THREE.Clock();
-  
+
   // 1. Create Scene (Daytime warm-haze green-sky)
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xbfd6b2);
@@ -50,9 +50,9 @@ function initThree() {
 
   // 2. Create Camera
   camera = new THREE.PerspectiveCamera(
-    52, 
-    window.innerWidth / window.innerHeight, 
-    0.1, 
+    52,
+    window.innerWidth / window.innerHeight,
+    0.1,
     1000
   );
 
@@ -83,7 +83,7 @@ function initThree() {
 function setupInputListeners() {
   window.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
-    
+
     // Intercept Escape key when actively playing to toggle pause
     if (e.key === 'Escape' || key === 'escape') {
       if (gameState === 'PLAYING' && activeGame) {
@@ -92,7 +92,7 @@ function setupInputListeners() {
       e.preventDefault();
       return;
     }
-    
+
     keysPressed[key] = true;
   });
 
@@ -177,7 +177,7 @@ function startGame() {
  */
 function triggerLevelUp() {
   gameState = 'LEVEL_UP';
-  
+
   // Play leveling chime
   Sound.playLevelUp();
 
@@ -191,12 +191,12 @@ function triggerLevelUp() {
   selectedChoices.forEach((upgrade) => {
     // Generate card element
     const card = document.createElement('div');
-    
+
     // Choose rarity randomly for aesthetic richness
     const roll = Math.random();
     let rarity = 'common';
     let rarityLabel = 'COMMON';
-    
+
     if (roll > 0.88) {
       rarity = 'legendary';
       rarityLabel = 'LEGENDARY';
@@ -239,7 +239,7 @@ function triggerLevelUp() {
 
       activeGame.horse.applyUpgrade(upgrade.type);
       levelUpDialog.close();
-      
+
       // Resume updates
       activeGame.resumeGame();
       gameState = 'PLAYING';
