@@ -22,7 +22,7 @@ export class ParticleEngine {
    */
   spawnFireflies(count) {
     const fireflyMat = new THREE.MeshBasicMaterial({
-      color: 0x39ff14, // Vibrant green
+      color: 0xffe082, // Soft glowing golden forest pollen
       transparent: true,
       opacity: 0.8
     });
@@ -57,7 +57,7 @@ export class ParticleEngine {
     const sparkCount = 12 + Math.floor(Math.random() * 6);
     
     const sparkMat = new THREE.MeshBasicMaterial({
-      color: 0x00f3ff, // High energy cyan
+      color: 0xffaa00, // Fiery amber spark
       transparent: true,
       opacity: 1.0
     });
@@ -93,8 +93,8 @@ export class ParticleEngine {
    */
   spawnDeathBurst(position) {
     const particleCount = 20;
-    const purpleMat = new THREE.MeshBasicMaterial({
-      color: 0xbd00ff, // Neon Purple
+    const woodDebrisMat = new THREE.MeshBasicMaterial({
+      color: 0x5d4037, // Earthy decay wood/leaves dark brown
       transparent: true,
       opacity: 0.9
     });
@@ -102,7 +102,7 @@ export class ParticleEngine {
     const deathGeo = new THREE.SphereGeometry(0.12, 4, 4);
 
     for (let i = 0; i < particleCount; i++) {
-      const mesh = new THREE.Mesh(deathGeo, purpleMat);
+      const mesh = new THREE.Mesh(deathGeo, woodDebrisMat);
       mesh.position.copy(position);
       mesh.position.y += 0.5; // Offset to center of enemy
       this.scene.add(mesh);
@@ -132,7 +132,7 @@ export class ParticleEngine {
   spawnLevelUpHalo(playerPosition) {
     const haloCount = 60;
     const levelMat = new THREE.MeshBasicMaterial({
-      color: 0x39ff14, // Vibrant green
+      color: 0xffd700, // Shimmering gold spiral
       transparent: true,
       opacity: 1.0
     });

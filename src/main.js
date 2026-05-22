@@ -10,13 +10,13 @@ const keysPressed = {};
 
 // Upgrade Pool Definitions
 const UPGRADE_POOL = [
-  { type: 'speed', title: 'SHADOW SWIFTNESS', desc: 'Increases stallion movement speed by 15%.', icon: '⚡' },
-  { type: 'damage', title: 'DARK MIGHT', desc: 'Siphons void energy, raising bullet damage by 25%.', icon: '🗡️' },
-  { type: 'fireRate', title: 'LUNAR RE-FIRE', desc: 'Enhances shooting capabilities, increasing rate of fire by 20%.', icon: '🔥' },
-  { type: 'pierce', title: 'PIERCING HOOVES', desc: 'Bullets pierce through an additional target before dissolving.', icon: '🏹' },
-  { type: 'magnet', title: 'RESONANCE PULL', desc: 'Extends magical magnetic pull radius for XP gems by 30%.', icon: '🧲' },
-  { type: 'vitality', title: 'SHADOW VITALITY', desc: 'Enhances shell matrix: raises Max Health by 20 and restores to Full Health.', icon: '❤️' },
-  { type: 'nova', title: 'CHAOS NOVA', desc: 'Fires an additional reverse energy bullet at 80% damage in the opposite direction.', icon: '🌀' },
+  { type: 'speed', title: 'WILD RUNNER', desc: 'Increases steed movement speed by 15%.', icon: '🏇', suit: '♠', rank: 'A' },
+  { type: 'damage', title: 'HEAVY EMBERS', desc: 'Infuses warm sunlit fire, raising bullet damage by 25%.', icon: '🔥', suit: '♣', rank: 'A' },
+  { type: 'fireRate', title: 'PRIMAL FRENZY', desc: 'Primal adrenaline increases rate of fire by 20%.', icon: '🏹', suit: '♠', rank: 'J' },
+  { type: 'pierce', title: 'SHARP FLINT', desc: 'Ember projectiles pierce through an additional target.', icon: '☄', suit: '♦', rank: 'J' },
+  { type: 'magnet', title: 'GOLDEN RESONANCE', desc: 'Extends magnet pull radius for gold sunstones by 30%.', icon: '🧲', suit: '♦', rank: 'Q' },
+  { type: 'vitality', title: 'EARTH RECOVERY', desc: 'Primal soil recovery raises Max Health by 20 and heals fully.', icon: '♥', suit: '♥', rank: 'K' },
+  { type: 'nova', title: 'SPLIT EMBER', desc: 'Fires an additional reverse ember bullet at 80% damage.', icon: '🌀', suit: '♣', rank: '10' },
 ];
 
 // Initialize DOM hooks
@@ -36,10 +36,10 @@ updateHighScoreDisplay();
 function initThree() {
   clock = new THREE.Clock();
   
-  // 1. Create Scene
+  // 1. Create Scene (Daytime warm-haze green-sky)
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x03060a);
-  scene.fog = new THREE.FogExp2(0x03060a, 0.015);
+  scene.background = new THREE.Color(0xbfd6b2);
+  scene.fog = new THREE.FogExp2(0xbfd6b2, 0.015);
 
   // 2. Create Camera
   camera = new THREE.PerspectiveCamera(
@@ -162,12 +162,31 @@ function triggerLevelUp() {
       rarityLabel = 'RARE';
     }
 
+    const isRedSuit = (upgrade.suit === '♥' || upgrade.suit === '♦');
+    const suitClass = isRedSuit ? 'suit-red' : 'suit-black';
+
     card.className = `upgrade-card ${rarity}`;
     card.innerHTML = `
-      <div class="card-rarity">${rarityLabel}</div>
-      <div class="card-icon">${upgrade.icon}</div>
-      <div class="card-title">${upgrade.title}</div>
-      <div class="card-description">${upgrade.desc}</div>
+      <div class="card-inner">
+        <div class="card-corner top-left ${suitClass}">
+          <span class="card-corner-val">${upgrade.rank}</span>
+          <span class="card-corner-suit">${upgrade.suit}</span>
+        </div>
+        <div class="card-corner bottom-right ${suitClass}">
+          <span class="card-corner-val">${upgrade.rank}</span>
+          <span class="card-corner-suit">${upgrade.suit}</span>
+        </div>
+        <div class="card-center">
+          <div class="card-icon-frame">
+            <div class="card-icon">${upgrade.icon}</div>
+          </div>
+          <div class="card-title">${upgrade.title}</div>
+          <div class="card-description">${upgrade.desc}</div>
+        </div>
+        <div class="card-footer">
+          <span class="card-rarity-badge ${rarity}">${rarityLabel}</span>
+        </div>
+      </div>
     `;
 
     // Apply upgrade and resume play on click

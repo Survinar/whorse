@@ -1,27 +1,36 @@
 /* ==========================================================================
-   Whorse Styling System - Premium Dark Synth/Glassmorphism Design
+   Whorse Styling System - Premium Earthy Survival & Playing Cards Design
    ========================================================================== */
 
 :root {
-  --bg-color: #03060a;
-  --panel-bg: rgba(6, 12, 22, 0.55);
-  --panel-border: rgba(0, 243, 255, 0.15);
-  --text-primary: #f0f4f8;
-  --text-secondary: #8e9dae;
+  /* Earthy Natural Palette (Daytime Forest & Steed theme) */
+  --bg-color: #1a2316; /* Deep forest undergrowth */
+  --panel-bg: rgba(36, 23, 15, 0.95); /* Rich dark walnut wood / leather */
+  --panel-border: #6d4c33; /* Hand-polished cedar wood border */
+  --text-primary: #fcf8ec; /* Creamy parchment color for dark panels */
+  --text-secondary: #c2b59d; /* Weathered warm sepia */
   
-  /* Neon Accent Colors */
-  --accent-cyan: #00f3ff;
-  --accent-cyan-glow: rgba(0, 243, 255, 0.5);
-  --accent-green: #39ff14;
-  --accent-green-glow: rgba(57, 255, 20, 0.4);
-  --accent-purple: #bd00ff;
-  --accent-purple-glow: rgba(189, 0, 255, 0.4);
-  --accent-red: #ff0055;
-  --accent-red-glow: rgba(255, 0, 85, 0.5);
+  /* Earthy Theme Accents */
+  --accent-gold: #d4af37; /* Warm sun gold */
+  --accent-gold-glow: rgba(212, 175, 55, 0.4);
+  --accent-emerald: #558b2f; /* Deep oak emerald green */
+  --accent-emerald-glow: rgba(85, 139, 47, 0.4);
+  --accent-bronze: #cd7f32; /* Antique bronze */
+  --accent-bronze-glow: rgba(205, 127, 50, 0.4);
+  --accent-terracotta: #d84315; /* Earth clay red */
+  --accent-terracotta-glow: rgba(216, 67, 21, 0.4);
   
-  /* Fonts */
-  --font-display: 'Orbitron', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* Vintage Playing Card Specific Colors */
+  --card-bg: #faf4e5; /* Warm aged papyrus/parchment background */
+  --card-border: #d7cbb5; /* Aged paper crease color */
+  --card-border-outer: #332211; /* Ornate ink edge */
+  --card-text-dark: #20150d; /* Charcoal sepia ink */
+  --card-text-red: #8b1111; /* Dried blood / red seal ink */
+  
+  /* Typography */
+  --font-display: 'Cinzel', 'Georgia', serif; /* Antique serif for titles and cards */
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; /* High readability body */
+  --font-mono: 'Special Elite', 'Courier New', monospace; /* Weathered typewriter for stats/HUD */
 }
 
 * {
@@ -51,53 +60,87 @@ body {
   display: block;
 }
 
+/* Custom Scrollbar for overflow lists */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--panel-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-gold);
+}
+
 /* ==========================================================================
-   Universal Glassmorphism Panels & Buttons
+   Universal Earthy Panels & Buttons
    ========================================================================== */
 
 .glass-panel {
   background: var(--panel-bg);
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
-  border: 1px solid var(--panel-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6),
-              inset 0 0 12px rgba(0, 243, 255, 0.05);
-  border-radius: 16px;
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  border: 3px solid #2e1a0e;
+  outline: 1px solid var(--accent-bronze);
+  outline-offset: -3px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.75),
+              inset 0 0 20px rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
 }
 
 .glass-panel-sm {
-  background: rgba(8, 16, 28, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  background: rgba(44, 26, 17, 0.92);
+  border: 2px solid #523420;
+  border-radius: 6px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
 }
 
-/* Premium Buttons */
+/* Stitched Leather Ribbon Effect */
+.instructions-header, .dialog-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--accent-gold);
+  text-align: center;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px dashed rgba(212, 175, 55, 0.3);
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+/* Premium Buttons - Stitched Leather / Gold Trim */
 .btn {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-size: 1rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
   padding: 14px 28px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   outline: none;
 }
 
 .primary-btn {
-  background: rgba(0, 243, 255, 0.15);
-  color: var(--accent-cyan);
-  border: 1px solid var(--accent-cyan);
-  text-shadow: 0 0 5px var(--accent-cyan-glow);
+  background: #50311f;
+  color: #ffe599;
+  border: 2px solid #8c5b3f;
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.6);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .primary-btn:hover {
-  background: var(--accent-cyan);
-  color: #000;
-  box-shadow: 0 0 20px var(--accent-cyan-glow);
+  background: var(--accent-gold);
+  color: #2c1a11;
+  border-color: #ffe599;
+  box-shadow: 0 0 15px var(--accent-gold-glow),
+              inset 0 0 4px rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
 
@@ -105,35 +148,35 @@ body {
   transform: translateY(0);
 }
 
-/* Neon Animations */
-@keyframes pulseGlow {
-  0% { box-shadow: 0 0 10px rgba(0, 243, 255, 0.3), inset 0 0 8px rgba(0, 243, 255, 0.1); }
-  50% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.6), inset 0 0 16px rgba(0, 243, 255, 0.2); }
-  100% { box-shadow: 0 0 10px rgba(0, 243, 255, 0.3), inset 0 0 8px rgba(0, 243, 255, 0.1); }
+/* Golden Daybreak Glow */
+@keyframes goldPulse {
+  0% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.3), inset 0 0 8px rgba(212, 175, 55, 0.1); }
+  50% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), inset 0 0 16px rgba(212, 175, 55, 0.2); }
+  100% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.3), inset 0 0 8px rgba(212, 175, 55, 0.1); }
 }
 
-@keyframes pulseGlowRed {
-  0% { box-shadow: 0 0 10px rgba(255, 0, 85, 0.3), inset 0 0 8px rgba(255, 0, 85, 0.1); border-color: rgba(255, 0, 85, 0.6); }
-  50% { box-shadow: 0 0 20px rgba(255, 0, 85, 0.6), inset 0 0 16px rgba(255, 0, 85, 0.2); border-color: rgba(255, 0, 85, 1); }
-  100% { box-shadow: 0 0 10px rgba(255, 0, 85, 0.3), inset 0 0 8px rgba(255, 0, 85, 0.1); border-color: rgba(255, 0, 85, 0.6); }
+@keyframes goldPulseRed {
+  0% { box-shadow: 0 0 10px rgba(216, 67, 21, 0.3), inset 0 0 8px rgba(216, 67, 21, 0.1); border-color: rgba(216, 67, 21, 0.6); }
+  50% { box-shadow: 0 0 20px rgba(216, 67, 21, 0.6), inset 0 0 16px rgba(216, 67, 21, 0.2); border-color: rgba(216, 67, 21, 1); }
+  100% { box-shadow: 0 0 10px rgba(216, 67, 21, 0.3), inset 0 0 8px rgba(216, 67, 21, 0.1); border-color: rgba(216, 67, 21, 0.6); }
 }
 
 .pulse-glow {
-  animation: pulseGlow 2.5s infinite;
+  animation: goldPulse 2.5s infinite;
 }
 
 .pulse-glow-red {
-  background: rgba(255, 0, 85, 0.15);
-  color: var(--accent-red);
-  border: 1px solid var(--accent-red);
-  text-shadow: 0 0 5px var(--accent-red-glow);
-  animation: pulseGlowRed 2.5s infinite;
+  background: rgba(216, 67, 21, 0.2);
+  color: #ff8a65;
+  border: 2px solid var(--accent-terracotta);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  animation: goldPulseRed 2.5s infinite;
 }
 
 .pulse-glow-red:hover {
-  background: var(--accent-red);
+  background: var(--accent-terracotta);
   color: #fff;
-  box-shadow: 0 0 20px var(--accent-red-glow);
+  box-shadow: 0 0 20px var(--accent-terracotta-glow);
   transform: translateY(-2px);
 }
 
@@ -163,18 +206,18 @@ body {
 }
 
 /* ==========================================================================
-   Start Screen Specific
+   Start Screen - Sunlit Clearing Vibe
    ========================================================================== */
 
 #start-screen {
-  background: radial-gradient(circle at center, rgba(3, 10, 20, 0.8) 0%, rgba(1, 3, 5, 0.98) 100%);
+  background: radial-gradient(circle at center, #5d7554 0%, #1e261b 100%);
   padding: 20px;
 }
 
 .glow-container {
   position: relative;
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
 .game-title {
@@ -182,13 +225,14 @@ body {
   font-size: 5rem;
   font-weight: 900;
   letter-spacing: 0.25em;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(0, 243, 255, 0.2),
-               0 0 30px rgba(0, 243, 255, 0.4),
-               0 0 60px rgba(0, 243, 255, 0.8);
+  /* Gold Gradient Text */
+  background: linear-gradient(to bottom, #ffe899 0%, #d4af37 50%, #8c6b12 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.7));
   position: relative;
   z-index: 2;
-  margin-left: 0.25em; /* Compensate for letter spacing alignment */
+  margin-left: 0.25em;
 }
 
 .title-glow {
@@ -198,49 +242,38 @@ body {
   font-weight: 900;
   letter-spacing: 0.25em;
   color: transparent;
-  -webkit-text-stroke: 1px var(--accent-cyan);
-  opacity: 0.2;
+  -webkit-text-stroke: 2px rgba(212, 175, 55, 0.15);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(1.05);
   z-index: 1;
   pointer-events: none;
-  filter: blur(2px);
+  filter: blur(3px);
 }
 
 .subtitle {
   font-family: var(--font-display);
-  font-size: 1rem;
-  letter-spacing: 0.5em;
-  color: var(--accent-cyan);
+  font-size: 1.1rem;
+  letter-spacing: 0.4em;
+  color: #ffe082;
   margin-top: 10px;
-  text-shadow: 0 0 10px var(--accent-cyan-glow);
-  font-weight: 500;
+  text-shadow: 1px 2px 4px rgba(0,0,0,0.5);
+  font-weight: 700;
 }
 
 .start-card {
   width: 100%;
-  max-width: 520px;
+  max-width: 540px;
   padding: 40px;
   display: flex;
   flex-direction: column;
-  gap: 30px;
-}
-
-.instructions-header {
-  font-family: var(--font-display);
-  font-size: 0.85rem;
-  letter-spacing: 0.2em;
-  color: var(--text-secondary);
-  text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding-bottom: 10px;
+  gap: 25px;
 }
 
 .controls-grid {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 }
 
 .control-item {
@@ -250,6 +283,10 @@ body {
   color: var(--text-primary);
   font-size: 0.9rem;
   line-height: 1.4;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .control-item span {
@@ -257,55 +294,57 @@ body {
 }
 
 kbd {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 4px;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5);
-  color: #fff;
-  font-family: monospace;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+  color: #fcf8ec;
+  font-family: var(--font-mono);
   font-weight: bold;
-  padding: 4px 10px;
-  font-size: 0.85rem;
+  padding: 3px 8px;
+  font-size: 0.8rem;
   display: inline-block;
 }
 
 .icon-auto-shoot {
   font-size: 1.5rem;
-  color: var(--accent-cyan);
-  text-shadow: 0 0 8px var(--accent-cyan-glow);
+  color: #ffa726;
+  text-shadow: 0 0 6px rgba(255, 167, 38, 0.6);
   width: 40px;
   text-align: center;
 }
 
 .xp-gem {
-  color: var(--accent-green);
+  color: var(--accent-gold);
   font-size: 1.2rem;
-  text-shadow: 0 0 8px var(--accent-green-glow);
-  border-color: rgba(57, 255, 20, 0.3);
-  background: rgba(57, 255, 20, 0.05);
+  text-shadow: 0 0 6px var(--accent-gold-glow);
+  border-color: rgba(212, 175, 55, 0.4);
+  background: rgba(212, 175, 55, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
 }
 
 .high-score-container {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-size: 0.85rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   text-align: center;
   color: var(--text-secondary);
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.35);
   padding: 10px;
   border-radius: 6px;
-  border: 1px dashed rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(212, 175, 55, 0.2);
 }
 
 .high-score-container span {
-  color: var(--accent-cyan);
+  color: var(--accent-gold);
   font-weight: 700;
-  text-shadow: 0 0 5px var(--accent-cyan-glow);
+  text-shadow: 0 0 5px var(--accent-gold-glow);
 }
 
 /* ==========================================================================
    HUD Layout (Gameplay Screen)
-   ========================================================================= */
+   ========================================================================== */
 
 #hud-overlay {
   padding: 20px;
@@ -331,31 +370,31 @@ kbd {
 .hud-label {
   display: flex;
   justify-content: space-between;
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-size: 0.75rem;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.05em;
   font-weight: 700;
   color: var(--text-secondary);
   margin-bottom: 8px;
 }
 
 .health-hud .hud-label span:nth-child(2) {
-  color: var(--accent-red);
-  text-shadow: 0 0 4px rgba(255, 0, 85, 0.3);
+  color: #ff7043;
+  text-shadow: 0 0 4px rgba(255, 112, 67, 0.4);
 }
 
 .xp-hud .hud-label span:nth-child(2) {
-  color: var(--accent-green);
-  text-shadow: 0 0 4px rgba(57, 255, 20, 0.3);
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px var(--accent-gold-glow);
 }
 
 /* Progress Bars */
 .progress-bar-container {
-  height: 10px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 5px;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 6px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1.5px solid #2e1a0e;
   position: relative;
 }
 
@@ -366,13 +405,13 @@ kbd {
 }
 
 .health-fill {
-  background: linear-gradient(90deg, #ff0055 0%, #ff5588 100%);
-  box-shadow: 0 0 10px var(--accent-red-glow);
+  background: linear-gradient(90deg, #991f1f 0%, #d84315 100%);
+  box-shadow: 0 0 8px rgba(216, 67, 21, 0.4);
 }
 
 .xp-fill {
-  background: linear-gradient(90deg, #39ff14 0%, #88ff55 100%);
-  box-shadow: 0 0 10px var(--accent-green-glow);
+  background: linear-gradient(90deg, #b58c23 0%, #ffd700 100%);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
 }
 
 .hud-bottom {
@@ -392,27 +431,27 @@ kbd {
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 
 .stat-icon {
-  font-size: 1.1rem;
-  opacity: 0.8;
+  font-size: 1.2rem;
+  opacity: 0.9;
 }
 
 #time-val {
-  color: var(--accent-cyan);
-  text-shadow: 0 0 5px var(--accent-cyan-glow);
+  color: var(--accent-gold);
+  text-shadow: 0 0 5px var(--accent-gold-glow);
 }
 
 #kill-val {
-  color: var(--accent-purple);
-  text-shadow: 0 0 5px var(--accent-purple-glow);
+  color: #ffab91;
+  text-shadow: 0 0 5px rgba(255, 171, 145, 0.4);
 }
 
-/* Active Upgrades List */
+/* Active Upgrades List (Styled as Mini Cards) */
 .active-upgrades-list {
   display: flex;
   flex-wrap: wrap-reverse;
@@ -423,12 +462,13 @@ kbd {
 
 .upgrade-badge {
   padding: 6px 12px;
-  font-size: 0.7rem;
-  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
   font-weight: 700;
-  color: var(--accent-cyan);
-  border: 1px solid rgba(0, 243, 255, 0.3);
-  background: rgba(0, 243, 255, 0.05);
+  color: #ffe082;
+  border: 1.5px solid #8c5b3f;
+  background: rgba(74, 51, 36, 0.7);
+  box-shadow: 1px 2px 4px rgba(0,0,0,0.5);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -436,8 +476,8 @@ kbd {
 }
 
 .upgrade-count {
-  background: var(--accent-cyan);
-  color: #000;
+  background: var(--accent-gold);
+  color: #2c1a11;
   padding: 1px 5px;
   border-radius: 3px;
   font-size: 0.65rem;
@@ -445,7 +485,7 @@ kbd {
 }
 
 /* ==========================================================================
-   Modals & Dialogs (Level Up, Game Over)
+   Modals & Dialogs (Wood Frame & Backdrop Blur)
    ========================================================================== */
 
 .game-dialog {
@@ -453,20 +493,21 @@ kbd {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border: 1px solid var(--panel-border);
-  outline: none;
-  padding: 40px;
+  border: 4px solid #2e1a0e;
+  outline: 2px solid var(--accent-gold);
+  outline-offset: -5px;
+  padding: 35px;
   max-width: 900px;
   width: 90%;
-  box-shadow: 0 20px 80px rgba(0,0,0,0.8);
-  margin: 0; /* Clear agent overrides */
+  box-shadow: 0 20px 80px rgba(0,0,0,0.85);
+  margin: 0;
 }
 
 /* Stylize standard backdrop blur */
 .game-dialog::backdrop {
-  background-color: rgba(3, 6, 12, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background-color: rgba(18, 25, 15, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 /* Modern dialog display states */
@@ -489,36 +530,35 @@ kbd {
 
 .dialog-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 .dialog-title {
   font-family: var(--font-display);
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 900;
   letter-spacing: 0.1em;
   margin-bottom: 8px;
 }
 
-.dialog-subtitle {
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-}
-
 .animate-neon {
   color: #fff;
-  text-shadow: 0 0 8px rgba(0, 243, 255, 0.4),
-               0 0 20px rgba(0, 243, 255, 0.8);
+  background: linear-gradient(to bottom, #ffe899 0%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
 }
 
 .animate-red-neon {
   color: #fff;
-  text-shadow: 0 0 8px rgba(255, 0, 85, 0.4),
-               0 0 20px rgba(255, 0, 85, 0.8);
+  background: linear-gradient(to bottom, #ff9e80 0%, #d84315 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
 }
 
 /* ==========================================================================
-   Level Up Choice Cards
+   Level Up Playing Cards - REDESIGNED
    ========================================================================== */
 
 .cards-grid {
@@ -526,24 +566,26 @@ kbd {
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   width: 100%;
+  perspective: 1000px; /* Enable 3D flip triggers */
 }
 
+/* The actual physical playing card */
 .upgrade-card {
-  background: rgba(12, 22, 38, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 24px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  height: 350px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4),
+              inset 0 0 40px rgba(40, 30, 20, 0.05);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
-  height: 280px;
 }
 
+/* Self-contained weathered linen/papyrus texture overlay */
 .upgrade-card::before {
   content: '';
   position: absolute;
@@ -551,28 +593,106 @@ kbd {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, rgba(0, 243, 255, 0.05) 0%, transparent 100%);
-  opacity: 0.5;
+  border-radius: 11px;
+  background-image: 
+    linear-gradient(rgba(30, 20, 10, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 20, 10, 0.03) 1px, transparent 1px);
+  background-size: 6px 6px;
+  opacity: 0.75;
   pointer-events: none;
+  z-index: 3;
 }
 
-/* Glass card active states */
+/* Inner styled container (double border framing typical of antique cards) */
+.card-inner {
+  border: 2px solid var(--card-border-outer);
+  border-radius: 8px;
+  padding: 16px 12px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+/* Floating animation on hover */
 .upgrade-card:hover {
-  background: rgba(12, 22, 38, 0.6);
-  border-color: rgba(0, 243, 255, 0.4);
-  box-shadow: 0 10px 24px rgba(0, 243, 255, 0.15),
-              0 0 15px rgba(0, 243, 255, 0.05);
-  transform: translateY(-8px);
+  transform: translateY(-12px) rotate(1.5deg);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.55),
+              0 0 25px rgba(212, 175, 55, 0.2);
 }
 
 .upgrade-card:active {
-  transform: translateY(-3px);
+  transform: translateY(-4px) rotate(0deg);
+}
+
+/* Playing Card Corner Markers (Rank & Suit) */
+.card-corner {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1.1;
+}
+
+.card-corner-suit {
+  font-size: 1.4rem;
+}
+
+.top-left {
+  top: 8px;
+  left: 8px;
+}
+
+.bottom-right {
+  bottom: 8px;
+  right: 8px;
+  transform: rotate(180deg);
+}
+
+/* Suit Ink Colors */
+.suit-black {
+  color: var(--card-text-dark);
+}
+
+.suit-red {
+  color: var(--card-text-red);
+}
+
+/* Central illustration / details zone */
+.card-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+/* Framed icon frame typical of antique cards */
+.card-icon-frame {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid var(--card-border-outer);
+  background: rgba(40, 30, 20, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  position: relative;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.08);
 }
 
 .card-icon {
-  font-size: 2.2rem;
-  margin-bottom: 16px;
-  filter: drop-shadow(0 0 6px var(--accent-cyan-glow));
+  font-size: 2.3rem;
+  filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.25));
   transition: transform 0.3s ease;
 }
 
@@ -580,71 +700,113 @@ kbd {
   transform: scale(1.15) rotate(5deg);
 }
 
+/* Card titles and descriptions */
 .card-title {
   font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: #fff;
-  margin-bottom: 12px;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--card-text-dark);
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid rgba(51, 34, 17, 0.15);
+  padding-bottom: 4px;
+  width: 100%;
 }
 
 .card-description {
+  font-family: var(--font-body);
   font-size: 0.8rem;
-  line-height: 1.5;
-  color: var(--text-secondary);
-  flex-grow: 1;
+  line-height: 1.4;
+  color: #4a3c31;
+  font-weight: 600;
+  max-width: 90%;
 }
 
-.card-rarity {
-  font-family: var(--font-display);
+/* Card Rarity Bottom Badges */
+.card-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+}
+
+.card-rarity-badge {
+  font-family: var(--font-mono);
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.1em;
-  padding: 4px 8px;
+  padding: 4px 10px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-secondary);
-  margin-top: 16px;
+  border: 1px solid rgba(0,0,0,0.15);
+  background: rgba(0, 0, 0, 0.04);
+  color: #5c4c3e;
 }
 
-/* Rarity specific overrides */
+/* ==========================================================================
+   Rarity Card Overrides
+   ========================================================================== */
+
+/* Common - Classic parchment scroll appearance */
+.upgrade-card.common {
+  border-color: var(--card-border);
+}
+
+/* Rare - Bronze Brackets & Detailed Trim */
 .upgrade-card.rare {
-  border-color: rgba(189, 0, 255, 0.15);
-}
-.upgrade-card.rare:hover {
-  border-color: rgba(189, 0, 255, 0.5);
-  box-shadow: 0 10px 24px rgba(189, 0, 255, 0.15);
-}
-.upgrade-card.rare .card-icon {
-  filter: drop-shadow(0 0 6px var(--accent-purple-glow));
-}
-.upgrade-card.rare .card-rarity {
-  background: rgba(189, 0, 255, 0.1);
-  color: #d766ff;
-  border: 1px solid rgba(189, 0, 255, 0.2);
+  border-color: #cd7f32;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4),
+              0 0 15px rgba(205, 127, 50, 0.15);
 }
 
+/* Bronze corner bracket elements using card inner border coordinates */
+.upgrade-card.rare .card-inner {
+  border-color: #cd7f32;
+}
+
+.upgrade-card.rare .card-rarity-badge {
+  background: rgba(205, 127, 50, 0.15);
+  color: #8c4c12;
+  border-color: #cd7f32;
+}
+
+.upgrade-card.rare .card-icon-frame {
+  border-color: #cd7f32;
+  background: rgba(205, 127, 50, 0.05);
+}
+
+/* Legendary - Gilded Gold Frames & Slow Shimmer Float */
 .upgrade-card.legendary {
-  border-color: rgba(57, 255, 20, 0.15);
+  border-color: #d4af37;
+  /* Add elegant gold sparkle effect via shadow */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4),
+              0 0 25px rgba(212, 175, 55, 0.35);
+  animation: cardFloat 3s ease-in-out infinite;
 }
-.upgrade-card.legendary:hover {
-  border-color: rgba(57, 255, 20, 0.5);
-  box-shadow: 0 10px 24px rgba(57, 255, 20, 0.15);
+
+.upgrade-card.legendary .card-inner {
+  border: 3px double #d4af37;
 }
-.upgrade-card.legendary .card-icon {
-  filter: drop-shadow(0 0 6px var(--accent-green-glow));
+
+.upgrade-card.legendary .card-icon-frame {
+  border-color: #d4af37;
+  background: rgba(212, 175, 55, 0.08);
 }
-.upgrade-card.legendary .card-rarity {
-  background: rgba(57, 255, 20, 0.1);
-  color: #72ff55;
-  border: 1px solid rgba(57, 255, 20, 0.2);
+
+.upgrade-card.legendary .card-rarity-badge {
+  background: rgba(212, 175, 55, 0.2);
+  color: #8a6c11;
+  border-color: #d4af37;
   animation: cardTextPulse 1.5s infinite alternate;
 }
 
+@keyframes cardFloat {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(0.5deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
 @keyframes cardTextPulse {
-  from { text-shadow: 0 0 2px rgba(57, 255, 20, 0.1); }
-  to { text-shadow: 0 0 6px rgba(57, 255, 20, 0.6); }
+  from { text-shadow: 0 0 1px rgba(212, 175, 55, 0.1); }
+  to { text-shadow: 0 0 5px rgba(212, 175, 55, 0.7); }
 }
 
 /* ==========================================================================
@@ -665,7 +827,7 @@ kbd {
 .game-over-stats {
   width: 100%;
   padding: 24px;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -674,9 +836,9 @@ kbd {
 .end-stat-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+  border-bottom: 1px dashed rgba(212, 175, 55, 0.2);
   padding-bottom: 8px;
 }
 
@@ -686,16 +848,16 @@ kbd {
 }
 
 .stat-highlight {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-weight: 700;
   color: #fff;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
-#end-time { color: var(--accent-cyan); }
-#end-kills { color: var(--accent-purple); }
-#end-level { color: var(--accent-green); }
-#end-xp { color: #ffd700; } /* gold */
+#end-time { color: var(--accent-gold); }
+#end-kills { color: #ffab91; }
+#end-level { color: #88ff55; }
+#end-xp { color: #ffd700; }
 
 #restart-btn {
   width: 100%;
@@ -710,12 +872,12 @@ kbd {
   height: 100%;
   pointer-events: none;
   z-index: 5;
-  box-shadow: inset 0 0 0px rgba(255, 0, 85, 0);
+  box-shadow: inset 0 0 0px rgba(216, 67, 21, 0);
   transition: box-shadow 0.1s ease-out;
 }
 
 .damage-overlay.flash {
-  box-shadow: inset 0 0 50px rgba(255, 0, 85, 0.45);
+  box-shadow: inset 0 0 50px rgba(216, 67, 21, 0.45);
 }
 
 .damage-overlay.low-hp {
@@ -723,8 +885,8 @@ kbd {
 }
 
 @keyframes hpVignettePulse {
-  0% { box-shadow: inset 0 0 20px rgba(255, 0, 85, 0.2); }
-  100% { box-shadow: inset 0 0 45px rgba(255, 0, 85, 0.5); }
+  0% { box-shadow: inset 0 0 20px rgba(216, 67, 21, 0.2); }
+  100% { box-shadow: inset 0 0 45px rgba(216, 67, 21, 0.5); }
 }
 
 /* ==========================================================================
@@ -739,8 +901,8 @@ kbd {
     font-size: 3.1rem;
   }
   .subtitle {
-    font-size: 0.75rem;
-    letter-spacing: 0.3em;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
   }
   .start-card {
     padding: 24px;
@@ -753,26 +915,66 @@ kbd {
     padding-right: 5px;
   }
   .upgrade-card {
-    height: 140px;
-    padding: 16px;
+    height: 160px;
+    padding: 6px;
+  }
+  
+  .upgrade-card:hover {
+    transform: translateY(-3px);
+  }
+  
+  .card-inner {
+    padding: 10px 8px;
     flex-direction: row;
     align-items: center;
-    text-align: left;
     gap: 15px;
   }
-  .card-icon {
+  
+  .card-corner {
+    display: none; /* Hide corners in compact mobile row to save horizontal space */
+  }
+  
+  .card-center {
+    flex-direction: row;
+    text-align: left;
+    align-items: center;
+    margin: 0;
+    gap: 12px;
+    flex-grow: 1;
+    width: auto;
+  }
+  
+  .card-icon-frame {
+    width: 48px;
+    height: 48px;
     margin-bottom: 0;
+    flex-shrink: 0;
+  }
+  
+  .card-icon {
     font-size: 1.8rem;
   }
-  .card-rarity {
-    margin-top: 0;
-    position: absolute;
-    top: 10px;
-    right: 10px;
+  
+  .card-title {
+    font-size: 0.95rem;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: auto;
   }
+  
   .card-description {
     font-size: 0.75rem;
+    max-width: 100%;
   }
+  
+  .card-footer {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    margin-top: 0;
+  }
+  
   .hud-top {
     flex-direction: column;
     gap: 10px;

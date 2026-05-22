@@ -21,11 +21,11 @@ export class Forest {
    */
   initGround() {
     const groundGeo = new THREE.PlaneGeometry(300, 300);
-    // Deep mossy dark forest green/black standard material
+    // Mossy, warm meadow forest ground plane
     const groundMat = new THREE.MeshStandardMaterial({
-      color: 0x050c07,
-      roughness: 0.9,
-      metalness: 0.1,
+      color: 0x384f2d, // Grassy meadow green
+      roughness: 0.95,
+      metalness: 0.05,
     });
     
     const ground = new THREE.Mesh(groundGeo, groundMat);
@@ -33,10 +33,10 @@ export class Forest {
     ground.receiveShadow = true;
     this.scene.add(ground);
 
-    // Subtle grid lines to give depth in the dark forest
-    const gridHelper = new THREE.GridHelper(300, 30, 0x00f3ff, 0x071b12);
+    // Subtle earth-brown pathway grid lines to add scale and depth
+    const gridHelper = new THREE.GridHelper(300, 30, 0x634d3b, 0x47392b);
     gridHelper.position.y = 0.01; // Slightly above ground
-    gridHelper.material.opacity = 0.08;
+    gridHelper.material.opacity = 0.06;
     gridHelper.material.transparent = true;
     this.scene.add(gridHelper);
   }
@@ -45,36 +45,36 @@ export class Forest {
    * Mood-setting ambient lights and soft shadow-casting moon directional light
    */
   initLights() {
-    // 1. Spooky ambient forest light (purplish-blue)
-    const ambientLight = new THREE.AmbientLight(0x0e071c, 0.8);
+    // 1. Warm, glowing golden-green ambient light
+    const ambientLight = new THREE.AmbientLight(0xeaf2cf, 1.2);
     this.scene.add(ambientLight);
 
-    // 2. Cyan accent light (glow direction)
-    const cyanLight = new THREE.DirectionalLight(0x00f3ff, 0.4);
-    cyanLight.position.set(-30, 20, -20);
-    this.scene.add(cyanLight);
+    // 2. Light blue sky bounce light
+    const skyLight = new THREE.DirectionalLight(0xbde3ff, 0.5);
+    skyLight.position.set(-30, 20, -20);
+    this.scene.add(skyLight);
 
-    // 3. Moon light with soft shadows (directional light)
-    const moonLight = new THREE.DirectionalLight(0xa5c5ff, 1.2);
-    moonLight.position.set(40, 60, 30);
-    moonLight.castShadow = true;
+    // 3. Bright golden sunlight casting shadows
+    const sunLight = new THREE.DirectionalLight(0xfffae0, 1.6);
+    sunLight.position.set(40, 60, 30);
+    sunLight.castShadow = true;
 
     // Shadow settings
-    moonLight.shadow.mapSize.width = 1024;
-    moonLight.shadow.mapSize.height = 1024;
-    moonLight.shadow.camera.near = 0.5;
-    moonLight.shadow.camera.far = 150;
+    sunLight.shadow.mapSize.width = 1024;
+    sunLight.shadow.mapSize.height = 1024;
+    sunLight.shadow.camera.near = 0.5;
+    sunLight.shadow.camera.far = 150;
     
     // Orthographic shadow camera bounds for top-down view
     const d = 40;
-    moonLight.shadow.camera.left = -d;
-    moonLight.shadow.camera.right = d;
-    moonLight.shadow.camera.top = d;
-    moonLight.shadow.camera.bottom = -d;
-    moonLight.shadow.bias = -0.0005;
+    sunLight.shadow.camera.left = -d;
+    sunLight.shadow.camera.right = d;
+    sunLight.shadow.camera.top = d;
+    sunLight.shadow.camera.bottom = -d;
+    sunLight.shadow.bias = -0.0005;
 
-    this.scene.add(moonLight);
-    this.moonLight = moonLight;
+    this.scene.add(sunLight);
+    this.moonLight = sunLight; // Retain variable binding as 'moonLight' for simple downstream updates
   }
 
   /**
@@ -110,7 +110,7 @@ export class Forest {
     const trunkRadius = 0.25 + Math.random() * 0.15;
     const trunkGeo = new THREE.CylinderGeometry(trunkRadius * 0.8, trunkRadius, trunkHeight, 6);
     const trunkMat = new THREE.MeshStandardMaterial({
-      color: 0x22160d, // Dark wood bark
+      color: 0x5c3e21, // Warm natural brown bark
       roughness: 0.95,
     });
     const trunk = new THREE.Mesh(trunkGeo, trunkMat);
@@ -123,7 +123,7 @@ export class Forest {
       // 2a. Pine Tree Canopy (Three stacked layered cones)
       const layers = 3;
       const foliageMat = new THREE.MeshStandardMaterial({
-        color: 0x0a1a0f, // Deep pine forest green
+        color: 0x1f4726, // Natural lively pine forest green
         roughness: 0.9,
       });
 
@@ -143,7 +143,7 @@ export class Forest {
     } else {
       // 2b. Oak Tree Canopy (Three clumped spheres for a leafy look)
       const foliageMat = new THREE.MeshStandardMaterial({
-        color: 0x0c2512, // Rich dark oak green
+        color: 0x2e5927, // Vibrant oak leaf green
         roughness: 0.9,
       });
       

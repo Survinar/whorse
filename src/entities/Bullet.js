@@ -19,8 +19,8 @@ export class Bullet {
     // Construct the glowing 3D mesh
     const bulletGeo = new THREE.SphereGeometry(this.radius, 8, 8);
     const bulletMat = new THREE.MeshStandardMaterial({
-      color: 0x00f3ff,      // Electric cyan
-      emissive: 0x00f3ff,
+      color: 0xff9800,      // Fiery glowing amber ember
+      emissive: 0xff5722,   // Deep orange-red hot core glow
       emissiveIntensity: 2.0,
       roughness: 0.1,
     });

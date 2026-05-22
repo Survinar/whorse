@@ -38,7 +38,7 @@ export class Game {
     this.forest = new Forest(this.scene);
     this.particles = new ParticleEngine(this.scene);
     
-    // Initialize Player Stallion
+    // Initialize Player Steed
     this.horse = new Horse(this.scene);
 
     // Initial camera placement

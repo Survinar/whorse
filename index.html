@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Whorse: Shadow Stallion Forest Survival</title>
-  <meta name="description" content="Control a legendary dark stallion in a haunted neon forest. Shoot enemies, gather magical XP, and level up to survive.">
+  <title>Whorse: Wild Steed Forest Survival</title>
+  <meta name="description" content="Control a legendary wild steed in an atmospheric daytime forest clearing. Shoot enemies, gather magical XP gold stones, and level up to survive.">
   
   <!-- Premium Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;600;700&family=Special+Elite&display=swap" rel="stylesheet">
   
   <!-- Styling -->
   <link rel="stylesheet" href="/src/style.css">
@@ -17,13 +17,13 @@
 <body>
   <!-- Canvas container for Three.js -->
   <canvas id="game-canvas"></canvas>
-
+ 
   <!-- Start Screen Overlay -->
   <div id="start-screen" class="overlay active">
     <div class="glow-container">
       <div class="title-glow">WHORSE</div>
       <h1 class="game-title">WHORSE</h1>
-      <p class="subtitle">SHADOW STALLION SURVIVAL</p>
+      <p class="subtitle">WILD STEED DAYTIME SURVIVAL</p>
     </div>
     
     <div class="start-card glass-panel">
@@ -31,46 +31,46 @@
       <div class="controls-grid">
         <div class="control-item">
           <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or <kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd>
-          <span>Move the Stallion</span>
+          <span>Move the Steed</span>
         </div>
         <div class="control-item">
           <div class="icon-auto-shoot">☄</div>
-          <span>The horse auto-targets and fires at the nearest shadow beast</span>
+          <span>The steed auto-targets and fires glowing embers at the nearest beast</span>
         </div>
         <div class="control-item">
           <kbd class="xp-gem">♦</kbd>
-          <span>Collect glowing XP orbs dropped by slain enemies to level up</span>
+          <span>Collect glowing gold sunstones dropped by slain enemies to level up</span>
         </div>
       </div>
       
       <div class="high-score-container">
         BEST SURVIVAL TIME: <span id="best-time-val">00:00</span>
       </div>
-
+ 
       <button id="start-btn" class="btn primary-btn pulse-glow">
-        ENTER THE FOREST
+        ENTER THE CLEARING
       </button>
     </div>
   </div>
-
+ 
   <!-- HUD HUD (Heads-Up Display) Overlay -->
   <div id="hud-overlay" class="overlay">
     <div class="hud-top">
       <!-- Player Info & Health -->
       <div class="hud-item health-hud glass-panel-sm">
         <div class="hud-label">
-          <span>STALLION VITALITY</span>
+          <span>STEED VITALITY</span>
           <span id="hp-text">100/100</span>
         </div>
         <div class="progress-bar-container">
           <div id="health-fill" class="progress-bar-fill health-fill" style="width: 100%;"></div>
         </div>
       </div>
-
+ 
       <!-- Level & XP -->
       <div class="hud-item xp-hud glass-panel-sm">
         <div class="hud-label">
-          <span>SHADOW RESONANCE (LVL <span id="level-val">1</span>)</span>
+          <span>RESONANCE LEVEL (LVL <span id="level-val">1</span>)</span>
           <span id="xp-text">0/10</span>
         </div>
         <div class="progress-bar-container">
@@ -78,7 +78,7 @@
         </div>
       </div>
     </div>
-
+ 
     <div class="hud-bottom">
       <div class="hud-stats-group">
         <!-- Stats counters -->
@@ -91,19 +91,19 @@
           <span id="kill-val">0</span>
         </div>
       </div>
-
+ 
       <!-- Active Upgrades HUD Container -->
       <div id="active-upgrades-hud" class="active-upgrades-list">
         <!-- Will be dynamically populated with badges -->
       </div>
     </div>
   </div>
-
+ 
   <!-- Level Up Modal Dialog -->
   <dialog id="level-up-dialog" class="game-dialog glass-panel">
     <div class="dialog-header">
-      <h2 class="dialog-title animate-neon">RESONANCE LEVEL UP!</h2>
-      <p class="dialog-subtitle">Select a blessing to enhance the shadow stallion</p>
+      <h2 class="dialog-title animate-neon">CHOOSE AN UPGRADE</h2>
+      <p class="dialog-subtitle">Select a playing card to enhance the steed's abilities</p>
     </div>
     
     <!-- Dynamic Cards Container -->
@@ -111,12 +111,12 @@
       <!-- 3 dynamically generated upgrade cards will be inserted here -->
     </div>
   </dialog>
-
+ 
   <!-- Game Over Modal Dialog -->
   <dialog id="game-over-dialog" class="game-dialog glass-panel">
     <div class="dialog-header">
-      <h2 class="dialog-title game-over-title animate-red-neon">STALLION DEFEATED</h2>
-      <p class="dialog-subtitle">Your spark has faded back into the void...</p>
+      <h2 class="dialog-title game-over-title animate-red-neon">STEED DEFEATED</h2>
+      <p class="dialog-subtitle">Your spirit returns to the fertile earth...</p>
     </div>
     
     <div class="game-over-stats glass-panel-sm">
@@ -137,7 +137,7 @@
         <span id="end-xp" class="stat-highlight">325 XP</span>
       </div>
     </div>
-
+ 
     <button id="restart-btn" class="btn primary-btn pulse-glow-red">
       RE-AWAKEN SPIRIT
     </button>

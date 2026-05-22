@@ -23,11 +23,11 @@ export class XPOrb {
     // Construct double-pyramid crystal geometry (Octahedron)
     const gemGeo = new THREE.OctahedronGeometry(this.radius, 0);
     const gemMat = new THREE.MeshStandardMaterial({
-      color: 0x39ff14,      // Toxic neon green
-      emissive: 0x39ff14,
+      color: 0xffd700,      // Glistening golden sunstone
+      emissive: 0xff8f00,   // Warm gold glow
       emissiveIntensity: 1.5,
-      roughness: 0.2,
-      metalness: 0.8,
+      roughness: 0.1,
+      metalness: 0.9,
     });
     
     this.mesh = new THREE.Mesh(gemGeo, gemMat);

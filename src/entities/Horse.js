@@ -55,28 +55,24 @@ export class Horse {
   buildModel() {
     // 1. Materials
     const obsidianMat = new THREE.MeshStandardMaterial({
-      color: 0x05080c,      // Glossy obsidian black
-      roughness: 0.15,
-      metalness: 0.85,
+      color: 0x0f1115,      // Sleek charcoal black coat
+      roughness: 0.35,
+      metalness: 0.2,
     });
     
     const glowingManeMat = new THREE.MeshStandardMaterial({
-      color: 0x00f3ff,      // Cyan magic glowing mane
-      emissive: 0x00f3ff,
-      emissiveIntensity: 1.5,
-      transparent: true,
-      opacity: 0.9,
+      color: 0x221a15,      // Rich dark brown/charcoal flowing hair mane
+      roughness: 0.8,
     });
 
     const glowingEyeMat = new THREE.MeshStandardMaterial({
-      color: 0xff0055,      // Red menacing glowing eyes
-      emissive: 0xff0055,
-      emissiveIntensity: 2.0,
+      color: 0x1c120c,      // Realistic dark chocolate brown eyes
+      roughness: 0.1,
     });
 
     const hoofMat = new THREE.MeshStandardMaterial({
-      color: 0x1e2d3b,
-      roughness: 0.5,
+      color: 0x3d3126,      // Earth-brown hooves
+      roughness: 0.7,
     });
 
     // 2. Torso / Body Group (centered relative to parent group)

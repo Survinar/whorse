@@ -1,18 +1,18 @@
-# 🐎 Whorse: Shadow Stallion Forest Survival
+# 🐎 Whorse: Wild Steed Daytime Survival
 
 An atmospheric, top-down 3D survival action game built using **Three.js**, **Vite**, **Vanilla CSS**, and the **Web Audio API**.
 
-You control a mythical dark stallion in a haunted, neon-lit forest. Spooky shadow beasts emerge continuously trying to banish you. Level up, collect energy gems, and choose ancient blessings to survive the void!
+You control a mythical charcoal black steed in a beautiful sunlit forest clearing. Wild beasts emerge continuously trying to banish you. Level up, collect golden sunstones, and choose ancient blessings represented by weathered playing cards to survive the clearing!
 
 ---
 
 ## ✨ Features
 
-- **Stylized 3D Procedural Models**: Hierarchical 3D rigs for the stallion, shadow wolves, giant wooden Ents, and floating Wisps. Features a rhythmic trotting leg-swinging rig and torso bobbing.
-- **Dynamic Forest Environment**: Mood-setting ambient lights, deep mist, and moving moon shadows. Uses an **infinite wrapping engine**—trees wrap around the viewport bounds seamlessy to allow endless exploration.
+- **Stylized 3D Procedural Models**: Hierarchical 3D rigs for the wild steed, red-brown wolves, giant forest Ents, and glowing fire Wisps. Features a rhythmic trotting leg-swinging rig and torso bobbing.
+- **Warm Daytime Environment**: Gold-hazed sunlight, deep forest clearing, and rich pine/oak greenery. Uses an **infinite wrapping engine**—trees wrap around the viewport bounds seamlessly to allow endless exploration.
 - **Real-Time Sound Synthesizer**: All audio (laser shots, noise hit-cracks, death sweeps, XP blips, level-up arpeggios, and ambient forest rumbles) are synthesized directly inside the browser using the **Web Audio API**. Zero external audio file dependencies!
-- **Intelligent Beast Pathfinding**: Shadow beasts track and hunt you, avoiding trees. Uses **mutual crowd repulsion** so swarms surround the stallion strategically rather than clipping into a single blob.
-- **Glassmorphic Blessing Cards**: Pauses the game on level-up to present three random upgrades with randomized rarities (Common: Cyan, Rare: Purple, Legendary: Pulsing Green), with neon highlights and hover shifts.
+- **Intelligent Beast Pathfinding**: Wild beasts track and hunt you, avoiding trees. Uses **mutual crowd repulsion** so swarms surround the steed strategically rather than clipping into a single blob.
+- **Vintage Upgrade Playing Cards**: Pauses the game on level-up to present three random upgrades styled like antique Tarot/playing cards with physical linen texture, double-borders, card corners with suits (♠, ♣, ♥, ♦), and unique rarity stylings (Common, Rare bronze brackets, Legendary golden floating cards).
 - **Continuous Difficulty Scaling**: Waves intensify over time, spawning enemies more frequently and introducing tankier wooden giants.
 - **High Score System**: Uses `localStorage` to save your best survival times.
 
@@ -20,15 +20,9 @@ You control a mythical dark stallion in a haunted, neon-lit forest. Spooky shado
 
 ## 🎮 Controls
 
-| Keys | Movement |
-| :--- | :--- |
-| <kbd>W</kbd> / <kbd>↑</kbd> | Move Up |
-| <kbd>A</kbd> / <kbd>←</kbd> | Move Left |
-| <kbd>S</kbd> / <kbd>↓</kbd> | Move Down |
-| <kbd>D</kbd> / <kbd>→</kbd> | Move Right |
-
-* **Firing**: Automatically targets and fires glowing energy projectiles at the nearest shadow beast within range.
-* **Gems**: Stand near glowing green crystals dropped by banished beasts to magnetically pull and absorb them.
+- **Movement**: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or <kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> to move the steed.
+- **Firing**: Automatically targets and fires glowing ember projectiles at the nearest wild beast within range.
+- **Sunstones**: Stand near glowing golden sunstones dropped by banished beasts to magnetically pull and absorb them.
 
 ---
 
@@ -61,5 +55,5 @@ Follow these steps to run the game on your local machine:
 - **Three.js** (WebGL 3D rendering pipeline)
 - **Vite** (Next-gen frontend toolchain)
 - **Web Audio API** (Procedural synthesizer engine)
-- **CSS3 / HTML5** (Glassmorphism overlays and native `<dialog>` modals)
+- **CSS3 / HTML5** (Earthy panels and native `<dialog>` modals)
 - **GitHub Actions** (Continuous Integration & GitHub Pages deployment)

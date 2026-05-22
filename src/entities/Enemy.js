@@ -71,17 +71,17 @@ export class Enemy {
    * Procedurally build 3D mesh components
    */
   buildModel() {
-    const wolfMat = new THREE.MeshStandardMaterial({ color: 0x1d0b30, roughness: 0.8 }); // deep dark violet
-    const entMat = new THREE.MeshStandardMaterial({ color: 0x1f140e, roughness: 0.95 }); // rotting wood
+    const wolfMat = new THREE.MeshStandardMaterial({ color: 0x2d1e18, roughness: 0.85 }); // deep dark forest brown
+    const entMat = new THREE.MeshStandardMaterial({ color: 0x2b1c11, roughness: 0.95 }); // rich textured oak trunk wood
     const wispMat = new THREE.MeshStandardMaterial({
-      color: 0xbd00ff, // glowing purple
-      emissive: 0xbd00ff,
+      color: 0xff6f00, // glowing bright orange fire ember
+      emissive: 0xff3d00,
       emissiveIntensity: 1.2,
       transparent: true,
       opacity: 0.8,
     });
-    const glowingEyeMat = new THREE.MeshStandardMaterial({ color: 0xff0033, emissive: 0xff0033, emissiveIntensity: 2.0 });
-    const leafMat = new THREE.MeshStandardMaterial({ color: 0x052e0a, roughness: 0.9 });
+    const glowingEyeMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, emissive: 0xff7b00, emissiveIntensity: 2.0 }); // glowing amber eyes
+    const leafMat = new THREE.MeshStandardMaterial({ color: 0x1e3f20, roughness: 0.9 }); // lush forest vine foliage
 
     if (this.type === 'wolf') {
       // Body Box
@@ -146,9 +146,9 @@ export class Enemy {
       vineOverlay.position.set(0, 0.9, 0);
       this.entBody.add(vineOverlay);
 
-      // Glowing green hollow eyes
+      // Glowing amber hollow eyes
       const eyeGeo = new THREE.SphereGeometry(0.06, 4, 4);
-      const greenEyeMat = new THREE.MeshStandardMaterial({ color: 0x39ff14, emissive: 0x39ff14, emissiveIntensity: 1.5 });
+      const greenEyeMat = new THREE.MeshStandardMaterial({ color: 0xffb300, emissive: 0xff8f00, emissiveIntensity: 1.5 });
       const lEye = new THREE.Mesh(eyeGeo, greenEyeMat);
       lEye.position.set(-0.16, 0.75, 0.22);
       const rEye = new THREE.Mesh(eyeGeo, greenEyeMat);
@@ -192,10 +192,10 @@ export class Enemy {
       this.wispCore.castShadow = false;
       this.mesh.add(this.wispCore);
 
-      // Glowing crown nodes orbiting around
+      // Glowing gold crown nodes orbiting around
       this.orbiters = [];
       const orbiterGeo = new THREE.SphereGeometry(0.08, 4, 4);
-      const orbiterMat = new THREE.MeshStandardMaterial({ color: 0x00f3ff, emissive: 0x00f3ff, emissiveIntensity: 1.5 });
+      const orbiterMat = new THREE.MeshStandardMaterial({ color: 0xffeb3b, emissive: 0xffd54f, emissiveIntensity: 1.5 });
       
       for (let i = 0; i < 3; i++) {
         const orb = new THREE.Mesh(orbiterGeo, orbiterMat);
@@ -241,7 +241,7 @@ export class Enemy {
     // Move forward
     this.mesh.position.addScaledVector(direction, this.speed * delta);
 
-    // Smoothly turn to face the player stallion
+    // Smoothly turn to face the player steed
     const targetAngle = Math.atan2(direction.x, direction.z);
     this.mesh.rotation.y = targetAngle;
 
