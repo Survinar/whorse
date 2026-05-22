@@ -210,64 +210,69 @@ body {
    ========================================================================== */
 
 #start-screen {
-  background: radial-gradient(circle at center, #5d7554 0%, #1e261b 100%);
+  background: radial-gradient(circle at center, #2e4326 0%, #0d120a 100%);
   padding: 20px;
 }
 
 .glow-container {
   position: relative;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
 .game-title {
   font-family: var(--font-display);
-  font-size: 5rem;
+  font-size: 6rem;
   font-weight: 900;
-  letter-spacing: 0.25em;
-  /* Gold Gradient Text */
-  background: linear-gradient(to bottom, #ffe899 0%, #d4af37 50%, #8c6b12 100%);
+  letter-spacing: 0.15em;
+  /* Premium metallic gold to white sheen gradient */
+  background: linear-gradient(135deg, #ffffff 0%, #ffd54f 50%, #b28900 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.7));
+  filter: drop-shadow(4px 6px 12px rgba(0, 0, 0, 0.95));
   position: relative;
   z-index: 2;
-  margin-left: 0.25em;
+  margin-left: 0.15em;
 }
 
 .title-glow {
   position: absolute;
   font-family: var(--font-display);
-  font-size: 5.2rem;
+  font-size: 6.2rem;
   font-weight: 900;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.15em;
   color: transparent;
-  -webkit-text-stroke: 2px rgba(212, 175, 55, 0.15);
+  -webkit-text-stroke: 3px rgba(255, 213, 79, 0.25);
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(1.05);
+  transform: translate(-50%, -50%) scale(1.03);
   z-index: 1;
   pointer-events: none;
-  filter: blur(3px);
+  filter: blur(8px);
 }
 
 .subtitle {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  letter-spacing: 0.4em;
-  color: #ffe082;
-  margin-top: 10px;
-  text-shadow: 1px 2px 4px rgba(0,0,0,0.5);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  color: #ffcc00;
+  margin-top: 15px;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.9);
   font-weight: 700;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .start-card {
   width: 100%;
-  max-width: 540px;
-  padding: 40px;
+  max-width: 420px;
+  padding: 30px;
   display: flex;
   flex-direction: column;
   gap: 25px;
+  align-items: center;
+  text-align: center;
 }
 
 .controls-grid {
@@ -324,16 +329,21 @@ kbd {
   border-radius: 4px;
 }
 
+
+
 .high-score-container {
+  width: 100%;
   font-family: var(--font-mono);
   font-size: 0.85rem;
   letter-spacing: 0.05em;
   text-align: center;
   color: var(--text-secondary);
-  background: rgba(0, 0, 0, 0.35);
-  padding: 10px;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 12px;
   border-radius: 6px;
-  border: 1px dashed rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+  box-sizing: border-box;
 }
 
 .high-score-container span {
