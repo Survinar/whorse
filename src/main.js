@@ -10,14 +10,48 @@ const keysPressed = {};
 
 // Upgrade Pool Definitions
 const UPGRADE_POOL = [
-  { type: 'speed', title: 'DAI TALPA', desc: 'NIGGA HORSE NEVER STOPS!! Incrase speed by 15%.', icon: '🏇', suit: '♠', rank: 'A' },
-  { type: 'damage', title: 'BILE GRELE', desc: 'Raises bullet damage by 25%.', icon: '🔥', suit: '♣', rank: 'A' },
-  { type: 'fireRate', title: 'BINE AZI', desc: 'Shoot faster.', icon: '🏹', suit: '♠', rank: 'J' },
-  { type: 'pierce', title: 'SHARP FLINT', desc: 'Projectiles pierce through an additional target.', icon: '☄', suit: '♦', rank: 'J' },
-  { type: 'magnet', title: 'GOLDEN RESONANCE', desc: 'Extends magnet pull radius by 30%.', icon: '🧲', suit: '♦', rank: 'Q' },
-  { type: 'vitality', title: 'BEER', desc: 'Your blood becomes stronger. Maximum health increases by 20 and fully heals.', icon: '♥', suit: '♥', rank: 'K' },
-  { type: 'nova', title: 'SPLIT EMBER', desc: 'Fires an additional bullet backwards at 80% damage.', icon: '🌀', suit: '♣', rank: '10' },
+  { type: 'speed', title: 'DAI TALPA', icon: '🏇', suit: '♠', rank: 'A' },
+  { type: 'damage', title: 'BILE GRELE', icon: '🔥', suit: '♣', rank: 'A' },
+  { type: 'fireRate', title: 'BINE AZI', icon: '🏹', suit: '♠', rank: 'J' },
+  { type: 'pierce', title: 'SHARP FLINT', icon: '☄', suit: '♦', rank: 'J' },
+  { type: 'magnet', title: 'GOLDEN RESONANCE', icon: '🧲', suit: '♦', rank: 'Q' },
+  { type: 'vitality', title: 'BEER', icon: '♥', suit: '♥', rank: 'K' },
+  { type: 'nova', title: 'SPLIT EMBER', icon: '🌀', suit: '♣', rank: '10' },
+  { type: 'orbiter', title: 'SUN HALO', icon: '☀️', suit: '♦', rank: 'A' },
+  { type: 'trail', title: 'EMBER TRAIL', icon: '🔥', suit: '♣', rank: 'Q' },
+  { type: 'stomp', title: 'EARTH STOMP', icon: '👣', suit: '♠', rank: 'K' },
 ];
+
+/**
+ * Generates custom description text incorporating the rarity multipliers
+ */
+function getUpgradeDescription(type, rarity) {
+  const mult = rarity === 'legendary' ? 3.0 : (rarity === 'rare' ? 1.8 : 1.0);
+  switch (type) {
+    case 'speed':
+      return `NIGGA HORSE NEVER STOPS!! Increase speed by ${Math.round(10 * mult)}%.`;
+    case 'damage':
+      return `Raises bullet damage by ${Math.round(15 * mult)}%.`;
+    case 'fireRate':
+      return `Shoot faster. Increases fire rate by ${Math.round(12 * mult)}%.`;
+    case 'pierce':
+      return `Projectiles pierce through ${Math.round(1 * mult)} additional target(s).`;
+    case 'magnet':
+      return `Extends magnet pull radius by ${Math.round(20 * mult)}%.`;
+    case 'vitality':
+      return `Your blood becomes stronger. Maximum health increases by ${Math.round(15 * mult)} and fully heals.`;
+    case 'nova':
+      return `Fires an additional bullet backwards at ${Math.round(60 * mult)}% damage.`;
+    case 'orbiter':
+      return `Summons ${Math.round(1 * mult)} spinning fire ember(s) dealing continuous burn damage.`;
+    case 'trail':
+      return `Leaves a burning path that deals ${Math.round(12 * mult)}/s damage for ${Math.round((2.0 + 0.5 * mult) * 10) / 10}s.`;
+    case 'stomp':
+      return `Periodic ground stomp dealing ${Math.round(30 * mult)} AoE damage inside a ${Math.round((4.5 + 1.2 * mult) * 10) / 10}m radius.`;
+    default:
+      return '';
+  }
+}
 
 // Initialize DOM hooks
 const startScreen = document.getElementById('start-screen');
@@ -224,7 +258,7 @@ function triggerLevelUp() {
             <div class="card-icon">${upgrade.icon}</div>
           </div>
           <div class="card-title">${upgrade.title}</div>
-          <div class="card-description">${upgrade.desc}</div>
+          <div class="card-description">${getUpgradeDescription(upgrade.type, rarity)}</div>
         </div>
         <div class="card-footer">
           <span class="card-rarity-badge ${rarity}">${rarityLabel}</span>
@@ -237,7 +271,7 @@ function triggerLevelUp() {
       // Play selection chirp
       Sound.playXP();
 
-      activeGame.horse.applyUpgrade(upgrade.type);
+      activeGame.horse.applyUpgrade(upgrade.type, rarity);
       levelUpDialog.close();
 
       // Resume updates

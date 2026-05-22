@@ -22,6 +22,16 @@ export class Horse {
     this.pierce = 1;
     this.magnetRange = 5.5;
     
+    // Skill backing statistics
+    this.novaMult = 0.6;
+    this.orbiterDamage = 0;
+    this.trailDamage = 0;
+    this.trailWidth = 1.5;
+    this.trailDuration = 2.0;
+    this.stompDamage = 0;
+    this.stompRadius = 4.5;
+    this.stompCooldown = 4.5;
+    
     // Auto-Shooting Cooldown Timer (in seconds)
     this.shootCooldown = 0.0;
     
@@ -34,6 +44,9 @@ export class Horse {
       magnet: 0,
       vitality: 0,
       nova: 0,
+      orbiter: 0,
+      trail: 0,
+      stomp: 0,
     };
     
     // Construct the 3D Procedural Mesh Group
@@ -352,27 +365,33 @@ export class Horse {
   /**
    * Apply permanent stat upgrades based on selected blessings
    */
-  applyUpgrade(type) {
-    this.activeUpgrades[type]++;
+  applyUpgrade(type, rarity = 'common') {
+    const mult = rarity === 'legendary' ? 3.0 : (rarity === 'rare' ? 1.8 : 1.0);
     
     switch(type) {
       case 'speed':
-        this.speed *= 1.15; // +15% movement speed
+        this.activeUpgrades.speed++;
+        this.speed *= (1.0 + 0.10 * mult);
         break;
       case 'damage':
-        this.damage = Math.round(this.damage * 1.25); // +25% bullet damage
+        this.activeUpgrades.damage++;
+        this.damage = Math.round(this.damage * (1.0 + 0.15 * mult));
         break;
       case 'fireRate':
-        this.fireRate *= 1.2; // +20% fire rate
+        this.activeUpgrades.fireRate++;
+        this.fireRate *= (1.0 + 0.12 * mult);
         break;
       case 'pierce':
-        this.pierce += 1; // +1 pierce count
+        this.activeUpgrades.pierce += Math.round(1 * mult);
+        this.pierce += Math.round(1 * mult);
         break;
       case 'magnet':
-        this.magnetRange *= 1.3; // +30% XP magnetic pull
+        this.activeUpgrades.magnet++;
+        this.magnetRange *= (1.0 + 0.20 * mult);
         break;
       case 'vitality':
-        this.maxHp += 20; // +20 max HP
+        this.activeUpgrades.vitality++;
+        this.maxHp += Math.round(15 * mult);
         this.hp = this.maxHp; // Full Heal
         
         // Remove low health UI pulse if fully healed
@@ -380,7 +399,24 @@ export class Horse {
         if (overlay) overlay.classList.remove('low-hp');
         break;
       case 'nova':
-        // Extra Bullet logic handled in Game.js via stats check
+        this.activeUpgrades.nova++;
+        this.novaMult = (this.novaMult || 0.6) + 0.3 * mult;
+        break;
+      case 'orbiter':
+        this.activeUpgrades.orbiter += Math.round(1 * mult); // Adds 1, 2, or 3 orbiters
+        this.orbiterDamage = (this.orbiterDamage || 0) + Math.round(10 * mult);
+        break;
+      case 'trail':
+        this.activeUpgrades.trail++;
+        this.trailDamage = (this.trailDamage || 0) + Math.round(12 * mult);
+        this.trailWidth = (this.trailWidth || 1.5) + 0.5 * mult;
+        this.trailDuration = (this.trailDuration || 2.0) + 0.5 * mult;
+        break;
+      case 'stomp':
+        this.activeUpgrades.stomp++;
+        this.stompDamage = (this.stompDamage || 0) + Math.round(30 * mult);
+        this.stompRadius = (this.stompRadius || 4.5) + 1.2 * mult;
+        this.stompCooldown = Math.max(1.5, (this.stompCooldown || 4.5) - 0.5 * mult);
         break;
     }
   }

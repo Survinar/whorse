@@ -34,6 +34,23 @@ export class Game {
     this.enemies = [];
     this.xpOrbs = [];
 
+    // Arrays for skills
+    this.orbiters = [];
+    this.trailNodes = [];
+    this.stompEffects = [];
+    this.stompTimer = 0.0;
+    this.trailSpawnTimer = 0.0;
+
+    // Cache shared orbiter geometries/materials
+    this.orbiterGeometry = new THREE.SphereGeometry(0.25, 8, 8);
+    this.orbiterMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffaa00,
+      emissive: 0xff5500,
+      emissiveIntensity: 1.5,
+      roughness: 0.2,
+      metalness: 0.1
+    });
+
     // Initialize systems
     this.forest = new Forest(this.scene);
     this.particles = new ParticleEngine(this.scene);
@@ -94,6 +111,9 @@ export class Game {
     this.enemies.forEach(e => e.update(delta, this.horse.mesh.position, this.forest, this.enemies));
     this.particles.update(delta, this.horse.mesh.position);
 
+    // 6.5. Update Skills (Orbiters, Trails, and Stomps)
+    this.updateSkills(delta, dx, dz);
+
     // 7. Resolve Collisions Matrix
     this.checkCollisions(delta);
 
@@ -113,6 +133,222 @@ export class Game {
       setTimeout(() => {
         this.onLevelUpCallback();
       }, 350);
+    }
+  }
+
+  /**
+   * Ticks and handles procedural visualizations and aura damage sweeps for skills
+   */
+  updateSkills(delta, dx, dz) {
+    const isMoving = dx !== 0 || dz !== 0;
+    const playerPos = this.horse.mesh.position;
+
+    // --- Orbiting Embers (Sun Halo) ---
+    const activeOrbiters = this.horse.activeUpgrades.orbiter || 0;
+    if (activeOrbiters > 0) {
+      // Spawn or remove orbiters to match active count
+      if (this.orbiters.length !== activeOrbiters) {
+        // Clear existing
+        this.orbiters.forEach(orbiter => {
+          this.scene.remove(orbiter.mesh);
+        });
+        this.orbiters = [];
+        
+        // Spawn exact amount
+        for (let i = 0; i < activeOrbiters; i++) {
+          const mesh = new THREE.Mesh(this.orbiterGeometry, this.orbiterMaterial);
+          this.scene.add(mesh);
+          this.orbiters.push({ mesh });
+        }
+      }
+
+      // Update position and check collision
+      const count = this.orbiters.length;
+      const orbitRadius = 2.5;
+      const orbitSpeed = 2.5;
+      const damage = this.horse.orbiterDamage || 10;
+      const orbiterRadius = 0.5;
+
+      this.orbiters.forEach((orbiter, idx) => {
+        const angle = this.time * orbitSpeed + (idx * Math.PI * 2) / count;
+        orbiter.mesh.position.set(
+          playerPos.x + Math.cos(angle) * orbitRadius,
+          1.0,
+          playerPos.z + Math.sin(angle) * orbitRadius
+        );
+
+        // Tick burn damage against overlapping enemies
+        for (const enemy of this.enemies) {
+          if (!enemy.alive) continue;
+          const edx = orbiter.mesh.position.x - enemy.mesh.position.x;
+          const edz = orbiter.mesh.position.z - enemy.mesh.position.z;
+          const distSq = edx * edx + edz * edz;
+          const minDist = orbiterRadius + enemy.collisionRadius;
+          if (distSq < minDist * minDist) {
+            const isDead = enemy.takeDamage(damage * delta);
+            if (isDead) {
+              this.banishEnemy(enemy);
+            }
+          }
+        }
+      });
+    } else {
+      // Clean up if no orbiters are active
+      if (this.orbiters.length > 0) {
+        this.orbiters.forEach(orbiter => this.scene.remove(orbiter.mesh));
+        this.orbiters = [];
+      }
+    }
+
+    // --- Embers Trail ---
+    const activeTrail = this.horse.activeUpgrades.trail || 0;
+    if (activeTrail > 0) {
+      if (isMoving) {
+        this.trailSpawnTimer += delta;
+        if (this.trailSpawnTimer >= 0.15) {
+          this.trailSpawnTimer = 0.0;
+
+          const width = this.horse.trailWidth || 1.5;
+          const duration = this.horse.trailDuration || 2.0;
+
+          const geo = new THREE.CircleGeometry(width / 2, 8);
+          const mat = new THREE.MeshBasicMaterial({
+            color: 0xff5500,
+            transparent: true,
+            opacity: 0.7,
+            depthWrite: false,
+            side: THREE.DoubleSide
+          });
+
+          const mesh = new THREE.Mesh(geo, mat);
+          mesh.rotation.x = -Math.PI / 2;
+          mesh.position.copy(playerPos);
+          mesh.position.y = 0.02; // slightly above floor
+          this.scene.add(mesh);
+
+          this.trailNodes.push({
+            mesh,
+            geometry: geo,
+            material: mat,
+            maxDuration: duration,
+            elapsed: 0.0,
+            radius: width / 2
+          });
+        }
+      }
+
+      // Update active trails
+      this.trailNodes.forEach(node => {
+        node.elapsed += delta;
+        const ratio = Math.max(0.0, 1.0 - (node.elapsed / node.maxDuration));
+
+        if (ratio > 0.0) {
+          node.mesh.scale.set(ratio, ratio, ratio);
+          node.material.opacity = ratio * 0.7;
+
+          const currentRadius = node.radius * ratio;
+          const damage = this.horse.trailDamage || 12;
+
+          for (const enemy of this.enemies) {
+            if (!enemy.alive) continue;
+            const edx = node.mesh.position.x - enemy.mesh.position.x;
+            const edz = node.mesh.position.z - enemy.mesh.position.z;
+            const distSq = edx * edx + edz * edz;
+            const minDist = currentRadius + enemy.collisionRadius;
+            if (distSq < minDist * minDist) {
+              const isDead = enemy.takeDamage(damage * delta);
+              if (isDead) {
+                this.banishEnemy(enemy);
+              }
+            }
+          }
+        }
+      });
+
+      // Banish expired trail nodes
+      this.trailNodes = this.trailNodes.filter(node => {
+        if (node.elapsed >= node.maxDuration) {
+          this.scene.remove(node.mesh);
+          node.geometry.dispose();
+          node.material.dispose();
+          return false;
+        }
+        return true;
+      });
+    }
+
+    // --- Earth Stomp ---
+    const activeStomp = this.horse.activeUpgrades.stomp || 0;
+    if (activeStomp > 0) {
+      this.stompTimer += delta;
+      if (this.stompTimer >= this.horse.stompCooldown) {
+        this.stompTimer = 0.0;
+
+        const stompRadius = this.horse.stompRadius || 4.5;
+        const stompDamage = this.horse.stompDamage || 30;
+
+        // Visual flash and rumble sound
+        Sound.playHit();
+        
+        // Scan surrounding enemies and stomp
+        for (const enemy of this.enemies) {
+          if (!enemy.alive) continue;
+          const edx = playerPos.x - enemy.mesh.position.x;
+          const edz = playerPos.z - enemy.mesh.position.z;
+          const distSq = edx * edx + edz * edz;
+
+          if (distSq < stompRadius * stompRadius) {
+            const isDead = enemy.takeDamage(stompDamage);
+            this.particles.spawnHitSparks(enemy.mesh.position.clone());
+            if (isDead) {
+              this.banishEnemy(enemy);
+            }
+          }
+        }
+
+        // Expanded Ring Shockwave Visual
+        const ringGeo = new THREE.RingGeometry(0.1, stompRadius, 32);
+        const ringMat = new THREE.MeshBasicMaterial({
+          color: 0xffd700,
+          transparent: true,
+          opacity: 0.8,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.rotation.x = -Math.PI / 2;
+        ringMesh.position.copy(playerPos);
+        ringMesh.position.y = 0.03;
+        this.scene.add(ringMesh);
+
+        this.stompEffects.push({
+          mesh: ringMesh,
+          geometry: ringGeo,
+          material: ringMat,
+          maxDuration: 0.4,
+          elapsed: 0.0
+        });
+      }
+
+      // Update expand rings
+      this.stompEffects.forEach(effect => {
+        effect.elapsed += delta;
+        const ratio = Math.min(1.0, effect.elapsed / effect.maxDuration);
+
+        effect.mesh.scale.set(ratio, ratio, ratio);
+        effect.material.opacity = (1.0 - ratio) * 0.8;
+      });
+
+      // Filter expired effects
+      this.stompEffects = this.stompEffects.filter(effect => {
+        if (effect.elapsed >= effect.maxDuration) {
+          this.scene.remove(effect.mesh);
+          effect.geometry.dispose();
+          effect.material.dispose();
+          return false;
+        }
+        return true;
+      });
     }
   }
 
@@ -342,6 +578,9 @@ export class Game {
       magnet: '🧲 RESONANCE',
       vitality: '❤️ VITALITY',
       nova: '🌀 CHAOS NOVA',
+      orbiter: '☀️ SUN HALO',
+      trail: '🔥 EMBER TRAIL',
+      stomp: '👣 EARTH STOMP',
     };
 
     for (const [key, val] of Object.entries(this.horse.activeUpgrades)) {
@@ -405,6 +644,36 @@ export class Game {
     this.bullets = [];
     this.enemies = [];
     this.xpOrbs = [];
+
+    // Dispose Orbiters
+    this.orbiters.forEach(orbiter => {
+      this.scene.remove(orbiter.mesh);
+    });
+    this.orbiters = [];
+
+    // Dispose Trails
+    this.trailNodes.forEach(node => {
+      this.scene.remove(node.mesh);
+      node.geometry.dispose();
+      node.material.dispose();
+    });
+    this.trailNodes = [];
+
+    // Dispose Stomps
+    this.stompEffects.forEach(effect => {
+      this.scene.remove(effect.mesh);
+      effect.geometry.dispose();
+      effect.material.dispose();
+    });
+    this.stompEffects = [];
+
+    // Dispose cached orbiter geometries/materials
+    if (this.orbiterGeometry) {
+      this.orbiterGeometry.dispose();
+    }
+    if (this.orbiterMaterial) {
+      this.orbiterMaterial.dispose();
+    }
     
     if (this.horse) {
       this.scene.remove(this.horse.mesh);
