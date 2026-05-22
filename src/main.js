@@ -29,6 +29,13 @@ const gameOverDialog = document.getElementById('game-over-dialog');
 const cardContainer = document.getElementById('upgrade-cards-container');
 const bestTimeVal = document.getElementById('best-time-val');
 
+// Pause menu DOM hooks
+const pauseDialog = document.getElementById('pause-dialog');
+const resumeBtn = document.getElementById('resume-btn');
+const pauseRestartBtn = document.getElementById('pause-restart-btn');
+const pauseTime = document.getElementById('pause-time');
+const pauseKills = document.getElementById('pause-kills');
+
 // Load best score on startup
 updateHighScoreDisplay();
 
@@ -76,6 +83,16 @@ function initThree() {
 function setupInputListeners() {
   window.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
+    
+    // Intercept Escape key when actively playing to toggle pause
+    if (e.key === 'Escape' || key === 'escape') {
+      if (gameState === 'PLAYING' && activeGame) {
+        togglePause();
+      }
+      e.preventDefault();
+      return;
+    }
+    
     keysPressed[key] = true;
   });
 
@@ -83,6 +100,32 @@ function setupInputListeners() {
     const key = e.key.toLowerCase();
     keysPressed[key] = false;
   });
+}
+
+/**
+ * Toggles the game pause state, updates stats display, and pauses/resumes sounds.
+ */
+function togglePause() {
+  if (!activeGame) return;
+
+  if (activeGame.isPaused) {
+    pauseDialog.close();
+    activeGame.resumeGame();
+    Sound.startAmbientDrone();
+  } else {
+    activeGame.pauseGame();
+
+    // Populate current survival metrics in the Pause screen
+    const minutes = Math.floor(activeGame.time / 60);
+    const seconds = Math.floor(activeGame.time % 60);
+    const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+    pauseTime.innerText = timeStr;
+    pauseKills.innerText = activeGame.kills;
+
+    pauseDialog.showModal();
+    Sound.stopAmbientDrone();
+  }
 }
 
 /**
@@ -263,8 +306,9 @@ function restartGame() {
   activeGame = new Game(scene, camera, triggerLevelUp, triggerGameOver);
   gameState = 'PLAYING';
 
-  // Play rebirth chime
+  // Play rebirth chime and start ambient background drone
   Sound.playLevelUp();
+  Sound.startAmbientDrone();
 }
 
 /**
@@ -278,6 +322,27 @@ function updateHighScoreDisplay() {
 // Bind Button actions
 startBtn.addEventListener('click', startGame);
 restartBtn.addEventListener('click', restartGame);
+resumeBtn.addEventListener('click', () => {
+  if (gameState === 'PLAYING' && activeGame && activeGame.isPaused) {
+    togglePause();
+  }
+});
+pauseRestartBtn.addEventListener('click', () => {
+  if (activeGame) {
+    pauseDialog.close();
+    restartGame();
+  }
+});
+
+// Protect dialog components from native Escape desynchronizations
+levelUpDialog.addEventListener('cancel', (e) => e.preventDefault());
+gameOverDialog.addEventListener('cancel', (e) => e.preventDefault());
+pauseDialog.addEventListener('cancel', (e) => {
+  e.preventDefault();
+  if (gameState === 'PLAYING' && activeGame && activeGame.isPaused) {
+    togglePause();
+  }
+});
 
 // Bootstrap Game on load
 window.addEventListener('DOMContentLoaded', () => {

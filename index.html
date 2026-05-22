@@ -127,6 +127,34 @@
     </button>
   </dialog>
 
+  <!-- Pause Modal Dialog -->
+  <dialog id="pause-dialog" class="game-dialog glass-panel">
+    <div class="dialog-header">
+      <h2 class="dialog-title animate-neon">GAME PAUSED</h2>
+      <p class="dialog-subtitle">The run is frozen. Take a breath.</p>
+    </div>
+    
+    <div class="pause-stats glass-panel-sm">
+      <div class="end-stat-row">
+        <span>TIME SURVIVED</span>
+        <span id="pause-time" class="stat-highlight">00:00</span>
+      </div>
+      <div class="end-stat-row">
+        <span>BEASTS BANISHED</span>
+        <span id="pause-kills" class="stat-highlight">0</span>
+      </div>
+    </div>
+
+    <div class="pause-actions">
+      <button id="resume-btn" class="btn primary-btn pulse-glow">
+        RESUME
+      </button>
+      <button id="pause-restart-btn" class="btn secondary-btn">
+        RESTART RUN
+      </button>
+    </div>
+  </dialog>
+
   <!-- Main JS entry script -->
   <script type="module" src="/src/main.js"></script>
 </body>
