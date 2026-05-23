@@ -6,7 +6,7 @@ import * as THREE from 'three';
  * with flocking repulsions, pathfinding, and hit-flash states.
  */
 export class Enemy {
-  constructor(scene, type, playerPosition) {
+  constructor(scene, type, playerPosition, gameTime = 0) {
     this.scene = scene;
     this.type = type;
     this.alive = true;
@@ -38,7 +38,7 @@ export class Enemy {
     }
 
     // Set type-specific attributes
-    this.setupStats();
+    this.setupStats(gameTime);
     
     // Spawns in a random ring just outside the camera viewport (28-32 units away)
     const spawnAngle = Math.random() * Math.PI * 2;
@@ -63,7 +63,7 @@ export class Enemy {
   /**
    * Set specific archetype attributes
    */
-  setupStats() {
+  setupStats(gameTime = 0) {
     switch (this.type) {
       case 'wolf':
         this.hp = 20;
@@ -113,6 +113,28 @@ export class Enemy {
         this.collisionRadius = this.bossShape === 'golem' ? 1.8 : (this.bossShape === 'beast' ? 1.6 : 1.4);
         this.xpValue = 0; // Drops Treasure Chest instead of XP gems
         break;
+    }
+
+    // Infinite scaling over time:
+    if (gameTime > 0) {
+      // HP increases by 1.8% per second infinitely (+108% per minute)
+      const hpMultiplier = 1.0 + gameTime * 0.018;
+      this.maxHp = Math.round(this.maxHp * hpMultiplier);
+      this.hp = this.maxHp;
+
+      // Damage increases by 1.0% per second infinitely (+60% per minute)
+      const dmgMultiplier = 1.0 + gameTime * 0.01;
+      this.damage = Math.round(this.damage * dmgMultiplier);
+
+      // Speed increases by 0.1% per second infinitely, capped at a playable 9.0
+      const speedMultiplier = 1.0 + gameTime * 0.001;
+      this.speed = Math.min(9.0, this.speed * speedMultiplier);
+
+      // Scale model visual size and collision boundaries over time (+0.12% per second, capped at 2.2x base size)
+      this.sizeScale = Math.min(2.2, 1.0 + gameTime * 0.0012);
+      this.collisionRadius *= this.sizeScale;
+    } else {
+      this.sizeScale = 1.0;
     }
   }
 
@@ -640,6 +662,14 @@ export class Enemy {
 
       // Scale entire group to 2.2x towering scale
       this.mesh.scale.set(2.2, 2.2, 2.2);
+    }
+
+    // Apply overall infinite time size scale (making older/later enemies look physically larger!)
+    if (this.type === 'boss') {
+      const finalScale = 2.2 * this.sizeScale;
+      this.mesh.scale.set(finalScale, finalScale, finalScale);
+    } else {
+      this.mesh.scale.set(this.sizeScale, this.sizeScale, this.sizeScale);
     }
   }
 

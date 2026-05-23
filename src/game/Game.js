@@ -133,11 +133,8 @@ export class Game {
     if (this.bossTimer <= 0) {
       this.bossTimer = 45.0; // reset
       
-      // Instantiate boss off-screen first to access its procedurally generated name
-      const scaleMultiplier = 1.0 + this.time * 0.005; // boss gets tankier over time
-      const boss = new Enemy(this.scene, 'boss', this.horse.mesh.position);
-      boss.hp = Math.round(boss.hp * scaleMultiplier);
-      boss.maxHp = boss.hp;
+      // Instantiate boss off-screen first to access its procedurally generated name and scale it with time
+      const boss = new Enemy(this.scene, 'boss', this.horse.mesh.position, this.time);
       this.enemies.push(boss);
 
       // Trigger gold/red warning banner with procedural boss name
@@ -820,8 +817,8 @@ export class Game {
           else type = 'wolf';
         }
 
-        // Instantiate off-screen
-        const beast = new Enemy(this.scene, type, this.horse.mesh.position);
+        // Instantiate off-screen with infinite time scaling
+        const beast = new Enemy(this.scene, type, this.horse.mesh.position, this.time);
         this.enemies.push(beast);
       }
 
