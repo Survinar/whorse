@@ -557,6 +557,49 @@ body {
   color: var(--accent-gold);
 }
 
+.lb-btn {
+  margin-top: 4px;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  padding: 8px 14px;
+  font-family: var(--font-display);
+  align-self: center;
+}
+
+.large-dialog {
+  max-width: 580px;
+  width: 90vw;
+  padding: 30px 40px;
+}
+
+.search-row {
+  width: 100%;
+  margin-bottom: 16px;
+  display: flex;
+}
+
+.search-input {
+  width: 100%;
+  font-size: 0.9rem;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px dashed rgba(202, 191, 168, 0.3);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+.search-input:focus {
+  border-style: solid;
+  border-color: var(--accent-gold);
+}
+
+.large-scroll {
+  max-height: 320px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
 
 /* ==========================================================================
    2. Heads-Up Display (HUD)

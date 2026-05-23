@@ -78,6 +78,13 @@ const bestTimeVal = document.getElementById('best-time-val');
 const usernameInput = document.getElementById('username-input');
 const leaderboardBody = document.getElementById('leaderboard-body');
 
+// Full Leaderboard DOM Hooks
+const fullLeaderboardDialog = document.getElementById('full-leaderboard-dialog');
+const viewFullLbBtn = document.getElementById('view-full-lb-btn');
+const closeFullLbBtn = document.getElementById('close-full-lb-btn');
+const lbSearchInput = document.getElementById('lb-search-input');
+const fullLeaderboardBody = document.getElementById('full-leaderboard-body');
+
 // Pause menu DOM hooks
 const pauseDialog = document.getElementById('pause-dialog');
 const resumeBtn = document.getElementById('resume-btn');
@@ -519,6 +526,7 @@ pauseRestartBtn.addEventListener('click', () => {
 // Protect dialog components from native Escape desynchronizations
 levelUpDialog.addEventListener('cancel', (e) => e.preventDefault());
 gameOverDialog.addEventListener('cancel', (e) => e.preventDefault());
+fullLeaderboardDialog.addEventListener('cancel', (e) => e.preventDefault());
 pauseDialog.addEventListener('cancel', (e) => {
   e.preventDefault();
   if (gameState === 'PLAYING' && activeGame && activeGame.isPaused) {
@@ -526,13 +534,87 @@ pauseDialog.addEventListener('cancel', (e) => {
   }
 });
 
+// Full Leaderboard Action Listeners
+viewFullLbBtn.addEventListener('click', openFullLeaderboard);
+closeFullLbBtn.addEventListener('click', () => {
+  fullLeaderboardDialog.close();
+});
+
+// Live Client-Side Leaderboard Search Filter
+let allLeaderboardScores = [];
+lbSearchInput.addEventListener('input', () => {
+  const query = lbSearchInput.value.trim().toLowerCase();
+  if (!query) {
+    renderFullLeaderboard(allLeaderboardScores);
+    return;
+  }
+  const filtered = allLeaderboardScores.filter(entry => 
+    (entry.username || 'Anonymous').toLowerCase().includes(query)
+  );
+  renderFullLeaderboard(filtered);
+});
+
+/**
+ * Open the full leaderboard modal and fetch the top 100 runs.
+ */
+function openFullLeaderboard() {
+  // Clear search and show loading state
+  lbSearchInput.value = '';
+  fullLeaderboardBody.innerHTML = '<tr><td colspan="5" class="lb-loading">Loading top 100 runs...</td></tr>';
+  
+  fullLeaderboardDialog.showModal();
+
+  fetchTopScores(100).then(scores => {
+    allLeaderboardScores = scores;
+    renderFullLeaderboard(scores);
+  }).catch(() => {
+    fullLeaderboardBody.innerHTML = '<tr><td colspan="5" class="lb-loading">Failed to load leaderboard</td></tr>';
+  });
+}
+
+/**
+ * Render the fetched scores list into the full leaderboard table.
+ * @param {Array} scores - List of scores to display
+ */
+function renderFullLeaderboard(scores) {
+  const currentUsername = (usernameInput.value.trim()) || 'Anonymous';
+  
+  if (scores.length === 0) {
+    fullLeaderboardBody.innerHTML = '<tr><td colspan="5" class="lb-loading">No matching runs found</td></tr>';
+    return;
+  }
+
+  fullLeaderboardBody.innerHTML = '';
+  scores.forEach((entry) => {
+    // Find absolute rank in the overall leaderboard
+    const absoluteIndex = allLeaderboardScores.findIndex(s => s.id === entry.id);
+    const rank = absoluteIndex !== -1 ? absoluteIndex + 1 : '?';
+    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+    const mins = Math.floor((entry.time || 0) / 60);
+    const secs = Math.floor((entry.time || 0) % 60);
+    const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    const isYou = entry.username === currentUsername;
+
+    const tr = document.createElement('tr');
+    if (isYou) tr.classList.add('lb-you');
+    tr.innerHTML = `
+      <td>${medal}</td>
+      <td class="lb-rider-name">${escapeHTML(entry.username || 'Anonymous')}</td>
+      <td>${timeStr}</td>
+      <td>${entry.level || 1}</td>
+      <td>${entry.kills || 0}</td>
+    `;
+    fullLeaderboardBody.appendChild(tr);
+  });
+}
+
 /**
  * Fetch and render global leaderboard
  */
 function refreshLeaderboard() {
   const currentUsername = (usernameInput.value.trim()) || 'Anonymous';
 
-  fetchTopScores(10).then(scores => {
+  fetchTopScores(3).then(scores => {
     if (scores.length === 0) {
       leaderboardBody.innerHTML = '<tr><td colspan="5" class="lb-loading">No runs yet — be the first!</td></tr>';
       return;

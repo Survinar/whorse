@@ -86,6 +86,9 @@
             </tbody>
           </table>
         </div>
+        <button id="view-full-lb-btn" class="btn secondary-btn lb-btn">
+          VIEW FULL LEADERBOARD
+        </button>
       </div>
 
       <button id="start-btn" class="btn primary-btn pulse-glow">
@@ -210,6 +213,41 @@
         RESTART RUN
       </button>
     </div>
+  </dialog>
+
+  <!-- Full Leaderboard Modal Dialog -->
+  <dialog id="full-leaderboard-dialog" class="game-dialog glass-panel large-dialog">
+    <div class="dialog-header">
+      <h2 class="dialog-title animate-neon">🏆 GLOBAL LEADERBOARD</h2>
+      <p class="dialog-subtitle">All-time top runs by elite riders</p>
+    </div>
+
+    <!-- Search Input Row -->
+    <div class="search-row">
+      <input type="text" id="lb-search-input" class="username-input search-input" placeholder="🔍 Search Rider Name..." autocomplete="off" spellcheck="false">
+    </div>
+
+    <!-- Scrolling Table -->
+    <div class="leaderboard-scroll large-scroll">
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Rider</th>
+            <th>Time</th>
+            <th>Lvl</th>
+            <th>Kills</th>
+          </tr>
+        </thead>
+        <tbody id="full-leaderboard-body">
+          <tr><td colspan="5" class="lb-loading">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <button id="close-full-lb-btn" class="btn primary-btn pulse-glow">
+      CLOSE
+    </button>
   </dialog>
 
   <!-- Main JS entry script -->
