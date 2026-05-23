@@ -127,6 +127,40 @@ function setupInputListeners() {
       return;
     }
 
+    // Intercept '=' key during gameplay to auto level up 10 times (Debug feature)
+    if (e.key === '=' && gameState === 'PLAYING' && activeGame) {
+      for (let i = 0; i < 10; i++) {
+        activeGame.horse.level++;
+        const randomUpgrade = UPGRADE_POOL[Math.floor(Math.random() * UPGRADE_POOL.length)];
+        const roll = Math.random();
+        const rarity = roll > 0.88 ? 'legendary' : (roll > 0.65 ? 'rare' : 'common');
+        activeGame.horse.applyUpgrade(randomUpgrade.type, rarity);
+      }
+      
+      activeGame.horse.hp = activeGame.horse.maxHp;
+      activeGame.horse.xp = 0;
+      activeGame.horse.maxXp = Math.floor(10 + activeGame.horse.level * 4.5);
+      activeGame.updateHUD();
+
+      // Trigger spectacular particle trails and play level up chime
+      activeGame.particles.spawnLevelUpHalo(activeGame.horse.mesh.position);
+      for (let i = 0; i < 6; i++) {
+        const offset = new THREE.Vector3((Math.random() - 0.5) * 2, 0, (Math.random() - 0.5) * 2);
+        activeGame.particles.spawnHitSparks(activeGame.horse.mesh.position.clone().add(offset));
+      }
+      Sound.playLevelUp();
+
+      // Show temporary golden screen alert
+      const alert = document.createElement('div');
+      alert.className = 'chest-banner';
+      alert.innerText = `⚡ DEBUG: LEVEL +10 (MAX HEALTH & 10 RANDOM UPGRADES!) ⚡`;
+      document.body.appendChild(alert);
+      setTimeout(() => alert.remove(), 2500);
+
+      e.preventDefault();
+      return;
+    }
+
     keysPressed[key] = true;
   });
 
