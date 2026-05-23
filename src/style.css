@@ -1,38 +1,41 @@
 /* ==========================================================================
-   Whorse Styling System - Premium Earthy Survival & Playing Cards Design
+   Whorse Styling System - Ultra-Premium Earthy & Vintage Playing Cards Design
    ========================================================================== */
 
 :root {
   /* Earthy Natural Palette (Daytime Forest & Steed theme) */
-  --bg-color: #1a2316; /* Deep forest undergrowth */
-  --panel-bg: rgba(36, 23, 15, 0.95); /* Rich dark walnut wood / leather */
-  --panel-border: #6d4c33; /* Hand-polished cedar wood border */
-  --text-primary: #fcf8ec; /* Creamy parchment color for dark panels */
-  --text-secondary: #c2b59d; /* Weathered warm sepia */
+  --bg-color: #11180d; /* Ultra deep forest undergrowth */
+  --panel-bg: linear-gradient(135deg, rgba(38, 24, 15, 0.96) 0%, rgba(24, 14, 8, 0.98) 100%); /* Premium Walnut Leather */
+  --panel-border: rgba(138, 92, 56, 0.35); /* Hand-stitched cedar wood outline */
+  --text-primary: #fdfaf2; /* Aged parchment cream */
+  --text-secondary: #cabfa8; /* Light sepia */
   
   /* Earthy Theme Accents */
-  --accent-gold: #d4af37; /* Warm sun gold */
-  --accent-gold-glow: rgba(212, 175, 55, 0.4);
-  --accent-emerald: #558b2f; /* Deep oak emerald green */
-  --accent-emerald-glow: rgba(85, 139, 47, 0.4);
-  --accent-bronze: #cd7f32; /* Antique bronze */
-  --accent-bronze-glow: rgba(205, 127, 50, 0.4);
-  --accent-terracotta: #d84315; /* Earth clay red */
-  --accent-terracotta-glow: rgba(216, 67, 21, 0.4);
+  --accent-gold: #d4af37; /* Warm sunlight gold */
+  --accent-gold-glow: rgba(212, 175, 55, 0.45);
+  --accent-silver: #c0c0c0; /* High-sheen sterling silver */
+  --accent-silver-glow: rgba(192, 192, 192, 0.4);
+  --accent-emerald: #689f38; /* Sunlit oak green */
+  --accent-emerald-glow: rgba(104, 159, 56, 0.35);
+  --accent-bronze: #cd7f32; /* Antique polished copper */
+  --accent-bronze-glow: rgba(205, 127, 50, 0.3);
+  --accent-terracotta: #ff3d00; /* Intense flame/blood red */
+  --accent-terracotta-glow: rgba(255, 61, 0, 0.4);
   
-  /* Vintage Playing Card Specific Colors */
-  --card-bg: #faf4e5; /* Warm aged papyrus/parchment background */
-  --card-border: #d7cbb5; /* Aged paper crease color */
-  --card-border-outer: #332211; /* Ornate ink edge */
-  --card-text-dark: #20150d; /* Charcoal sepia ink */
-  --card-text-red: #8b1111; /* Dried blood / red seal ink */
+  /* Vintage Playing Card Colors */
+  --card-bg: linear-gradient(150deg, #fbf7eb 0%, #f4edd7 100%); /* Textured papyrus parchment */
+  --card-border: #dfd4bf; /* Creased aged paper */
+  --card-border-outer: #332115; /* Heavy ink border */
+  --card-text-dark: #1c130d; /* Charcoal black ink */
+  --card-text-red: #9e1b1b; /* Royal red wax seal ink */
   
   /* Typography */
-  --font-display: 'Cinzel', 'Georgia', serif; /* Antique serif for titles and cards */
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; /* High readability body */
-  --font-mono: 'Special Elite', 'Courier New', monospace; /* Weathered typewriter for stats/HUD */
+  --font-display: 'Cinzel', 'Georgia', serif; /* Ornate serif headers */
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; /* Ultra clean body */
+  --font-mono: 'Special Elite', 'Courier New', monospace; /* Typewriter stat counters */
 }
 
+/* Base Resets */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -60,105 +63,150 @@ body {
   display: block;
 }
 
-/* Custom Scrollbar for overflow lists */
+/* Custom Scrollbar for list overlays */
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--panel-border);
+  background: #6d4c33;
   border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-gold);
 }
 
 /* ==========================================================================
-   Universal Earthy Panels & Buttons
+   Universal Glassmorphic Wood Panels & Buttons
    ========================================================================== */
 
 .glass-panel {
   background: var(--panel-bg);
-  backdrop-filter: blur(8px) saturate(120%);
-  -webkit-backdrop-filter: blur(8px) saturate(120%);
-  border: 3px solid #2e1a0e;
-  outline: 1px solid var(--accent-bronze);
-  outline-offset: -3px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.75),
-              inset 0 0 20px rgba(0, 0, 0, 0.6);
-  border-radius: 12px;
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  border: 3px solid #29180e;
+  outline: 1.5px solid rgba(212, 175, 55, 0.3);
+  outline-offset: -3.5px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85),
+              inset 0 0 25px rgba(0, 0, 0, 0.5),
+              0 0 30px rgba(212, 175, 55, 0.04);
+  border-radius: 16px;
+  position: relative;
+}
+
+/* Ornate Gold Leaf Corners for Panels */
+.glass-panel::before, .glass-panel::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--accent-gold);
+  pointer-events: none;
+  z-index: 2;
+}
+.glass-panel::before {
+  top: 6px;
+  left: 6px;
+  border-right: none;
+  border-bottom: none;
+}
+.glass-panel::after {
+  bottom: 6px;
+  right: 6px;
+  border-left: none;
+  border-top: none;
 }
 
 .glass-panel-sm {
-  background: rgba(44, 26, 17, 0.92);
-  border: 2px solid #523420;
-  border-radius: 6px;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+  background: rgba(36, 21, 13, 0.94);
+  border: 1.5px solid #4a2d1a;
+  border-radius: 8px;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.7);
 }
 
-/* Stitched Leather Ribbon Effect */
-.instructions-header, .dialog-subtitle {
+/* Stitched Ribbon Effect */
+.dialog-subtitle {
   font-family: var(--font-mono);
   font-size: 0.85rem;
   letter-spacing: 0.1em;
   color: var(--accent-gold);
   text-align: center;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px dashed rgba(212, 175, 55, 0.3);
-  border-radius: 4px;
-  margin-bottom: 15px;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px dashed rgba(212, 175, 55, 0.25);
+  border-radius: 6px;
+  margin-bottom: 22px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-/* Premium Buttons - Stitched Leather / Gold Trim */
+/* Premium Buttons - Gilded Shields & Stitched Straps */
 .btn {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  padding: 14px 28px;
+  letter-spacing: 0.15em;
+  padding: 14px 34px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   outline: none;
+  position: relative;
+  text-align: center;
 }
 
 .primary-btn {
-  background: #50311f;
+  background: linear-gradient(to bottom, #50311f 0%, #3a2214 100%);
   color: #ffe599;
   border: 2px solid #8c5b3f;
-  box-shadow: inset 0 0 6px rgba(0,0,0,0.6);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4),
+              inset 0 0 6px rgba(0, 0, 0, 0.5);
+  text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.9);
 }
 
 .primary-btn:hover {
-  background: var(--accent-gold);
-  color: #2c1a11;
-  border-color: #ffe599;
-  box-shadow: 0 0 15px var(--accent-gold-glow),
-              inset 0 0 4px rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
+  background: linear-gradient(to bottom, #d4af37 0%, #aa841d 100%);
+  color: #1a0f08;
+  border-color: #fdf0cd;
+  box-shadow: 0 0 20px var(--accent-gold-glow),
+              0 6px 20px rgba(0, 0, 0, 0.5),
+              inset 0 1px 3px rgba(255, 255, 255, 0.4);
+  transform: translateY(-3px);
 }
 
 .primary-btn:active {
-  transform: translateY(0);
+  transform: translateY(-1px);
 }
 
-/* Golden Daybreak Glow */
+.secondary-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 2px dashed rgba(138, 92, 56, 0.6);
+  box-shadow: none;
+}
+
+.secondary-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-gold);
+  background: rgba(138, 92, 56, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Shimmer animations */
 @keyframes goldPulse {
-  0% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.3), inset 0 0 8px rgba(212, 175, 55, 0.1); }
-  50% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), inset 0 0 16px rgba(212, 175, 55, 0.2); }
-  100% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.3), inset 0 0 8px rgba(212, 175, 55, 0.1); }
+  0% { box-shadow: 0 0 12px rgba(212, 175, 55, 0.35), inset 0 0 8px rgba(212, 175, 55, 0.1); }
+  50% { box-shadow: 0 0 24px rgba(212, 175, 55, 0.7), inset 0 0 16px rgba(212, 175, 55, 0.25); }
+  100% { box-shadow: 0 0 12px rgba(212, 175, 55, 0.35), inset 0 0 8px rgba(212, 175, 55, 0.1); }
 }
 
 @keyframes goldPulseRed {
-  0% { box-shadow: 0 0 10px rgba(216, 67, 21, 0.3), inset 0 0 8px rgba(216, 67, 21, 0.1); border-color: rgba(216, 67, 21, 0.6); }
-  50% { box-shadow: 0 0 20px rgba(216, 67, 21, 0.6), inset 0 0 16px rgba(216, 67, 21, 0.2); border-color: rgba(216, 67, 21, 1); }
-  100% { box-shadow: 0 0 10px rgba(216, 67, 21, 0.3), inset 0 0 8px rgba(216, 67, 21, 0.1); border-color: rgba(216, 67, 21, 0.6); }
+  0% { box-shadow: 0 0 12px rgba(255, 61, 0, 0.35), inset 0 0 8px rgba(255, 61, 0, 0.1); border-color: rgba(255, 61, 0, 0.5); }
+  50% { box-shadow: 0 0 24px rgba(255, 61, 0, 0.7), inset 0 0 16px rgba(255, 61, 0, 0.25); border-color: rgba(255, 61, 0, 0.95); }
+  100% { box-shadow: 0 0 12px rgba(255, 61, 0, 0.35), inset 0 0 8px rgba(255, 61, 0, 0.1); border-color: rgba(255, 61, 0, 0.5); }
 }
 
 .pulse-glow {
@@ -166,22 +214,24 @@ body {
 }
 
 .pulse-glow-red {
-  background: rgba(216, 67, 21, 0.2);
-  color: #ff8a65;
+  background: rgba(255, 61, 0, 0.15);
+  color: #ffab91;
   border: 2px solid var(--accent-terracotta);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.9);
   animation: goldPulseRed 2.5s infinite;
 }
 
 .pulse-glow-red:hover {
-  background: var(--accent-terracotta);
+  background: linear-gradient(to bottom, #ff3d00 0%, #b22a00 100%);
   color: #fff;
-  box-shadow: 0 0 20px var(--accent-terracotta-glow);
-  transform: translateY(-2px);
+  border-color: #ffd0c0;
+  box-shadow: 0 0 25px rgba(255, 61, 0, 0.7),
+              0 6px 20px rgba(0, 0, 0, 0.5);
+  transform: translateY(-3px);
 }
 
 /* ==========================================================================
-   Overlay Controller (Start, Game Screens)
+   Overlay Controller (Start, HUD, dialog screens)
    ========================================================================== */
 
 .overlay {
@@ -193,7 +243,7 @@ body {
   z-index: 10;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -206,858 +256,643 @@ body {
 }
 
 /* ==========================================================================
-   Start Screen - Sunlit Clearing Vibe
+   1. Cinematic Start Screen
    ========================================================================== */
 
 #start-screen {
-  background: radial-gradient(circle at center, #2e4326 0%, #0d120a 100%);
-  padding: 20px;
+  background: radial-gradient(circle at center, rgba(17, 24, 13, 0.45) 0%, rgba(10, 14, 8, 0.92) 80%);
 }
 
+/* Sunlight glow behind header */
 .glow-container {
-  position: relative;
   text-align: center;
-  margin-bottom: 40px;
-}
-
-.game-title {
-  font-family: var(--font-display);
-  font-size: 6rem;
-  font-weight: 900;
-  letter-spacing: 0.15em;
-  /* Premium metallic gold to white sheen gradient */
-  background: linear-gradient(135deg, #ffffff 0%, #ffd54f 50%, #b28900 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(4px 6px 12px rgba(0, 0, 0, 0.95));
   position: relative;
-  z-index: 2;
-  margin-left: 0.15em;
+  margin-bottom: 30px;
+  animation: floatBreathing 6s ease-in-out infinite;
 }
 
-.title-glow {
+.glow-container::before {
+  content: '';
   position: absolute;
-  font-family: var(--font-display);
-  font-size: 6.2rem;
-  font-weight: 900;
-  letter-spacing: 0.15em;
-  color: transparent;
-  -webkit-text-stroke: 3px rgba(255, 213, 79, 0.25);
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(1.03);
-  z-index: 1;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0) 70%);
+  filter: blur(20px);
+  z-index: -1;
   pointer-events: none;
-  filter: blur(8px);
+}
+
+/* Gold Leaf Headings with sweeping metallic reflection sheens */
+.game-title {
+  font-family: var(--font-display);
+  font-size: 5.5rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  padding-left: 0.2em; /* offset letter spacing centering */
+  
+  /* Metallic Gradient */
+  background: linear-gradient(to bottom, #fff3cd 0%, #d4af37 35%, #96700c 70%, #fff3cd 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  
+  filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.95));
+  animation: goldSheen 4.5s linear infinite;
+  margin-bottom: 10px;
+}
+
+/* Atmospheric title back-glow */
+.title-glow {
+  display: none; /* obsolete, styled cleanly using CSS pseudo-elements */
 }
 
 .subtitle {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: 0.95rem;
-  letter-spacing: 0.05em;
-  color: #ffcc00;
-  margin-top: 15px;
-  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.9);
   font-weight: 700;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  letter-spacing: 0.25em;
+  color: var(--text-secondary);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  opacity: 0.95;
 }
 
 .start-card {
-  width: 100%;
-  max-width: 420px;
-  padding: 30px;
+  width: 420px;
+  padding: 40px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 25px;
-  align-items: center;
-  text-align: center;
 }
-
-.controls-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.control-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  line-height: 1.4;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 10px 14px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.control-item span {
-  flex: 1;
-}
-
-kbd {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 4px;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
-  color: #fcf8ec;
-  font-family: var(--font-mono);
-  font-weight: bold;
-  padding: 3px 8px;
-  font-size: 0.8rem;
-  display: inline-block;
-}
-
-.icon-auto-shoot {
-  font-size: 1.5rem;
-  color: #ffa726;
-  text-shadow: 0 0 6px rgba(255, 167, 38, 0.6);
-  width: 40px;
-  text-align: center;
-}
-
-.xp-gem {
-  color: var(--accent-gold);
-  font-size: 1.2rem;
-  text-shadow: 0 0 6px var(--accent-gold-glow);
-  border-color: rgba(212, 175, 55, 0.4);
-  background: rgba(212, 175, 55, 0.1);
-  padding: 2px 8px;
-  border-radius: 4px;
-}
-
-
 
 .high-score-container {
-  width: 100%;
   font-family: var(--font-mono);
-  font-size: 0.85rem;
-  letter-spacing: 0.05em;
-  text-align: center;
+  font-size: 0.9rem;
   color: var(--text-secondary);
-  background: rgba(0, 0, 0, 0.45);
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid rgba(212, 175, 55, 0.25);
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-  box-sizing: border-box;
+  letter-spacing: 0.05em;
+  border-bottom: 1px dashed rgba(202, 191, 168, 0.2);
+  padding-bottom: 10px;
+  width: 100%;
+  text-align: center;
 }
 
-.high-score-container span {
+#best-time-val {
   color: var(--accent-gold);
-  font-weight: 700;
-  text-shadow: 0 0 5px var(--accent-gold-glow);
+  font-weight: bold;
+}
+
+#start-btn {
+  width: 100%;
+  font-size: 1.1rem;
 }
 
 /* ==========================================================================
-   HUD Layout (Gameplay Screen)
+   2. Heads-Up Display (HUD)
    ========================================================================== */
 
 #hud-overlay {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
   justify-content: space-between;
-  align-items: stretch;
+  padding: 24px;
 }
 
 .hud-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
   width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  gap: 24px;
+  z-index: 10;
 }
 
 .hud-item {
-  flex: 1;
-  max-width: 400px;
+  width: 320px;
   padding: 16px 20px;
+  position: relative;
 }
 
+/* Carved Wood Progress Bars */
 .hud-label {
   display: flex;
   justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
   font-weight: 700;
+  letter-spacing: 0.08em;
   color: var(--text-secondary);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 
-.health-hud .hud-label span:nth-child(2) {
-  color: #ff7043;
-  text-shadow: 0 0 4px rgba(255, 112, 67, 0.4);
-}
-
-.xp-hud .hud-label span:nth-child(2) {
-  color: var(--accent-gold);
-  text-shadow: 0 0 4px var(--accent-gold-glow);
-}
-
-/* Progress Bars */
 .progress-bar-container {
+  width: 100%;
   height: 12px;
-  background: rgba(0, 0, 0, 0.6);
+  background: #120b07; /* Carved-out recess wood look */
   border-radius: 6px;
   overflow: hidden;
-  border: 1.5px solid #2e1a0e;
+  border: 1.5px solid #332014;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8),
+              0 1px 2px rgba(255,255,255,0.03);
   position: relative;
 }
 
 .progress-bar-fill {
   height: 100%;
   border-radius: 4px;
-  transition: width 0.15s ease-out;
-}
-
-.health-fill {
-  background: linear-gradient(90deg, #991f1f 0%, #d84315 100%);
-  box-shadow: 0 0 8px rgba(216, 67, 21, 0.4);
-}
-
-.xp-fill {
-  background: linear-gradient(90deg, #b58c23 0%, #ffd700 100%);
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
-}
-
-.hud-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  width: 100%;
-}
-
-.hud-stats-group {
-  display: flex;
-  gap: 12px;
-}
-
-.stat-badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-
-.stat-icon {
-  font-size: 1.2rem;
-  opacity: 0.9;
-}
-
-#time-val {
-  color: var(--accent-gold);
-  text-shadow: 0 0 5px var(--accent-gold-glow);
-}
-
-#kill-val {
-  color: #ffab91;
-  text-shadow: 0 0 5px rgba(255, 171, 145, 0.4);
-}
-
-/* Active Upgrades List (Styled as Mini Cards) */
-.active-upgrades-list {
-  display: flex;
-  flex-wrap: wrap-reverse;
-  justify-content: flex-end;
-  gap: 8px;
-  max-width: 60%;
-}
-
-.upgrade-badge {
-  padding: 6px 12px;
-  font-size: 0.75rem;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  color: #ffe082;
-  border: 1.5px solid #8c5b3f;
-  background: rgba(74, 51, 36, 0.7);
-  box-shadow: 1px 2px 4px rgba(0,0,0,0.5);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.upgrade-count {
-  background: var(--accent-gold);
-  color: #2c1a11;
-  padding: 1px 5px;
-  border-radius: 3px;
-  font-size: 0.65rem;
-  font-weight: 900;
-}
-
-/* ==========================================================================
-   Modals & Dialogs (Wood Frame & Backdrop Blur)
-   ========================================================================== */
-
-.game-dialog {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border: 4px solid #2e1a0e;
-  outline: 2px solid var(--accent-gold);
-  outline-offset: -5px;
-  padding: 35px;
-  max-width: 900px;
-  width: 90%;
-  box-shadow: 0 20px 80px rgba(0,0,0,0.85);
-  margin: 0;
-}
-
-/* Stylize standard backdrop blur */
-.game-dialog::backdrop {
-  background-color: rgba(18, 25, 15, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-/* Modern dialog display states */
-.game-dialog[open] {
-  display: flex;
-  flex-direction: column;
-  animation: fadeInDialog 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes fadeInDialog {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -46%) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-.dialog-header {
-  text-align: center;
-  margin-bottom: 25px;
-}
-
-.dialog-title {
-  font-family: var(--font-display);
-  font-size: 2.4rem;
-  font-weight: 900;
-  letter-spacing: 0.1em;
-  margin-bottom: 8px;
-}
-
-.animate-neon {
-  color: #fff;
-  background: linear-gradient(to bottom, #ffe899 0%, #d4af37 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
-}
-
-.animate-red-neon {
-  color: #fff;
-  background: linear-gradient(to bottom, #ff9e80 0%, #d84315 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
-}
-
-/* ==========================================================================
-   Level Up Playing Cards - REDESIGNED
-   ========================================================================== */
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  width: 100%;
-  perspective: 1000px; /* Enable 3D flip triggers */
-}
-
-/* The actual physical playing card */
-.upgrade-card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 8px;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: width 0.3s ease-out;
   position: relative;
-  height: 350px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4),
-              inset 0 0 40px rgba(40, 30, 20, 0.05);
-  display: flex;
-  flex-direction: column;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.4);
 }
 
-/* Self-contained weathered linen/papyrus texture overlay */
-.upgrade-card::before {
+/* Shimmer overlay on fills */
+.progress-bar-fill::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  border-radius: 11px;
-  background-image: 
-    linear-gradient(rgba(30, 20, 10, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(30, 20, 10, 0.03) 1px, transparent 1px);
-  background-size: 6px 6px;
-  opacity: 0.75;
-  pointer-events: none;
-  z-index: 3;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+  animation: shineSweep 3s infinite linear;
 }
 
-/* Inner styled container (double border framing typical of antique cards) */
-.card-inner {
-  border: 2px solid var(--card-border-outer);
-  border-radius: 8px;
-  padding: 16px 12px;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 2;
-  box-sizing: border-box;
+/* Ruby red heartbeat health fill */
+.health-fill {
+  background: linear-gradient(90deg, #ff1744 0%, #d50000 100%);
+  box-shadow: 0 0 12px rgba(255, 23, 68, 0.4), inset 0 1px 2px rgba(255,255,255,0.4);
 }
 
-/* Floating animation on hover */
-.upgrade-card:hover {
-  transform: translateY(-12px) rotate(1.5deg);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.55),
-              0 0 25px rgba(212, 175, 55, 0.2);
+/* Shimmering sunstone golden XP fill */
+.xp-fill {
+  background: linear-gradient(90deg, #ff9800 0%, #ffc107 100%);
+  box-shadow: 0 0 12px rgba(255, 152, 0, 0.4), inset 0 1px 2px rgba(255,255,255,0.4);
 }
 
-.upgrade-card:active {
-  transform: translateY(-4px) rotate(0deg);
-}
-
-/* Playing Card Corner Markers (Rank & Suit) */
-.card-corner {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* Gilded Level Badge inside XP HUD */
+#level-val {
+  color: var(--accent-gold);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.3rem;
-  line-height: 1.1;
+  text-shadow: 0 0 5px rgba(212,175,55,0.6);
 }
 
-.card-corner-suit {
-  font-size: 1.4rem;
-}
-
-.top-left {
-  top: 8px;
-  left: 8px;
-}
-
-.bottom-right {
-  bottom: 8px;
-  right: 8px;
-  transform: rotate(180deg);
-}
-
-/* Suit Ink Colors */
-.suit-black {
-  color: var(--card-text-dark);
-}
-
-.suit-red {
-  color: var(--card-text-red);
-}
-
-/* Central illustration / details zone */
-.card-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex-grow: 1;
-  text-align: center;
-  margin-top: 15px;
-  margin-bottom: 10px;
-}
-
-/* Framed icon frame typical of antique cards */
-.card-icon-frame {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  border: 2px solid var(--card-border-outer);
-  background: rgba(40, 30, 20, 0.04);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-  position: relative;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.08);
-}
-
-.card-icon {
-  font-size: 2.3rem;
-  filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.25));
-  transition: transform 0.3s ease;
-}
-
-.upgrade-card:hover .card-icon {
-  transform: scale(1.15) rotate(5deg);
-}
-
-/* Card titles and descriptions */
-.card-title {
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 900;
-  color: var(--card-text-dark);
-  margin-bottom: 8px;
-  letter-spacing: 0.02em;
-  border-bottom: 1px solid rgba(51, 34, 17, 0.15);
-  padding-bottom: 4px;
-  width: 100%;
-}
-
-.card-description {
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  line-height: 1.4;
-  color: #4a3c31;
-  font-weight: 600;
-  max-width: 90%;
-}
-
-/* Card Rarity Bottom Badges */
-.card-footer {
-  display: flex;
-  justify-content: center;
-  margin-top: auto;
-}
-
-.card-rarity-badge {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  padding: 4px 10px;
-  border-radius: 4px;
-  border: 1px solid rgba(0,0,0,0.15);
-  background: rgba(0, 0, 0, 0.04);
-  color: #5c4c3e;
-}
-
-/* ==========================================================================
-   Rarity Card Overrides
-   ========================================================================== */
-
-/* Common - Classic parchment scroll appearance */
-.upgrade-card.common {
-  border-color: var(--card-border);
-}
-
-/* Rare - Bronze Brackets & Detailed Trim */
-.upgrade-card.rare {
-  border-color: #cd7f32;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4),
-              0 0 15px rgba(205, 127, 50, 0.15);
-}
-
-/* Bronze corner bracket elements using card inner border coordinates */
-.upgrade-card.rare .card-inner {
-  border-color: #cd7f32;
-}
-
-.upgrade-card.rare .card-rarity-badge {
-  background: rgba(205, 127, 50, 0.15);
-  color: #8c4c12;
-  border-color: #cd7f32;
-}
-
-.upgrade-card.rare .card-icon-frame {
-  border-color: #cd7f32;
-  background: rgba(205, 127, 50, 0.05);
-}
-
-/* Legendary - Gilded Gold Frames & Slow Shimmer Float */
-.upgrade-card.legendary {
-  border-color: #d4af37;
-  /* Add elegant gold sparkle effect via shadow */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4),
-              0 0 25px rgba(212, 175, 55, 0.35);
-  animation: cardFloat 3s ease-in-out infinite;
-}
-
-.upgrade-card.legendary .card-inner {
-  border: 3px double #d4af37;
-}
-
-.upgrade-card.legendary .card-icon-frame {
-  border-color: #d4af37;
-  background: rgba(212, 175, 55, 0.08);
-}
-
-.upgrade-card.legendary .card-rarity-badge {
-  background: rgba(212, 175, 55, 0.2);
-  color: #8a6c11;
-  border-color: #d4af37;
-  animation: cardTextPulse 1.5s infinite alternate;
-}
-
-@keyframes cardFloat {
-  0% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-8px) rotate(0.5deg); }
-  100% { transform: translateY(0) rotate(0deg); }
-}
-
-@keyframes cardTextPulse {
-  from { text-shadow: 0 0 1px rgba(212, 175, 55, 0.1); }
-  to { text-shadow: 0 0 5px rgba(212, 175, 55, 0.7); }
-}
-
-/* ==========================================================================
-   Game Over Dialog Specific
-   ========================================================================== */
-
-#game-over-dialog {
-  max-width: 480px;
-  align-items: center;
-}
-
-.game-over-title {
-  font-size: 2.2rem;
-  letter-spacing: 0.05em;
-  margin-top: 10px;
-}
-
-.game-over-stats {
-  width: 100%;
-  padding: 24px;
-  margin-bottom: 25px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.end-stat-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  border-bottom: 1px dashed rgba(212, 175, 55, 0.2);
-  padding-bottom: 8px;
-}
-
-.end-stat-row:last-child {
-  border: none;
-  padding: 0;
-}
-
-.stat-highlight {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  color: #fff;
-  font-size: 1rem;
-}
-
-#end-time { color: var(--accent-gold); }
-#end-kills { color: #ffab91; }
-#end-level { color: #88ff55; }
-#end-xp { color: #ffd700; }
-
-#restart-btn {
-  width: 100%;
-}
-
-/* Pause Dialog Styling */
-#pause-dialog {
-  max-width: 480px;
-  align-items: center;
-}
-
-.pause-stats {
-  width: 100%;
-  padding: 24px;
-  margin-bottom: 25px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.pause-actions {
-  display: flex;
-  gap: 15px;
-  width: 100%;
-}
-
-.pause-actions .btn {
-  flex: 1;
-}
-
-/* Themed Secondary Button (Bronze/Dashed Leather style) */
-.secondary-btn {
-  background: rgba(36, 23, 15, 0.45);
-  color: var(--text-secondary);
-  border: 2px dashed var(--accent-bronze);
-  box-shadow: inset 0 0 6px rgba(0,0,0,0.4);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-}
-
-.secondary-btn:hover {
-  background: rgba(82, 52, 32, 0.85);
-  color: #ffe599;
-  border-style: solid;
-  border-color: var(--accent-gold);
-  transform: translateY(-2px);
-  box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
-}
-
-.secondary-btn:active {
-  transform: translateY(0);
-}
-
-/* Damage Flash Overlay effect */
+/* Damage red warning vignettes */
 .damage-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  box-shadow: inset 0 0 0px rgba(255,0,0,0);
+  z-index: 2;
   pointer-events: none;
-  z-index: 5;
-  box-shadow: inset 0 0 0px rgba(216, 67, 21, 0);
-  transition: box-shadow 0.1s ease-out;
-}
-
-.damage-overlay.flash {
-  box-shadow: inset 0 0 50px rgba(216, 67, 21, 0.45);
+  transition: box-shadow 0.4s ease;
 }
 
 .damage-overlay.low-hp {
-  animation: hpVignettePulse 1.5s infinite alternate;
+  box-shadow: inset 0 0 80px rgba(255,0,0,0.45);
+  animation: vignettePulse 1.4s infinite alternate ease-in-out;
 }
 
-@keyframes hpVignettePulse {
-  0% { box-shadow: inset 0 0 20px rgba(216, 67, 21, 0.2); }
-  100% { box-shadow: inset 0 0 45px rgba(216, 67, 21, 0.5); }
+/* Bottom Stats and Upgrades */
+.hud-bottom {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 10;
+}
+
+.hud-stats-group {
+  display: flex;
+  gap: 16px;
+}
+
+/* Medallion Stats Badges */
+.stat-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  border: 2px solid #5a3c26;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+.stat-badge:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-gold);
+}
+
+.stat-icon {
+  font-size: 1.25rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+/* Active Upgrades HUD row */
+.active-upgrades-list {
+  display: flex;
+  gap: 6px;
+  padding-bottom: 6px;
+}
+
+/* Overlapping mini upgrades pips */
+.upgrade-hud-icon {
+  width: 32px;
+  height: 46px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border-outer);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  cursor: help;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+.upgrade-hud-icon:hover {
+  transform: translateY(-16px) scale(1.5);
+  z-index: 99;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.7);
+}
+
+/* Tooltip descriptor inside upgrade icons */
+.upgrade-hud-icon::after {
+  content: attr(data-title);
+  position: absolute;
+  bottom: 54px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  background: rgba(22, 13, 8, 0.96);
+  color: var(--text-primary);
+  border: 1px solid var(--accent-gold);
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+}
+
+.upgrade-hud-icon:hover::after {
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
 }
 
 /* ==========================================================================
-   Responsive Queries & Utilities
+   3. Level-Up Upgrade Cards Dialog (Tarot Design)
    ========================================================================== */
 
-@media (max-width: 768px) {
-  .game-title {
-    font-size: 3rem;
+.game-dialog {
+  border: none;
+  margin: auto;
+  padding: 40px 60px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  outline: none;
+}
+
+.game-dialog[open] {
+  display: flex;
+  animation: dialogReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.dialog-header {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+  width: 100%;
+}
+
+.dialog-title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  text-shadow: 0 3px 8px rgba(0,0,0,0.7);
+}
+
+.cards-grid {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  padding: 10px 0;
+  perspective: 1000px; /* 3D Depth */
+}
+
+/* Tactile Physical Vintage Cards */
+.upgrade-card {
+  width: 205px;
+  height: 310px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  outline: 3px solid var(--card-border-outer);
+  outline-offset: -1.5px;
+  border-radius: 12px;
+  padding: 10px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1), outline-color 0.3s ease;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.65);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fine-ink outline decorations */
+.upgrade-card::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border: 1px solid rgba(51, 33, 21, 0.15);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.card-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* Card Pips (Corners) */
+.card-corner {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 0.85;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.top-left {
+  top: 0;
+  left: 0;
+}
+
+.bottom-right {
+  bottom: 0;
+  right: 0;
+  transform: rotate(180deg);
+}
+
+/* Pip Inks */
+.suit-red {
+  color: var(--card-text-red);
+}
+.suit-black {
+  color: var(--card-text-dark);
+}
+
+.card-corner-suit {
+  font-size: 1.05rem;
+  margin-top: 1px;
+}
+
+/* Card Core Face */
+.card-center {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  padding: 0 8px;
+}
+
+/* Ornate icon frame */
+.card-icon-frame {
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, #f3eed8 0%, #e2d9bd 100%);
+  border: 1.5px solid var(--card-border-outer);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+  margin-bottom: 12px;
+}
+
+.card-icon {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 2px 4px rgba(51, 33, 21, 0.35));
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--card-text-dark);
+  margin-bottom: 8px;
+  line-height: 1.1;
+  border-bottom: 1.5px solid rgba(51, 33, 21, 0.15);
+  padding-bottom: 4px;
+  width: 85%;
+}
+
+.card-description {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgba(51, 33, 21, 0.85);
+  margin-top: 4px;
+}
+
+.card-footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+/* Rarity Badges */
+.card-rarity-badge {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--card-border-outer);
+}
+
+.card-rarity-badge.common {
+  background: #ebe4d0;
+  color: var(--card-text-dark);
+}
+
+.card-rarity-badge.rare {
+  background: linear-gradient(135deg, #b0bec5 0%, #78909c 100%);
+  color: #fff;
+  border-color: #37474f;
+}
+
+.card-rarity-badge.legendary {
+  background: linear-gradient(135deg, #ffe082 0%, #ffb300 100%);
+  color: #1a0f08;
+  border-color: #5d4037;
+}
+
+/* 3D Elevated Card Hover states */
+.upgrade-card:hover {
+  transform: translateY(-16px) scale(1.05) rotateX(6deg) rotateY(4deg);
+  z-index: 99;
+}
+
+/* Dynamic Glowing Rarity Shadows */
+.upgrade-card.common:hover {
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7),
+              0 0 20px rgba(138, 92, 56, 0.25);
+}
+
+.upgrade-card.rare:hover {
+  outline-color: #80deea;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.75),
+              0 0 25px rgba(0, 229, 255, 0.45);
+}
+
+.upgrade-card.legendary {
+  position: relative;
+}
+
+.upgrade-card.legendary:hover {
+  outline-color: #ffd54f;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8),
+              0 0 35px rgba(255, 179, 0, 0.65);
+}
+
+/* Legendary Ornate Flashing Overlay */
+.upgrade-card.legendary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0) 20%, rgba(255,215,0,0.12) 50%, rgba(255,255,255,0) 80%);
+  background-size: 250% 250%;
+  animation: shineSweep 4s infinite linear;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   4. Walnut Leather Dialogs (Pause, Game Over)
+   ========================================================================== */
+
+/* Dark ruby warning for game over header */
+.game-over-title {
+  color: #ff3d00;
+  text-shadow: 0 0 10px rgba(255, 61, 0, 0.4),
+              0 3px 8px rgba(0, 0, 0, 0.8);
+}
+
+.game-over-stats, .pause-stats {
+  width: 380px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+/* Stitched Parchment Tables */
+.end-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-bottom: 1px dashed rgba(138, 92, 56, 0.25);
+  padding-bottom: 8px;
+}
+
+.end-stat-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* Highlight metrics */
+.stat-highlight {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  color: var(--accent-gold);
+  text-shadow: 0 0 5px rgba(212,175,55,0.4);
+}
+
+.pause-actions {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   5. Keyframes & Animations
+   ========================================================================== */
+
+/* Shifting light sheens across text headers */
+@keyframes goldSheen {
+  0% { background-position: 0% auto; }
+  50% { background-position: 100% auto; }
+  100% { background-position: 200% auto; }
+}
+
+/* Periodic slide sweeping sheen across gold assets */
+@keyframes shineSweep {
+  0% { background-position: -250% -250%; }
+  100% { background-position: 250% 250%; }
+}
+
+/* Micro floating breathing effects for start screen titles */
+@keyframes floatBreathing {
+  0% { transform: translateY(0) scale(1.0); }
+  50% { transform: translateY(-8px) scale(1.02); }
+  100% { transform: translateY(0) scale(1.0); }
+}
+
+/* Low HP blood red warning vignette pulses */
+@keyframes vignettePulse {
+  0% { opacity: 0.65; box-shadow: inset 0 0 50px rgba(255, 0, 0, 0.3); }
+  100% { opacity: 1.0; box-shadow: inset 0 0 90px rgba(255, 0, 0, 0.55); }
+}
+
+/* Soft modal dialog transitions */
+@keyframes dialogReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(20px);
   }
-  .title-glow {
-    font-size: 3.1rem;
-  }
-  .subtitle {
-    font-size: 0.85rem;
-    letter-spacing: 0.2em;
-  }
-  .start-card {
-    padding: 24px;
-    gap: 20px;
-  }
-  .cards-grid {
-    grid-template-columns: 1fr;
-    max-height: 55vh;
-    overflow-y: auto;
-    padding-right: 5px;
-  }
-  .upgrade-card {
-    height: 160px;
-    padding: 6px;
-  }
-  
-  .upgrade-card:hover {
-    transform: translateY(-3px);
-  }
-  
-  .card-inner {
-    padding: 10px 8px;
-    flex-direction: row;
-    align-items: center;
-    gap: 15px;
-  }
-  
-  .card-corner {
-    display: none; /* Hide corners in compact mobile row to save horizontal space */
-  }
-  
-  .card-center {
-    flex-direction: row;
-    text-align: left;
-    align-items: center;
-    margin: 0;
-    gap: 12px;
-    flex-grow: 1;
-    width: auto;
-  }
-  
-  .card-icon-frame {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 0;
-    flex-shrink: 0;
-  }
-  
-  .card-icon {
-    font-size: 1.8rem;
-  }
-  
-  .card-title {
-    font-size: 0.95rem;
-    border: none;
-    padding: 0;
-    margin: 0;
-    width: auto;
-  }
-  
-  .card-description {
-    font-size: 0.75rem;
-    max-width: 100%;
-  }
-  
-  .card-footer {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    margin-top: 0;
-  }
-  
-  .hud-top {
-    flex-direction: column;
-    gap: 10px;
-  }
-  .hud-item {
-    max-width: 100%;
-  }
-  .hud-bottom {
-    flex-direction: column-reverse;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  .active-upgrades-list {
-    max-width: 100%;
-    justify-content: flex-start;
-  }
-  .dialog-title {
-    font-size: 1.6rem;
-  }
-  .pause-actions {
-    flex-direction: column;
-    gap: 10px;
-  }
-  .pause-stats {
-    padding: 16px;
-    margin-bottom: 15px;
+  100% {
+    opacity: 1;
+    transform: scale(1.0) translateY(0);
   }
 }
 
@@ -1087,11 +922,11 @@ kbd {
 @keyframes bossFadeInOut {
   0% {
     opacity: 0;
-    transform: translate(-50%, -70%) scale(0.9);
+    transform: translate(-50%, -70%) scale(0.95);
   }
   12% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.05);
+    transform: translate(-50%, -50%) scale(1.03);
   }
   22% {
     transform: translate(-50%, -50%) scale(1.0);
@@ -1102,7 +937,7 @@ kbd {
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -35%) scale(0.95);
+    transform: translate(-50%, -35%) scale(0.98);
   }
 }
 
