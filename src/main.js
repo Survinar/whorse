@@ -141,6 +141,7 @@ function setupInputListeners() {
       activeGame.horse.xp = 0;
       activeGame.horse.maxXp = Math.floor(10 + activeGame.horse.level * 4.5);
       activeGame.updateHUD();
+      activeGame.refreshUpgradeHUD();
 
       // Trigger spectacular particle trails and play level up chime
       activeGame.particles.spawnLevelUpHalo(activeGame.horse.mesh.position);
