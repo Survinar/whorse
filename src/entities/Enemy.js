@@ -64,6 +64,22 @@ export class Enemy {
         this.collisionRadius = 0.5;
         this.xpValue = 1;
         break;
+      case 'spider':
+        this.hp = 8;
+        this.maxHp = 8;
+        this.speed = 5.2;
+        this.damage = 8;
+        this.collisionRadius = 0.45;
+        this.xpValue = 1;
+        break;
+      case 'boar':
+        this.hp = 45;
+        this.maxHp = 45;
+        this.speed = 4.2;
+        this.damage = 18;
+        this.collisionRadius = 0.75;
+        this.xpValue = 2;
+        break;
     }
   }
 
@@ -82,6 +98,30 @@ export class Enemy {
     });
     const glowingEyeMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, emissive: 0xff7b00, emissiveIntensity: 2.0 }); // glowing amber eyes
     const leafMat = new THREE.MeshStandardMaterial({ color: 0x1e3f20, roughness: 0.9 }); // lush forest vine foliage
+
+    const spiderMat = new THREE.MeshStandardMaterial({
+      color: 0x15091a,      // Creepy deep dark purple/black
+      roughness: 0.65,
+      metalness: 0.2
+    });
+    const spiderEyeMat = new THREE.MeshStandardMaterial({
+      color: 0xff003c,      // Glowing red eyes
+      emissive: 0xff0000,
+      emissiveIntensity: 2.5
+    });
+    const boarMat = new THREE.MeshStandardMaterial({
+      color: 0x3d2b1f,      // Tough dark grey-brown hide
+      roughness: 0.9,
+    });
+    const boarArmorMat = new THREE.MeshStandardMaterial({
+      color: 0x5a4a42,      // Light grey armored plates
+      roughness: 0.7,
+      metalness: 0.5
+    });
+    const tuskMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,      // Bone white tusks
+      roughness: 0.3
+    });
 
     if (this.type === 'wolf') {
       // Body Box
@@ -202,6 +242,145 @@ export class Enemy {
         this.wispCore.add(orb);
         this.orbiters.push(orb);
       }
+    } else if (this.type === 'spider') {
+      // Thorax (center)
+      const thorax = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.25, 0.4), spiderMat);
+      thorax.position.y = 0.3;
+      thorax.castShadow = true;
+      this.mesh.add(thorax);
+
+      // Abdomen
+      const abdomen = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.4, 0.65), spiderMat);
+      abdomen.position.set(0, 0.42, -0.4);
+      abdomen.castShadow = true;
+      this.mesh.add(abdomen);
+
+      // Head
+      const head = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.2, 0.24), spiderMat);
+      head.position.set(0, 0.32, 0.28);
+      head.castShadow = true;
+      this.mesh.add(head);
+
+      // Spiders have multiple glowing red eyes (e.g. 4 small spheres on head)
+      const eyeGeo = new THREE.SphereGeometry(0.03, 4, 4);
+      const eyeOffsets = [
+        { x: -0.07, y: 0.38, z: 0.38 },
+        { x: 0.07, y: 0.38, z: 0.38 },
+        { x: -0.1, y: 0.34, z: 0.36 },
+        { x: 0.1, y: 0.34, z: 0.36 },
+      ];
+      eyeOffsets.forEach(pos => {
+        const eye = new THREE.Mesh(eyeGeo, spiderEyeMat);
+        eye.position.set(pos.x, pos.y, pos.z);
+        this.mesh.add(eye);
+      });
+
+      // 8 Thin leg pivots and jointed segments
+      this.legs = [];
+      const legSpacingZ = 0.12;
+      const legSides = [-1, 1]; // Left and Right
+      let legIdx = 0;
+
+      for (let zOffset = -1.5; zOffset <= 1.5; zOffset++) {
+        const zPos = zOffset * legSpacingZ;
+        legSides.forEach((side) => {
+          // Create leg group to pivot from thorax
+          const legPivot = new THREE.Group();
+          legPivot.position.set(side * 0.15, 0.3, zPos);
+          this.mesh.add(legPivot);
+
+          // Upper leg bone angled up and out
+          const upperGeo = new THREE.BoxGeometry(0.35, 0.08, 0.08);
+          const upper = new THREE.Mesh(upperGeo, spiderMat);
+          upper.position.x = side * 0.175; // extend out
+          upper.rotation.z = side * 0.45;  // angle up
+          upper.castShadow = true;
+          legPivot.add(upper);
+
+          // Lower leg bone angled down to touch ground
+          const lowerGeo = new THREE.BoxGeometry(0.08, 0.45, 0.08);
+          const lower = new THREE.Mesh(lowerGeo, spiderMat);
+          lower.position.set(side * 0.32, -0.22, 0);
+          lower.rotation.z = -side * 0.2; // angle down
+          lower.castShadow = true;
+          legPivot.add(lower);
+
+          this.legs.push({
+            pivot: legPivot,
+            phase: (legIdx * Math.PI) / 3, // out of sync crawly motion
+            side: side
+          });
+          legIdx++;
+        });
+      }
+
+    } else if (this.type === 'boar') {
+      // Sturdy Golem/Beast Body
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.62, 1.25), boarMat);
+      body.position.y = 0.45;
+      body.castShadow = true;
+      body.receiveShadow = true;
+      this.mesh.add(body);
+
+      // Back armor plating
+      const armor = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.2, 0.95), boarArmorMat);
+      armor.position.set(0, 0.78, -0.05);
+      armor.castShadow = true;
+      this.mesh.add(armor);
+
+      // Snout/snout head box angled slightly down
+      const headGroup = new THREE.Group();
+      headGroup.position.set(0, 0.55, 0.625);
+      this.mesh.add(headGroup);
+
+      const head = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.45, 0.55), boarMat);
+      head.position.set(0, 0.05, 0.2);
+      head.castShadow = true;
+      headGroup.add(head);
+
+      // Snout muzzle
+      const snout = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.22, 0.3), boarMat);
+      snout.position.set(0, -0.05, 0.45);
+      snout.castShadow = true;
+      headGroup.add(snout);
+
+      // Curved Tusks (Left & Right)
+      const tuskGeo = new THREE.BoxGeometry(0.08, 0.28, 0.22);
+      const lTusk = new THREE.Mesh(tuskGeo, tuskMat);
+      lTusk.position.set(-0.2, -0.08, 0.42);
+      lTusk.rotation.set(0.4, 0, 0.4); // curve up and out
+      lTusk.castShadow = true;
+      headGroup.add(lTusk);
+
+      const rTusk = new THREE.Mesh(tuskGeo, tuskMat);
+      rTusk.position.set(0.2, -0.08, 0.42);
+      rTusk.rotation.set(0.4, 0, -0.4); // curve up and out
+      rTusk.castShadow = true;
+      headGroup.add(rTusk);
+
+      // Glowing angry red eyes
+      const eyeGeo = new THREE.SphereGeometry(0.045, 4, 4);
+      const lEye = new THREE.Mesh(eyeGeo, spiderEyeMat);
+      lEye.position.set(-0.21, 0.15, 0.42);
+      const rEye = new THREE.Mesh(eyeGeo, spiderEyeMat);
+      rEye.position.set(0.21, 0.15, 0.42);
+      headGroup.add(lEye, rEye);
+
+      // Heavy stocky legs
+      this.legs = [];
+      const legPositions = [
+        { x: -0.26, z: 0.38 },
+        { x: 0.26, z: 0.38 },
+        { x: -0.26, z: -0.38 },
+        { x: 0.26, z: -0.38 },
+      ];
+      legPositions.forEach((pos) => {
+        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.36, 0.2), boarMat);
+        leg.position.set(pos.x, 0.18, pos.z);
+        leg.castShadow = true;
+        this.mesh.add(leg);
+        this.legs.push(leg);
+      });
     }
   }
 
@@ -215,6 +394,7 @@ export class Enemy {
         child.userData.originalColor = child.material.color.clone();
         if (child.material.emissive) {
           child.userData.originalEmissive = child.material.emissive.clone();
+          child.userData.originalEmissiveIntensity = child.material.emissiveIntensity;
         }
         this.materialsList.push(child.material);
       }
@@ -334,6 +514,26 @@ export class Enemy {
           Math.sin(orbitAngle) * radius
         );
       });
+    } else if (this.type === 'spider') {
+      // Crawly creepy 8-leg twitching
+      const swing = 0.45;
+      const freq = 14.0;
+      this.legs.forEach((leg) => {
+        const dir = leg.side;
+        leg.pivot.rotation.x = Math.sin(this.time * freq + leg.phase) * swing;
+        leg.pivot.rotation.z = Math.abs(Math.cos(this.time * freq * 0.5 + leg.phase)) * 0.15 * dir;
+      });
+    } else if (this.type === 'boar') {
+      // Heavy stumpy trot
+      const swing = 0.55;
+      const freq = 9.0;
+      this.legs[0].rotation.x = Math.sin(this.time * freq) * swing;
+      this.legs[3].rotation.x = Math.sin(this.time * freq) * swing;
+      this.legs[1].rotation.x = -Math.sin(this.time * freq) * swing;
+      this.legs[2].rotation.x = -Math.sin(this.time * freq) * swing;
+      
+      // Charge head bobbing
+      this.mesh.position.y = Math.abs(Math.sin(this.time * freq)) * 0.08;
     }
   }
 
@@ -376,7 +576,7 @@ export class Enemy {
         }
         if (child.material.emissive && child.userData.originalEmissive) {
           child.material.emissive.copy(child.userData.originalEmissive);
-          child.material.emissiveIntensity = this.type === 'wisp' ? 1.2 : (this.type === 'ent' ? 1.5 : 2.0);
+          child.material.emissiveIntensity = child.userData.originalEmissiveIntensity !== undefined ? child.userData.originalEmissiveIntensity : 0.0;
         }
       }
     });

@@ -68,24 +68,35 @@ export class Horse {
   buildModel() {
     // 1. Materials
     const obsidianMat = new THREE.MeshStandardMaterial({
-      color: 0x0f1115,      // Sleek charcoal black coat
+      color: 0x0a0c0e,      // Ultra-sleek charcoal black coat
       roughness: 0.35,
       metalness: 0.2,
     });
     
     const glowingManeMat = new THREE.MeshStandardMaterial({
-      color: 0x221a15,      // Rich dark brown/charcoal flowing hair mane
+      color: 0x3d1e18,      // Deep rich dark mahogany hair
+      emissive: 0xd35400,   // Radiant orange fire shimmer
+      emissiveIntensity: 0.6,
       roughness: 0.8,
     });
 
     const glowingEyeMat = new THREE.MeshStandardMaterial({
-      color: 0x1c120c,      // Realistic dark chocolate brown eyes
-      roughness: 0.1,
+      color: 0xffb300,      // Golden sunlit eyes
+      emissive: 0xff6600,
+      emissiveIntensity: 2.5,
     });
 
-    const hoofMat = new THREE.MeshStandardMaterial({
-      color: 0x3d3126,      // Earth-brown hooves
-      roughness: 0.7,
+    const goldMat = new THREE.MeshStandardMaterial({
+      color: 0xd4af37,      // Rich metallic solar gold
+      roughness: 0.15,
+      metalness: 0.9,
+    });
+
+    const glowingHornMat = new THREE.MeshStandardMaterial({
+      color: 0xffd700,      // Solar gold unicorn horn
+      emissive: 0xffaa00,
+      emissiveIntensity: 3.0,
+      roughness: 0.1,
     });
 
     // 2. Torso / Body Group (centered relative to parent group)
@@ -101,6 +112,19 @@ export class Horse {
     torso.receiveShadow = true;
     this.bodyGroup.add(torso);
 
+    // Gilded Back Saddle Plate
+    const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.54, 0.95), goldMat);
+    saddle.position.set(0, 0.1, -0.05); // sits on back
+    saddle.castShadow = true;
+    this.bodyGroup.add(saddle);
+
+    // Gilded Chest Collar Armor
+    const chestPlate = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.35, 0.35), goldMat);
+    chestPlate.position.set(0, 0.35, 0.72);
+    chestPlate.rotation.x = -Math.PI / 6;
+    chestPlate.castShadow = true;
+    this.bodyGroup.add(chestPlate);
+
     // 3. Neck & Head
     const neckGroup = new THREE.Group();
     neckGroup.position.set(0, 0.6, 0.7); // offset up and front
@@ -115,24 +139,38 @@ export class Horse {
     neck.receiveShadow = true;
     neckGroup.add(neck);
 
-    // Head Box
-    const headGeo = new THREE.BoxGeometry(0.38, 0.38, 0.85);
-    const head = new THREE.Mesh(headGeo, obsidianMat);
-    head.position.set(0, 0.75, 0.25); // on top/front of neck
-    head.rotation.x = Math.PI / 6; // Angle muzzle down
+    // Refined Equine Skull (head back)
+    const head = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.38, 0.48), obsidianMat);
+    head.position.set(0, 0.75, 0.12);
+    head.rotation.x = Math.PI / 6;
     head.castShadow = true;
     head.receiveShadow = true;
     neckGroup.add(head);
+
+    // Tapered Muzzle (snout front)
+    const muzzle = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.28, 0.45), obsidianMat);
+    muzzle.position.set(0, 0.65, 0.48);
+    muzzle.rotation.x = Math.PI / 6;
+    muzzle.castShadow = true;
+    muzzle.receiveShadow = true;
+    neckGroup.add(muzzle);
+
+    // Mythical Glowing Unicorn Horn / Crown Crest
+    const horn = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.45, 4), glowingHornMat);
+    horn.position.set(0, 1.05, 0.24);
+    horn.rotation.x = -Math.PI / 4; // slant forward
+    horn.castShadow = true;
+    neckGroup.add(horn);
 
     // Glowing Eyes (Left & Right)
     const eyeGeo = new THREE.SphereGeometry(0.06, 4, 4);
     
     const leftEye = new THREE.Mesh(eyeGeo, glowingEyeMat);
-    leftEye.position.set(-0.2, 0.85, 0.42);
+    leftEye.position.set(-0.2, 0.85, 0.22);
     neckGroup.add(leftEye);
 
     const rightEye = new THREE.Mesh(eyeGeo, glowingEyeMat);
-    rightEye.position.set(0.2, 0.85, 0.42);
+    rightEye.position.set(0.2, 0.85, 0.22);
     neckGroup.add(rightEye);
 
     // Ears (Left & Right)
@@ -150,11 +188,20 @@ export class Horse {
     rightEar.castShadow = true;
     neckGroup.add(rightEar);
 
-    // 4. Glowing Mane
-    const maneGeo = new THREE.BoxGeometry(0.1, 0.8, 0.25);
-    const mane = new THREE.Mesh(maneGeo, glowingManeMat);
-    mane.position.set(0, 0.45, -0.22); // center-back of neck
-    neckGroup.add(mane);
+    // 4. Gilded Flowing Mane (3 layers)
+    this.maneStrands = [];
+    const maneOffsets = [
+      { y: 0.58, z: -0.22, length: 0.65 },
+      { y: 0.38, z: -0.22, length: 0.75 },
+      { y: 0.18, z: -0.22, length: 0.55 },
+    ];
+    maneOffsets.forEach((off, idx) => {
+      const strand = new THREE.Mesh(new THREE.BoxGeometry(0.12, off.length, 0.22), glowingManeMat);
+      strand.position.set(0, off.y, off.z);
+      strand.castShadow = true;
+      neckGroup.add(strand);
+      this.maneStrands.push(strand);
+    });
 
     // 5. Four Legs (Pivoted at hips/shoulders inside main mesh to allow rotation)
     this.legs = [];
@@ -183,9 +230,15 @@ export class Horse {
       bone.receiveShadow = true;
       legPivot.add(bone);
 
-      // Hoof (at the bottom)
+      // Gold knee armor band
+      const kneeArmor = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.15, 0.22), goldMat);
+      kneeArmor.position.y = -legLength / 2;
+      kneeArmor.castShadow = true;
+      legPivot.add(kneeArmor);
+
+      // Hoof (at the bottom - Gilded!)
       const hoofGeo = new THREE.BoxGeometry(0.2, 0.15, 0.2);
-      const hoof = new THREE.Mesh(hoofGeo, hoofMat);
+      const hoof = new THREE.Mesh(hoofGeo, goldMat);
       hoof.position.y = -legLength - 0.025;
       hoof.castShadow = true;
       legPivot.add(hoof);
@@ -196,17 +249,25 @@ export class Horse {
       });
     });
 
-    // 6. Glowing Tail
-    const tailGroup = new THREE.Group();
-    tailGroup.position.set(0, 0.3, -0.9); // back of torso
-    tailGroup.rotation.x = Math.PI / 6; // slope down
-    this.bodyGroup.add(tailGroup);
+    // 6. Gilded Flowing Tail Group (multi-strands cascading)
+    this.tailGroup = new THREE.Group();
+    this.tailGroup.position.set(0, 0.3, -0.9); // back of torso
+    this.tailGroup.rotation.x = Math.PI / 6; // slope down
+    this.bodyGroup.add(this.tailGroup);
 
-    const tailGeo = new THREE.CylinderGeometry(0.06, 0.12, 1.2, 4);
-    const tail = new THREE.Mesh(tailGeo, glowingManeMat);
-    tail.position.y = -0.5;
-    tail.castShadow = true;
-    tailGroup.add(tail);
+    this.tailStrands = [];
+    const tailOffsets = [
+      { x: 0, y: -0.4, z: 0, scaleY: 0.9 },
+      { x: -0.08, y: -0.5, z: -0.06, scaleY: 1.1 },
+      { x: 0.08, y: -0.5, z: -0.06, scaleY: 1.1 },
+    ];
+    tailOffsets.forEach((off) => {
+      const strand = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.0 * off.scaleY, 0.08), glowingManeMat);
+      strand.position.set(off.x, off.y, off.z);
+      strand.castShadow = true;
+      this.tailGroup.add(strand);
+      this.tailStrands.push(strand);
+    });
   }
 
   /**
@@ -259,6 +320,17 @@ export class Horse {
       // Body bobs rhythmically and pitches forward slightly
       this.bodyGroup.position.y = this.baseBodyY + Math.abs(Math.sin(this.walkCycle * 2)) * 0.12;
       this.bodyGroup.rotation.x = 0.08;
+
+      // Dynamic hair sways!
+      if (this.tailGroup) {
+        this.tailGroup.rotation.z = Math.sin(this.walkCycle) * 0.25; // wave side-to-side
+        this.tailGroup.rotation.x = Math.PI / 6 + Math.abs(Math.sin(this.walkCycle)) * 0.1; // lift up and down
+      }
+      if (this.maneStrands) {
+        this.maneStrands.forEach((strand, idx) => {
+          strand.rotation.z = Math.sin(this.walkCycle + idx * 0.5) * 0.06;
+        });
+      }
     } else {
       // Smoothly return legs to vertical standing state
       this.legs.forEach((leg) => {
@@ -269,6 +341,17 @@ export class Horse {
       this.bodyGroup.position.y += (this.baseBodyY - this.bodyGroup.position.y) * 0.15;
       this.bodyGroup.rotation.x *= 0.85;
       this.walkCycle = 0;
+
+      // Return tail and mane smoothly to standard positions
+      if (this.tailGroup) {
+        this.tailGroup.rotation.z *= 0.85;
+        this.tailGroup.rotation.x += (Math.PI / 6 - this.tailGroup.rotation.x) * 0.15;
+      }
+      if (this.maneStrands) {
+        this.maneStrands.forEach((strand) => {
+          strand.rotation.z *= 0.85;
+        });
+      }
     }
   }
 

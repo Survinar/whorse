@@ -480,29 +480,48 @@ export class Game {
     this.spawnTimer -= delta;
 
     if (this.spawnTimer <= 0) {
-      // Choose archetype based on elapsed gameplay duration
-      let type = 'wolf';
-      const roll = Math.random();
-
+      // 1. Determine spawn count (group size) based on survival time
+      let spawnCount = 1;
       if (this.time < 30) {
-        // Phase 1 (0-30s): mostly fast wolves
-        type = roll > 0.85 ? 'wisp' : 'wolf';
-      } else if (this.time < 75) {
-        // Phase 2 (30-75s): wolves + floating wisps
-        type = roll > 0.6 ? 'wisp' : 'wolf';
+        spawnCount = 1;
+      } else if (this.time < 60) {
+        spawnCount = Math.floor(Math.random() * 2) + 1; // 1 to 2 enemies
+      } else if (this.time < 120) {
+        spawnCount = Math.floor(Math.random() * 2) + 2; // 2 to 3 enemies
       } else {
-        // Phase 3 (75s+): heavy Ent golems join the horde
-        if (roll > 0.85) type = 'ent';
-        else if (roll > 0.55) type = 'wisp';
-        else type = 'wolf';
+        spawnCount = Math.floor(Math.random() * 3) + 2; // 2 to 4 enemies
       }
 
-      // Instantiate off-screen
-      const beast = new Enemy(this.scene, type, this.horse.mesh.position);
-      this.enemies.push(beast);
+      // 2. Spawn the group of shadow beasts
+      for (let i = 0; i < spawnCount; i++) {
+        let type = 'wolf';
+        const roll = Math.random();
 
-      // Scale spawn frequency down as time increases (max 0.65s spawn interval)
-      this.spawnInterval = Math.max(0.65, this.baseSpawnInterval - this.time * 0.012);
+        if (this.time < 30) {
+          // Phase 1 (0-30s): Quick Wolves and creepy Spiders
+          type = roll > 0.5 ? 'spider' : 'wolf';
+        } else if (this.time < 75) {
+          // Phase 2 (30-75s): Wolves, Spiders, Wisps, and charging Boars
+          if (roll > 0.9) type = 'boar';
+          else if (roll > 0.7) type = 'wisp';
+          else if (roll > 0.35) type = 'spider';
+          else type = 'wolf';
+        } else {
+          // Phase 3 (75s+): Heavy Ent tanks, Boars, Wisps, Spiders, and Wolves swarming
+          if (roll > 0.85) type = 'ent';
+          else if (roll > 0.65) type = 'boar';
+          else if (roll > 0.5) type = 'wisp';
+          else if (roll > 0.25) type = 'spider';
+          else type = 'wolf';
+        }
+
+        // Instantiate off-screen
+        const beast = new Enemy(this.scene, type, this.horse.mesh.position);
+        this.enemies.push(beast);
+      }
+
+      // 3. Scale spawn frequency down aggressively over time (max 0.4s spawn interval)
+      this.spawnInterval = Math.max(0.4, this.baseSpawnInterval - this.time * 0.016);
       this.spawnTimer = this.spawnInterval;
     }
   }
