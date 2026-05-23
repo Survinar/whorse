@@ -28,17 +28,17 @@ export class Forest {
       metalness: 0.05,
     });
     
-    const ground = new THREE.Mesh(groundGeo, groundMat);
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
-    this.scene.add(ground);
+    this.groundMesh = new THREE.Mesh(groundGeo, groundMat);
+    this.groundMesh.rotation.x = -Math.PI / 2;
+    this.groundMesh.receiveShadow = true;
+    this.scene.add(this.groundMesh);
 
     // Subtle earth-brown pathway grid lines to add scale and depth
-    const gridHelper = new THREE.GridHelper(300, 30, 0x634d3b, 0x47392b);
-    gridHelper.position.y = 0.01; // Slightly above ground
-    gridHelper.material.opacity = 0.06;
-    gridHelper.material.transparent = true;
-    this.scene.add(gridHelper);
+    this.gridHelper = new THREE.GridHelper(300, 30, 0x634d3b, 0x47392b);
+    this.gridHelper.position.y = 0.01; // Slightly above ground
+    this.gridHelper.material.opacity = 0.06;
+    this.gridHelper.material.transparent = true;
+    this.scene.add(this.gridHelper);
   }
 
   /**
@@ -46,35 +46,35 @@ export class Forest {
    */
   initLights() {
     // 1. Warm, glowing golden-green ambient light
-    const ambientLight = new THREE.AmbientLight(0xeaf2cf, 1.2);
-    this.scene.add(ambientLight);
+    this.ambientLight = new THREE.AmbientLight(0xeaf2cf, 1.2);
+    this.scene.add(this.ambientLight);
 
     // 2. Light blue sky bounce light
-    const skyLight = new THREE.DirectionalLight(0xbde3ff, 0.5);
-    skyLight.position.set(-30, 20, -20);
-    this.scene.add(skyLight);
+    this.skyLight = new THREE.DirectionalLight(0xbde3ff, 0.5);
+    this.skyLight.position.set(-30, 20, -20);
+    this.scene.add(this.skyLight);
 
     // 3. Bright golden sunlight casting shadows
-    const sunLight = new THREE.DirectionalLight(0xfffae0, 1.6);
-    sunLight.position.set(40, 60, 30);
-    sunLight.castShadow = true;
+    this.sunLight = new THREE.DirectionalLight(0xfffae0, 1.6);
+    this.sunLight.position.set(40, 60, 30);
+    this.sunLight.castShadow = true;
 
     // Shadow settings
-    sunLight.shadow.mapSize.width = 1024;
-    sunLight.shadow.mapSize.height = 1024;
-    sunLight.shadow.camera.near = 0.5;
-    sunLight.shadow.camera.far = 150;
+    this.sunLight.shadow.mapSize.width = 1024;
+    this.sunLight.shadow.mapSize.height = 1024;
+    this.sunLight.shadow.camera.near = 0.5;
+    this.sunLight.shadow.camera.far = 150;
     
     // Orthographic shadow camera bounds for top-down view
     const d = 40;
-    sunLight.shadow.camera.left = -d;
-    sunLight.shadow.camera.right = d;
-    sunLight.shadow.camera.top = d;
-    sunLight.shadow.camera.bottom = -d;
-    sunLight.shadow.bias = -0.0005;
+    this.sunLight.shadow.camera.left = -d;
+    this.sunLight.shadow.camera.right = d;
+    this.sunLight.shadow.camera.top = d;
+    this.sunLight.shadow.camera.bottom = -d;
+    this.sunLight.shadow.bias = -0.0005;
 
-    this.scene.add(sunLight);
-    this.moonLight = sunLight; // Retain variable binding as 'moonLight' for simple downstream updates
+    this.scene.add(this.sunLight);
+    this.moonLight = this.sunLight; // Retain variable binding as 'moonLight' for simple downstream updates
   }
 
   /**
@@ -85,9 +85,14 @@ export class Forest {
       const type = Math.random() > 0.4 ? 'pine' : 'oak';
       const tree = this.createProceduralTree(type);
       
-      // Place tree randomly on the grid
-      const x = (Math.random() - 0.5) * this.gridSize;
-      const z = (Math.random() - 0.5) * this.gridSize;
+      // Place tree randomly on the grid, ensuring a clear start zone at (0, 0)
+      let x, z;
+      let attempts = 0;
+      do {
+        x = (Math.random() - 0.5) * this.gridSize;
+        z = (Math.random() - 0.5) * this.gridSize;
+        attempts++;
+      } while (Math.sqrt(x * x + z * z) < 8.0 && attempts < 100);
       
       tree.position.set(x, 0, z);
       this.scene.add(tree);
@@ -253,5 +258,39 @@ export class Forest {
     }
     
     return correction;
+  }
+
+  /**
+   * Destroys the forest meshes, ground, grid helper, and lights to prevent memory leaks on restart.
+   */
+  destroy() {
+    // Remove and dispose ground
+    if (this.groundMesh) {
+      this.scene.remove(this.groundMesh);
+      if (this.groundMesh.geometry) this.groundMesh.geometry.dispose();
+      if (this.groundMesh.material) this.groundMesh.material.dispose();
+    }
+    if (this.gridHelper) {
+      this.scene.remove(this.gridHelper);
+      if (this.gridHelper.geometry) this.gridHelper.geometry.dispose();
+      if (this.gridHelper.material) this.gridHelper.material.dispose();
+    }
+
+    // Remove lights
+    if (this.ambientLight) this.scene.remove(this.ambientLight);
+    if (this.skyLight) this.scene.remove(this.skyLight);
+    if (this.sunLight) this.scene.remove(this.sunLight);
+
+    // Remove and dispose trees
+    this.trees.forEach(tree => {
+      this.scene.remove(tree.mesh);
+      tree.mesh.traverse(child => {
+        if (child.isMesh) {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) child.material.dispose();
+        }
+      });
+    });
+    this.trees = [];
   }
 }

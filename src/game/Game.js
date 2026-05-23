@@ -62,8 +62,9 @@ export class Game {
     // Initialize Player Steed
     this.horse = new Horse(this.scene);
 
-    // Initial camera placement
-    this.updateCamera(0.1);
+    // Initial camera placement - set instantly to avoid clipping inside the horse or ground!
+    this.camera.position.set(this.horse.mesh.position.x, 22.0, this.horse.mesh.position.z + 11.5);
+    this.camera.lookAt(this.horse.mesh.position.x, 0.4, this.horse.mesh.position.z);
   }
 
   /**
@@ -1022,6 +1023,10 @@ export class Game {
       this.orbiterMaterial.dispose();
     }
     
+    if (this.forest) {
+      this.forest.destroy();
+    }
+
     if (this.horse) {
       this.scene.remove(this.horse.mesh);
       this.horse.legs.forEach(leg => {
