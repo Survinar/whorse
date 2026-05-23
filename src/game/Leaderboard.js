@@ -32,7 +32,7 @@ function initFirebase() {
   if (!app) {
     try {
       app = initializeApp(firebaseConfig);
-      db = getFirestore(app);
+      db = getFirestore(app, 'default');
     } catch (e) {
       console.error('[Leaderboard] Firebase init failed:', e);
     }
