@@ -762,16 +762,16 @@ export class Game {
     hudContainer.innerHTML = ''; // clear
 
     const labels = {
-      speed: '⚡ SWIFTNESS',
-      damage: '🗡️ DARK MIGHT',
-      fireRate: '🔥 FIRE RATE',
-      pierce: '🏹 PIERCE',
-      magnet: '🧲 RESONANCE',
-      vitality: '❤️ VITALITY',
-      nova: '🌀 CHAOS NOVA',
-      orbiter: '☀️ SUN HALO',
-      trail: '🔥 EMBER TRAIL',
-      stomp: '👣 EARTH STOMP',
+      speed: '⚡ SPD',
+      damage: '🗡️ DMG',
+      fireRate: '🔥 RATE',
+      pierce: '🏹 PRC',
+      magnet: '🧲 MAG',
+      vitality: '❤️ VIT',
+      nova: '🌀 NOVA',
+      orbiter: '☀️ HALO',
+      trail: '🔥 TRAIL',
+      stomp: '👣 STMP',
     };
 
     for (const [key, val] of Object.entries(this.horse.activeUpgrades)) {
