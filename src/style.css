@@ -1105,3 +1105,48 @@ kbd {
     transform: translate(-50%, -35%) scale(0.95);
   }
 }
+
+/* Exploration Chest Notification Banner */
+.chest-banner {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9998;
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: #00ffcc;
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.6), 0 0 20px rgba(192, 192, 192, 0.8);
+  font-weight: bold;
+  letter-spacing: 0.12rem;
+  background: linear-gradient(90deg, rgba(26, 46, 38, 0) 0%, rgba(26, 46, 38, 0.95) 20%, rgba(26, 46, 38, 0.95) 80%, rgba(26, 46, 38, 0) 100%);
+  border-top: 3px solid #00ffcc;
+  border-bottom: 3px solid #00ffcc;
+  padding: 10px 50px;
+  animation: chestFadeInOut 2.5s forwards ease-in-out;
+  pointer-events: none;
+  text-align: center;
+  white-space: nowrap;
+}
+
+@keyframes chestFadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(0.95);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.03);
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1.0);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -40%) scale(0.98);
+  }
+}

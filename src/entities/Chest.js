@@ -5,8 +5,9 @@ import * as THREE from 'three';
  * Spawns on Boss Archon defeat. Floats, bobs, and rotates on ground.
  */
 export class Chest {
-  constructor(scene, spawnPosition) {
+  constructor(scene, spawnPosition, type = 'boss') {
     this.scene = scene;
+    this.type = type;
     this.alive = true;
     this.radius = 0.5; // Proximity collision query radius
     this.bobTime = Math.random() * 100;
@@ -18,20 +19,22 @@ export class Chest {
     this.mesh.position.y = this.baseY;
     this.scene.add(this.mesh);
 
+    const isExploration = type === 'exploration';
+
     // Premium Earthy Materials
     const woodMat = new THREE.MeshStandardMaterial({
-      color: 0x3d2314, // Rich dark walnut wood
+      color: isExploration ? 0x242e2b : 0x3d2314, // Weathered moss evergreen wood vs dark walnut wood
       roughness: 0.85
     });
-    const goldMat = new THREE.MeshStandardMaterial({
-      color: 0xd4af37, // Polished solar gold bands
-      roughness: 0.15,
+    const metalMat = new THREE.MeshStandardMaterial({
+      color: isExploration ? 0xcccccc : 0xd4af37, // Polished silver vs solar gold bands
+      roughness: isExploration ? 0.1 : 0.15,
       metalness: 0.95
     });
     const lockMat = new THREE.MeshStandardMaterial({
-      color: 0xffaa00, // Glowing sun gold core lock
-      emissive: 0xff8800,
-      emissiveIntensity: 2.0,
+      color: isExploration ? 0x00ffcc : 0xffaa00, // Glowing teal vs glowing orange
+      emissive: isExploration ? 0x00d8a3 : 0xff8800,
+      emissiveIntensity: isExploration ? 2.5 : 2.0,
       roughness: 0.1
     });
 
@@ -50,12 +53,12 @@ export class Chest {
 
     // 3. Ornate Golden Iron Straps
     const bandGeo = new THREE.BoxGeometry(0.08, 0.65, 0.52);
-    const lBand = new THREE.Mesh(bandGeo, goldMat);
+    const lBand = new THREE.Mesh(bandGeo, metalMat);
     lBand.position.set(-0.25, 0.32, 0);
     lBand.castShadow = true;
     this.mesh.add(lBand);
 
-    const rBand = new THREE.Mesh(bandGeo, goldMat);
+    const rBand = new THREE.Mesh(bandGeo, metalMat);
     rBand.position.set(0.25, 0.32, 0);
     rBand.castShadow = true;
     this.mesh.add(rBand);

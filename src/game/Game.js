@@ -36,6 +36,7 @@ export class Game {
     this.xpOrbs = [];
     this.chests = [];
     this.bossTimer = 45.0; // Spawns a Boss Archon every 45s
+    this.explorationChestTimer = 25.0; // Spawns an exploration chest every 25s
 
     // Arrays for skills
     this.orbiters = [];
@@ -148,6 +149,16 @@ export class Game {
 
       // Play warning alert chime
       Sound.playLevelUp();
+    }
+
+    // 9.6. Exploration Chest Spawner progression
+    this.explorationChestTimer -= delta;
+    if (this.explorationChestTimer <= 0) {
+      this.explorationChestTimer = 25.0; // reset
+      const activeExplorationChests = this.chests.filter(c => c.type === 'exploration').length;
+      if (activeExplorationChests < 4) {
+        this.spawnExplorationChest();
+      }
     }
 
     // 10. Check Level Up triggers
@@ -522,29 +533,99 @@ export class Game {
    * Triggers instant level up, projects visual sparkle feedback,
    * and opens the level-up cards screen forcing Legendary upgrades.
    */
+  /**
+   * Triggers instant level up or chest rewards, projects visual sparkle feedback,
+   * and opens the level-up cards screen (forcing Legendary for boss chests).
+   */
   collectChest(chest) {
     chest.alive = false;
     chest.destroy();
 
-    // 1. Instant Level Up stats change
-    this.horse.instantLevelUp();
-    this.updateHUD(); // Sync HUD level
+    if (chest.type === 'exploration') {
+      // 1. Exploration Chest Reward: 40% health restoration + 60% level XP boost
+      const healAmount = Math.round(this.horse.maxHp * 0.4);
+      this.horse.hp = Math.min(this.horse.maxHp, this.horse.hp + healAmount);
+      
+      const xpReward = Math.round(this.horse.maxXp * 0.6);
+      const leveledUp = this.horse.addXp(xpReward);
 
-    // 2. Play triumphant visual sparkles and pause
-    this.pauseGame();
-    this.particles.spawnLevelUpHalo(this.horse.mesh.position);
-    for (let i = 0; i < 5; i++) {
-      const offset = new THREE.Vector3((Math.random() - 0.5) * 2, 0, (Math.random() - 0.5) * 2);
-      this.particles.spawnHitSparks(this.horse.mesh.position.clone().add(offset));
+      this.updateHUD(); // Sync HUD values
+
+      // 2. Play beautiful enchanted teal sparkles
+      this.particles.spawnExplorationChestHalo(this.horse.mesh.position);
+      for (let i = 0; i < 4; i++) {
+        const offset = new THREE.Vector3((Math.random() - 0.5) * 1.5, 0, (Math.random() - 0.5) * 1.5);
+        this.particles.spawnHitSparks(this.horse.mesh.position.clone().add(offset));
+      }
+
+      // 3. Play Web Audio synthesized bell chime
+      Sound.playChestOpen();
+
+      // 4. Show gorgeous golden floating screen banner
+      this.showExplorationMessage(`+${xpReward} XP & HEALED!`);
+
+      // 5. If we leveled up from this XP boost, open standard upgrade card select
+      if (leveledUp) {
+        this.pauseGame();
+        setTimeout(() => {
+          this.onLevelUpCallback(false); // forceLegendary = false (standard odds)
+        }, 400);
+      }
+    } else {
+      // Boss chest (original behavior)
+      // 1. Instant Level Up stats change
+      this.horse.instantLevelUp();
+      this.updateHUD(); // Sync HUD level
+
+      // 2. Play triumphant visual sparkles and pause
+      this.pauseGame();
+      this.particles.spawnLevelUpHalo(this.horse.mesh.position);
+      for (let i = 0; i < 5; i++) {
+        const offset = new THREE.Vector3((Math.random() - 0.5) * 2, 0, (Math.random() - 0.5) * 2);
+        this.particles.spawnHitSparks(this.horse.mesh.position.clone().add(offset));
+      }
+
+      // 3. Play level-up sound
+      Sound.playLevelUp();
+
+      // 4. Open playing cards select overlay forcing Legendary
+      setTimeout(() => {
+        this.onLevelUpCallback(true); // forceLegendary = true
+      }, 400);
     }
+  }
 
-    // 3. Play level-up sound
-    Sound.playLevelUp();
+  /**
+   * Helper to spawn a floating exploration chest banner
+   */
+  showExplorationMessage(text) {
+    const banner = document.createElement('div');
+    banner.className = 'chest-banner';
+    banner.innerText = `✨ ${text.toUpperCase()} ✨`;
+    document.body.appendChild(banner);
+    setTimeout(() => banner.remove(), 2500);
+  }
 
-    // 4. Open playing cards select overlay forcing Legendary
-    setTimeout(() => {
-      this.onLevelUpCallback(true); // forceLegendary = true
-    }, 400);
+  /**
+   * Spawns an exploration chest in the forest outside camera viewport, slide-aligned from trees
+   */
+  spawnExplorationChest() {
+    const playerPos = this.horse.mesh.position;
+    
+    // Choose random angle and distance between 30 and 55 units
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 30 + Math.random() * 25;
+    
+    const spawnX = playerPos.x + Math.cos(angle) * distance;
+    const spawnZ = playerPos.z + Math.sin(angle) * distance;
+    const spawnPos = new THREE.Vector3(spawnX, 0.35, spawnZ);
+
+    // Reposition safely outside tree trunks using the forest collisions
+    const correction = this.forest.checkCollisions(spawnPos, 0.6, 1.0);
+    spawnPos.add(correction);
+
+    const chest = new Chest(this.scene, spawnPos, 'exploration');
+    this.chests.push(chest);
   }
 
   /**
@@ -628,10 +709,19 @@ export class Game {
       return true;
     });
 
+    const playerPos = this.horse.mesh.position;
     this.chests = this.chests.filter(c => {
       if (!c.alive) {
         c.destroy();
         return false;
+      }
+      // If it is an exploration chest and it is too far away from the player, despawn it
+      if (c.type === 'exploration') {
+        const distSq = playerPos.distanceToSquared(c.mesh.position);
+        if (distSq > 95 * 95) {
+          c.destroy();
+          return false;
+        }
       }
       return true;
     });

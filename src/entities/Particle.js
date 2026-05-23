@@ -172,6 +172,49 @@ export class ParticleEngine {
   }
 
   /**
+   * Shimmering teal upward particle spiral for exploration chests
+   */
+  spawnExplorationChestHalo(playerPosition) {
+    const haloCount = 45;
+    const tealMat = new THREE.MeshBasicMaterial({
+      color: 0x00ffcc, // Shimmering enchanted teal
+      transparent: true,
+      opacity: 1.0
+    });
+
+    const haloGeo = new THREE.SphereGeometry(0.14, 5, 5);
+
+    for (let i = 0; i < haloCount; i++) {
+      const mesh = new THREE.Mesh(haloGeo, tealMat);
+      
+      const angle = (i / haloCount) * Math.PI * 6; // 3 full rotations
+      const radius = 0.4 + (i / haloCount) * 1.2;
+      
+      mesh.position.set(
+        playerPosition.x + Math.cos(angle) * radius,
+        playerPosition.y + 0.1,
+        playerPosition.z + Math.sin(angle) * radius
+      );
+      
+      this.scene.add(mesh);
+
+      const velocity = new THREE.Vector3(
+        Math.cos(angle) * 0.4,
+        2.2 + (i / haloCount) * 1.5,
+        Math.sin(angle) * 0.4
+      );
+
+      this.particles.push({
+        mesh,
+        velocity,
+        life: 0.5 + (i / haloCount) * 0.4,
+        maxLife: 0.9,
+        type: 'level' // Drifts up and fades out cleanly using existing level fade physics
+      });
+    }
+  }
+
+  /**
    * Update loops for active fireflies and fading particles
    */
   update(delta, playerPosition) {

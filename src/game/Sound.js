@@ -296,6 +296,37 @@ class SoundManager {
   }
 
   /**
+   * Play enchanted exploration chest opening sound - shimmering bells major chord
+   */
+  playChestOpen() {
+    if (!this.initialized || this.muted) return;
+    const ctx = this.ctx;
+    if (ctx.state === 'suspended') ctx.resume();
+
+    const time = ctx.currentTime;
+    // Ascending pure silver bell chime arpeggio: E5, G#5, B5, E6
+    const notes = [659.25, 830.61, 987.77, 1318.51];
+    
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, time + idx * 0.045);
+      
+      gain.gain.setValueAtTime(0.0, time + idx * 0.045);
+      gain.gain.linearRampToValueAtTime(0.06, time + idx * 0.045 + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + idx * 0.045 + 0.22);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.start(time + idx * 0.045);
+      osc.stop(time + idx * 0.045 + 0.25);
+    });
+  }
+
+  /**
    * Stop ambient drone (e.g. for pause or mute)
    */
   stopAmbientDrone() {
