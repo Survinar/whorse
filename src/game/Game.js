@@ -132,22 +132,22 @@ export class Game {
     if (this.bossTimer <= 0) {
       this.bossTimer = 45.0; // reset
       
-      // Trigger gold/red warning banner
-      const banner = document.createElement('div');
-      banner.className = 'boss-banner';
-      banner.innerText = '⚠️ BOSS ARCHON INCOMING! ⚠️';
-      document.body.appendChild(banner);
-      setTimeout(() => banner.remove(), 3500);
-
-      // Play warning alert chime
-      Sound.playLevelUp();
-
-      // Instantiate boss off-screen
+      // Instantiate boss off-screen first to access its procedurally generated name
       const scaleMultiplier = 1.0 + this.time * 0.005; // boss gets tankier over time
       const boss = new Enemy(this.scene, 'boss', this.horse.mesh.position);
       boss.hp = Math.round(boss.hp * scaleMultiplier);
       boss.maxHp = boss.hp;
       this.enemies.push(boss);
+
+      // Trigger gold/red warning banner with procedural boss name
+      const banner = document.createElement('div');
+      banner.className = 'boss-banner';
+      banner.innerText = `⚠️ BOSS: ${boss.bossName.toUpperCase()} INCOMING! ⚠️`;
+      document.body.appendChild(banner);
+      setTimeout(() => banner.remove(), 3500);
+
+      // Play warning alert chime
+      Sound.playLevelUp();
     }
 
     // 10. Check Level Up triggers

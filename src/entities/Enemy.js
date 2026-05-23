@@ -12,6 +12,31 @@ export class Enemy {
     this.alive = true;
     this.time = Math.random() * 100;
     
+    if (this.type === 'boss') {
+      // 1. Procedural Name Generator
+      const prefixes = ['Goliath', 'Titan', 'Archon', 'Elder', 'Dread', 'Apex', 'Spectral', 'Calamity', 'Ancient', 'Gilded', 'Void'];
+      const elements = ['Wildfire', 'Dreadwood', 'Ironhide', 'Void', 'Storm', 'Ashen', 'Blighted', 'Frostbite', 'Sunlit', 'Toxic', 'Abyssal'];
+      const nouns = ['Behemoth', 'Colossus', 'Monarch', 'Leviathan', 'Phantasm', 'Sovereign', 'Sentinel', 'Titan', 'Archon'];
+      
+      const p1 = prefixes[Math.floor(Math.random() * prefixes.length)];
+      const p2 = elements[Math.floor(Math.random() * elements.length)];
+      const p3 = nouns[Math.floor(Math.random() * nouns.length)];
+      this.bossName = `${p1} ${p2} ${p3}`;
+
+      // 2. Roll Core Shape
+      const shapes = ['beast', 'golem', 'wisp'];
+      this.bossShape = shapes[Math.floor(Math.random() * shapes.length)];
+
+      // 3. Roll Elemental Color Theme
+      const themes = ['fire', 'toxic', 'frost', 'gold', 'void'];
+      this.bossTheme = themes[Math.floor(Math.random() * themes.length)];
+
+      // 4. Roll Geometry Dimensions
+      this.bossScaleX = 0.85 + Math.random() * 0.4;
+      this.bossScaleY = 0.85 + Math.random() * 0.4;
+      this.bossScaleZ = 0.85 + Math.random() * 0.4;
+    }
+
     // Set type-specific attributes
     this.setupStats();
     
@@ -83,9 +108,9 @@ export class Enemy {
       case 'boss':
         this.hp = 300;
         this.maxHp = 300;
-        this.speed = 3.8;
-        this.damage = 40;
-        this.collisionRadius = 1.6;
+        this.speed = this.bossShape === 'wisp' ? 4.3 : (this.bossShape === 'golem' ? 3.0 : 3.8);
+        this.damage = this.bossShape === 'golem' ? 50 : 38;
+        this.collisionRadius = this.bossShape === 'golem' ? 1.8 : (this.bossShape === 'beast' ? 1.6 : 1.4);
         this.xpValue = 0; // Drops Treasure Chest instead of XP gems
         break;
     }
@@ -390,145 +415,230 @@ export class Enemy {
         this.legs.push(leg);
       });
     } else if (this.type === 'boss') {
-      // Towering Gilded Shadow Archon Behemoth
-      // Materials
-      const bossWoodMat = new THREE.MeshStandardMaterial({
-        color: 0x110c08, // Dark ash black bark
-        roughness: 0.9
-      });
+      // Procedural Boss Material Swatches
+      let bossBaseColor = 0x110c08; // dark ash
+      let bossArmorColor = 0xd4af37; // gold
+      let bossGlowColor = 0xff3300; // red
+      let bossGlowIntensity = 2.0;
+
+      switch (this.bossTheme) {
+        case 'fire':
+          bossBaseColor = 0x221105; // charcoal orange
+          bossArmorColor = 0xe65100; // burnt orange
+          bossGlowColor = 0xff5500; // flame orange
+          break;
+        case 'toxic':
+          bossBaseColor = 0x0f1a0f; // dark green
+          bossArmorColor = 0x33691e; // leafy moss
+          bossGlowColor = 0x76ff03; // neon acid green
+          bossGlowIntensity = 2.5;
+          break;
+        case 'frost':
+          bossBaseColor = 0x09141c; // ice navy
+          bossArmorColor = 0x006064; // deep cyan
+          bossGlowColor = 0x00e5ff; // ice cyan
+          bossGlowIntensity = 2.5;
+          break;
+        case 'gold':
+          bossBaseColor = 0x0a0c0e; // sleek black
+          bossArmorColor = 0xd4af37; // solar gold
+          bossGlowColor = 0xffd700; // bright gold
+          break;
+        case 'void':
+          bossBaseColor = 0x12051c; // deep violet black
+          bossArmorColor = 0x4a148c; // dark magenta
+          bossGlowColor = 0xd500f9; // void pink-purple
+          bossGlowIntensity = 3.0;
+          break;
+      }
+
+      const bossWoodMat = new THREE.MeshStandardMaterial({ color: bossBaseColor, roughness: 0.9 });
       const bossGoldMat = new THREE.MeshStandardMaterial({
-        color: 0xd4af37, // Gleaming solar gold plate
+        color: bossArmorColor,
         roughness: 0.15,
-        metalness: 0.95
+        metalness: this.bossTheme === 'gold' ? 0.95 : 0.6
       });
       const bossEyeMat = new THREE.MeshStandardMaterial({
-        color: 0xff003c, // High intensity glowing red crimson runes
-        emissive: 0xff0000,
-        emissiveIntensity: 3.0
+        color: bossGlowColor,
+        emissive: bossGlowColor,
+        emissiveIntensity: bossGlowIntensity
       });
 
-      // 1. Massive Torso Trunk
-      const torso = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.75, 1.6), bossWoodMat);
-      torso.position.y = 0.55;
-      torso.castShadow = true;
-      torso.receiveShadow = true;
-      this.mesh.add(torso);
+      const scaleX = this.bossScaleX || 1.0;
+      const scaleY = this.bossScaleY || 1.0;
+      const scaleZ = this.bossScaleZ || 1.0;
 
-      // Gold shoulder plates
-      const lShoulder = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.6, 0.6), bossGoldMat);
-      lShoulder.position.set(-0.48, 0.6, 0.3);
-      lShoulder.castShadow = true;
-      this.mesh.add(lShoulder);
+      if (this.bossShape === 'beast') {
+        // 1. Massive Torso Trunk
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(0.85 * scaleX, 0.75 * scaleY, 1.6 * scaleZ), bossWoodMat);
+        torso.position.y = 0.55;
+        torso.castShadow = true;
+        torso.receiveShadow = true;
+        this.mesh.add(torso);
 
-      const rShoulder = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.6, 0.6), bossGoldMat);
-      rShoulder.position.set(0.48, 0.6, 0.3);
-      rShoulder.castShadow = true;
-      this.mesh.add(rShoulder);
+        // Gold shoulder plates
+        const lShoulder = new THREE.Mesh(new THREE.BoxGeometry(0.2 * scaleX, 0.6 * scaleY, 0.6 * scaleZ), bossGoldMat);
+        lShoulder.position.set(-0.48 * scaleX, 0.6, 0.3 * scaleZ);
+        lShoulder.castShadow = true;
+        this.mesh.add(lShoulder);
 
-      // Gold flank armor
-      const lFlank = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.45, 0.7), bossGoldMat);
-      lFlank.position.set(-0.46, 0.5, -0.4);
-      lFlank.castShadow = true;
-      this.mesh.add(lFlank);
+        const rShoulder = new THREE.Mesh(new THREE.BoxGeometry(0.2 * scaleX, 0.6 * scaleY, 0.6 * scaleZ), bossGoldMat);
+        rShoulder.position.set(0.48 * scaleX, 0.6, 0.3 * scaleZ);
+        rShoulder.castShadow = true;
+        this.mesh.add(rShoulder);
 
-      const rFlank = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.45, 0.7), bossGoldMat);
-      rFlank.position.set(0.46, 0.5, -0.4);
-      rFlank.castShadow = true;
-      this.mesh.add(rFlank);
+        // Heavy Neck and head
+        const neck = new THREE.Mesh(new THREE.BoxGeometry(0.35 * scaleX, 0.65 * scaleY, 0.35 * scaleZ), bossWoodMat);
+        neck.position.set(0, 0.95, 0.65 * scaleZ);
+        neck.rotation.x = -Math.PI / 6;
+        neck.castShadow = true;
+        this.mesh.add(neck);
 
-      // 2. Heavy Neck and head
-      const neck = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.65, 0.35), bossWoodMat);
-      neck.position.set(0, 0.95, 0.65);
-      neck.rotation.x = -Math.PI / 6;
-      neck.castShadow = true;
-      this.mesh.add(neck);
+        const headGroup = new THREE.Group();
+        headGroup.position.set(0, 1.25, 0.85 * scaleZ);
+        this.mesh.add(headGroup);
 
-      const headGroup = new THREE.Group();
-      headGroup.position.set(0, 1.25, 0.85);
-      this.mesh.add(headGroup);
+        const head = new THREE.Mesh(new THREE.BoxGeometry(0.45 * scaleX, 0.42 * scaleY, 0.65 * scaleZ), bossWoodMat);
+        head.position.set(0, 0.05, 0.15 * scaleZ);
+        head.rotation.x = Math.PI / 6;
+        head.castShadow = true;
+        headGroup.add(head);
 
-      const head = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.42, 0.65), bossWoodMat);
-      head.position.set(0, 0.05, 0.15);
-      head.rotation.x = Math.PI / 6;
-      head.castShadow = true;
-      headGroup.add(head);
+        // Tapered gold face mask
+        const mask = new THREE.Mesh(new THREE.BoxGeometry(0.28 * scaleX, 0.2 * scaleY, 0.48 * scaleZ), bossGoldMat);
+        mask.position.set(0, 0.12, 0.3 * scaleZ);
+        mask.rotation.x = Math.PI / 6;
+        mask.castShadow = true;
+        headGroup.add(mask);
 
-      // Tapered gold face mask
-      const mask = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.2, 0.48), bossGoldMat);
-      mask.position.set(0, 0.12, 0.3);
-      mask.rotation.x = Math.PI / 6;
-      mask.castShadow = true;
-      headGroup.add(mask);
+        // Massive antler horns
+        const antlerGeo = new THREE.BoxGeometry(0.06 * scaleX, 0.55 * scaleY, 0.06 * scaleZ);
+        const lAntler1 = new THREE.Mesh(antlerGeo, bossGoldMat);
+        lAntler1.position.set(-0.25 * scaleX, 0.4, 0.05);
+        lAntler1.rotation.z = 0.45;
+        lAntler1.castShadow = true;
+        headGroup.add(lAntler1);
 
-      // Massive glowing gold horned antlers (Left & Right)
-      const antlerGeo = new THREE.BoxGeometry(0.06, 0.55, 0.06);
-      
-      const lAntler1 = new THREE.Mesh(antlerGeo, bossGoldMat);
-      lAntler1.position.set(-0.25, 0.4, 0.05);
-      lAntler1.rotation.z = 0.45; // angle out
-      lAntler1.rotation.y = 0.2;
-      lAntler1.castShadow = true;
-      headGroup.add(lAntler1);
+        const rAntler1 = new THREE.Mesh(antlerGeo, bossGoldMat);
+        rAntler1.position.set(0.25 * scaleX, 0.4, 0.05);
+        rAntler1.rotation.z = -0.45;
+        rAntler1.castShadow = true;
+        headGroup.add(rAntler1);
 
-      const lAntler2 = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.3, 0.05), bossGoldMat);
-      lAntler2.position.set(-0.35, 0.55, 0.1);
-      lAntler2.rotation.z = -0.3; // bend back
-      lAntler2.castShadow = true;
-      headGroup.add(lAntler2);
+        // Eyes
+        const eyeGeo = new THREE.SphereGeometry(0.045, 4, 4);
+        const lEye = new THREE.Mesh(eyeGeo, bossEyeMat);
+        lEye.position.set(-0.16 * scaleX, 0.15, 0.35 * scaleZ);
+        const rEye = new THREE.Mesh(eyeGeo, bossEyeMat);
+        rEye.position.set(0.16 * scaleX, 0.15, 0.35 * scaleZ);
+        headGroup.add(lEye, rEye);
 
-      const rAntler1 = new THREE.Mesh(antlerGeo, bossGoldMat);
-      rAntler1.position.set(0.25, 0.4, 0.05);
-      rAntler1.rotation.z = -0.45; // angle out
-      rAntler1.rotation.y = -0.2;
-      rAntler1.castShadow = true;
-      headGroup.add(rAntler1);
+        // 4 stumpy legs
+        this.legs = [];
+        const legSpacingX = 0.35;
+        const legSpacingZ = 0.55;
+        const legPositions = [
+          { x: -legSpacingX, z: legSpacingZ },
+          { x: legSpacingX, z: legSpacingZ },
+          { x: -legSpacingX, z: -legSpacingZ },
+          { x: legSpacingX, z: -legSpacingZ },
+        ];
+        legPositions.forEach(pos => {
+          const leg = new THREE.Mesh(new THREE.BoxGeometry(0.25 * scaleX, 0.4 * scaleY, 0.25 * scaleZ), bossWoodMat);
+          leg.position.set(pos.x * scaleX, 0.2, pos.z * scaleZ);
+          leg.castShadow = true;
+          this.mesh.add(leg);
+          this.legs.push(leg);
 
-      const rAntler2 = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.3, 0.05), bossGoldMat);
-      rAntler2.position.set(0.35, 0.55, 0.1);
-      rAntler2.rotation.z = 0.3; // bend back
-      rAntler2.castShadow = true;
-      headGroup.add(rAntler2);
+          const shin = new THREE.Mesh(new THREE.BoxGeometry(0.2 * scaleX, 0.3 * scaleY, 0.2 * scaleZ), bossGoldMat);
+          shin.position.set(pos.x * scaleX, -0.1, pos.z * scaleZ);
+          shin.castShadow = true;
+          this.mesh.add(shin);
+        });
 
-      // 4 Glowing crimson eyes on mask
-      const eyeGeo = new THREE.SphereGeometry(0.045, 4, 4);
-      const eyeOffsets = [
-        { x: -0.16, y: 0.15, z: 0.35 },
-        { x: 0.16, y: 0.15, z: 0.35 },
-        { x: -0.2, y: 0.06, z: 0.25 },
-        { x: 0.2, y: 0.06, z: 0.25 },
-      ];
-      eyeOffsets.forEach(pos => {
-        const eye = new THREE.Mesh(eyeGeo, bossEyeMat);
-        eye.position.set(pos.x, pos.y, pos.z);
-        headGroup.add(eye);
-      });
+      } else if (this.bossShape === 'golem') {
+        // Golem Torso
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(1.1 * scaleX, 1.4 * scaleY, 0.9 * scaleZ), bossWoodMat);
+        torso.position.y = 0.8;
+        torso.castShadow = true;
+        torso.receiveShadow = true;
+        this.mesh.add(torso);
 
-      // 3. Sturdy Gilded Legs
-      this.legs = [];
-      const legSpacingX = 0.35;
-      const legSpacingZ = 0.55;
-      
-      const legPositions = [
-        { x: -legSpacingX, z: legSpacingZ },
-        { x: legSpacingX, z: legSpacingZ },
-        { x: -legSpacingX, z: -legSpacingZ },
-        { x: legSpacingX, z: -legSpacingZ },
-      ];
+        // Golem Head
+        const head = new THREE.Mesh(new THREE.BoxGeometry(0.65 * scaleX, 0.6 * scaleY, 0.65 * scaleZ), bossWoodMat);
+        head.position.set(0, 1.62, 0);
+        head.castShadow = true;
+        this.mesh.add(head);
 
-      legPositions.forEach(pos => {
-        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.4, 0.25), bossWoodMat);
-        leg.position.set(pos.x, 0.2, pos.z);
-        leg.castShadow = true;
-        this.mesh.add(leg);
-        this.legs.push(leg);
+        const mossCap = new THREE.Mesh(new THREE.BoxGeometry(0.72 * scaleX, 0.2 * scaleY, 0.72 * scaleZ), bossGoldMat);
+        mossCap.position.set(0, 1.82, 0);
+        mossCap.castShadow = true;
+        this.mesh.add(mossCap);
 
-        const shin = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.3, 0.2), bossGoldMat);
-        shin.position.set(pos.x, -0.1, pos.z);
-        shin.castShadow = true;
-        this.mesh.add(shin);
-      });
+        // Glowing runic eyes
+        const eyeGeo = new THREE.SphereGeometry(0.07, 4, 4);
+        const lEye = new THREE.Mesh(eyeGeo, bossEyeMat);
+        lEye.position.set(-0.2 * scaleX, 1.62, 0.28 * scaleZ);
+        const rEye = new THREE.Mesh(eyeGeo, bossEyeMat);
+        rEye.position.set(0.2 * scaleX, 1.62, 0.28 * scaleZ);
+        this.mesh.add(lEye, rEye);
 
-      // Scale the entire mesh to 2.2x to make it huge!
+        // Left Arm Club
+        this.lArm = new THREE.Mesh(new THREE.BoxGeometry(0.35 * scaleX, 1.1 * scaleY, 0.35 * scaleZ), bossWoodMat);
+        this.lArm.position.set(-0.75 * scaleX, 0.8, 0.1 * scaleZ);
+        this.lArm.rotation.z = 0.15;
+        this.lArm.castShadow = true;
+        this.mesh.add(this.lArm);
+
+        // Right Arm Club
+        this.rArm = new THREE.Mesh(new THREE.BoxGeometry(0.35 * scaleX, 1.1 * scaleY, 0.35 * scaleZ), bossWoodMat);
+        this.rArm.position.set(0.75 * scaleX, 0.8, 0.1 * scaleZ);
+        this.rArm.rotation.z = -0.15;
+        this.rArm.castShadow = true;
+        this.mesh.add(this.rArm);
+
+        // 2 stumping Golem legs
+        this.legs = [];
+        const lLeg = new THREE.Mesh(new THREE.BoxGeometry(0.35 * scaleX, 0.72 * scaleY, 0.35 * scaleZ), bossWoodMat);
+        lLeg.position.set(-0.35 * scaleX, 0.1, 0);
+        lLeg.castShadow = true;
+        this.mesh.add(lLeg);
+
+        const rLeg = new THREE.Mesh(new THREE.BoxGeometry(0.35 * scaleX, 0.72 * scaleY, 0.35 * scaleZ), bossWoodMat);
+        rLeg.position.set(0.35 * scaleX, 0.1, 0);
+        rLeg.castShadow = true;
+        this.mesh.add(rLeg);
+
+        this.legs.push(lLeg, rLeg);
+
+      } else if (this.bossShape === 'wisp') {
+        // Floating core
+        this.wispCore = new THREE.Mesh(new THREE.SphereGeometry(0.85 * scaleX, 16, 16), bossEyeMat);
+        this.wispCore.position.y = 1.2;
+        this.wispCore.castShadow = false;
+        this.mesh.add(this.wispCore);
+
+        // Outer shell segments
+        const shellGeo = new THREE.BoxGeometry(1.0 * scaleX, 0.2 * scaleY, 1.0 * scaleZ);
+        for (let i = 0; i < 4; i++) {
+          const shell = new THREE.Mesh(shellGeo, bossArmorMat);
+          shell.position.set(0, 1.2, 0);
+          shell.rotation.y = (i * Math.PI) / 4;
+          shell.rotation.x = Math.PI / 6;
+          this.mesh.add(shell);
+        }
+
+        // 6 Golden orbiters spinning rapidly
+        this.orbiters = [];
+        const orbiterGeo = new THREE.SphereGeometry(0.15, 6, 6);
+        for (let i = 0; i < 6; i++) {
+          const orb = new THREE.Mesh(orbiterGeo, bossArmorMat);
+          this.wispCore.add(orb);
+          this.orbiters.push(orb);
+        }
+      }
+
+      // Scale entire group to 2.2x towering scale
       this.mesh.scale.set(2.2, 2.2, 2.2);
     }
   }
@@ -672,17 +782,75 @@ export class Enemy {
         leg.pivot.rotation.x = Math.sin(this.time * freq + leg.phase) * swing;
         leg.pivot.rotation.z = Math.abs(Math.cos(this.time * freq * 0.5 + leg.phase)) * 0.15 * dir;
       });
-    } else if (this.type === 'boar' || this.type === 'boss') {
+    } else if (this.type === 'boar') {
       // Heavy stumpy trot
       const swing = 0.55;
-      const freq = this.type === 'boss' ? 6.5 : 9.0;
+      const freq = 9.0;
       this.legs[0].rotation.x = Math.sin(this.time * freq) * swing;
       this.legs[3].rotation.x = Math.sin(this.time * freq) * swing;
       this.legs[1].rotation.x = -Math.sin(this.time * freq) * swing;
       this.legs[2].rotation.x = -Math.sin(this.time * freq) * swing;
-      
-      // Charge head bobbing (massive Behemoth bobs heavier!)
-      this.mesh.position.y = Math.abs(Math.sin(this.time * freq)) * (this.type === 'boss' ? 0.14 : 0.08);
+      this.mesh.position.y = Math.abs(Math.sin(this.time * freq)) * 0.08;
+    } else if (this.type === 'boss') {
+      if (this.bossShape === 'beast') {
+        // Massive stumpy stag trot
+        const swing = 0.55;
+        const freq = 6.5;
+        if (this.legs && this.legs.length >= 4) {
+          this.legs[0].rotation.x = Math.sin(this.time * freq) * swing;
+          this.legs[3].rotation.x = Math.sin(this.time * freq) * swing;
+          this.legs[1].rotation.x = -Math.sin(this.time * freq) * swing;
+          this.legs[2].rotation.x = -Math.sin(this.time * freq) * swing;
+        }
+        this.mesh.position.y = Math.abs(Math.sin(this.time * freq)) * 0.14;
+      } else if (this.bossShape === 'golem') {
+        // Heavy golem stomp & club swings
+        const swing = 0.35;
+        const freq = 3.5;
+        
+        // 2 stumping legs
+        if (this.legs && this.legs.length >= 2) {
+          this.legs[0].rotation.x = Math.sin(this.time * freq) * swing;
+          this.legs[1].rotation.x = -Math.sin(this.time * freq) * swing;
+        }
+        
+        // Heavy arms swinging
+        if (this.lArm) {
+          this.lArm.rotation.x = Math.sin(this.time * freq) * swing * 0.8;
+          this.lArm.rotation.z = 0.15 + Math.sin(this.time * freq * 0.5) * 0.05;
+        }
+        if (this.rArm) {
+          this.rArm.rotation.x = -Math.sin(this.time * freq) * swing * 0.8;
+          this.rArm.rotation.z = -0.15 - Math.sin(this.time * freq * 0.5) * 0.05;
+        }
+
+        // Heavy Golem bounce/bobbing
+        this.mesh.position.y = Math.abs(Math.sin(this.time * freq)) * 0.18;
+      } else if (this.bossShape === 'wisp') {
+        // Floating ghost weave bobbing
+        this.mesh.position.y = 1.0 + Math.sin(this.time * 2.2) * 0.4;
+        
+        // Spin core and its shells/orbiters
+        if (this.wispCore) {
+          this.wispCore.rotation.y += delta * 1.8;
+          this.wispCore.rotation.x += delta * 0.6;
+        }
+
+        // Opposing circular paths for orbiters (satellites)
+        if (this.orbiters && this.orbiters.length >= 6) {
+          this.orbiters.forEach((node, idx) => {
+            const isReverse = idx % 2 === 0;
+            const direction = isReverse ? -1 : 1;
+            const orbitAngle = (this.time * 3.5 * direction) + (idx * Math.PI * 2 / 6);
+            const radius = 1.4;
+            node.position.set(
+              Math.cos(orbitAngle) * radius,
+              Math.sin(this.time * 5 + idx) * 0.25, // dynamic wave wobble
+              Math.sin(orbitAngle) * radius
+            );
+          });
+        }
+      }
     }
   }
 
