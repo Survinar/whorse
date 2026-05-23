@@ -246,6 +246,8 @@ function animate() {
 
   if (gameState === 'PLAYING' && activeGame) {
     activeGame.update(delta, keysPressed);
+  } else if (gameState === 'START' && activeGame) {
+    activeGame.updatePreview(delta);
   }
 
   // Always render to display background fireflies and trees
@@ -265,6 +267,12 @@ function startGame() {
   // Toggle HUD overlays
   startScreen.classList.remove('active');
   hudOverlay.classList.add('active');
+
+  // Clean old showcase game and launch a fresh, active run!
+  if (activeGame) {
+    activeGame.clear();
+    activeGame = null;
+  }
 
   // Initialize Game Instance
   activeGame = new Game(scene, camera, triggerLevelUp, triggerGameOver);
@@ -368,10 +376,38 @@ function triggerGameOver(stats) {
   const seconds = Math.floor(stats.time % 60);
   const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-  const currentBest = localStorage.getItem('whorse_best_seconds') || 0;
+  // 1. Save Last Run Metrics
+  localStorage.setItem('whorse_last_time', timeStr);
+  localStorage.setItem('whorse_last_level', stats.level);
+  localStorage.setItem('whorse_last_kills', stats.kills);
+  localStorage.setItem('whorse_last_distance', stats.distanceRun || 0);
+  localStorage.setItem('whorse_last_bosses', stats.bossesKilled || 0);
+
+  // 2. Calculate and Save All-Time Records
+  const currentBest = parseFloat(localStorage.getItem('whorse_best_seconds') || '0');
   if (stats.time > currentBest) {
     localStorage.setItem('whorse_best_seconds', stats.time);
     localStorage.setItem('whorse_best_str', timeStr);
+  }
+
+  const currentBestLevel = parseInt(localStorage.getItem('whorse_best_level') || '1');
+  if (stats.level > currentBestLevel) {
+    localStorage.setItem('whorse_best_level', stats.level);
+  }
+
+  const currentBestKills = parseInt(localStorage.getItem('whorse_best_kills') || '0');
+  if (stats.kills > currentBestKills) {
+    localStorage.setItem('whorse_best_kills', stats.kills);
+  }
+
+  const currentBestDist = parseFloat(localStorage.getItem('whorse_best_distance') || '0');
+  if ((stats.distanceRun || 0) > currentBestDist) {
+    localStorage.setItem('whorse_best_distance', stats.distanceRun || 0);
+  }
+
+  const currentBestBosses = parseInt(localStorage.getItem('whorse_best_bosses') || '0');
+  if ((stats.bossesKilled || 0) > currentBestBosses) {
+    localStorage.setItem('whorse_best_bosses', stats.bossesKilled || 0);
   }
 
   // Update HUD text elements
@@ -420,8 +456,31 @@ function restartGame() {
  * High score display updater
  */
 function updateHighScoreDisplay() {
-  const bestStr = localStorage.getItem('whorse_best_str') || '00:00';
-  bestTimeVal.innerText = bestStr;
+  // 1. Last Run Metrics
+  const lastTime = localStorage.getItem('whorse_last_time') || '00:00';
+  const lastLevel = localStorage.getItem('whorse_last_level') || '1';
+  const lastKills = localStorage.getItem('whorse_last_kills') || '0';
+  const lastDist = parseFloat(localStorage.getItem('whorse_last_distance') || '0').toFixed(0);
+  const lastBosses = localStorage.getItem('whorse_last_bosses') || '0';
+
+  document.getElementById('last-time-val').innerText = lastTime;
+  document.getElementById('last-level-val').innerText = lastLevel;
+  document.getElementById('last-kills-val').innerText = lastKills;
+  document.getElementById('last-dist-val').innerText = `${lastDist}m`;
+  document.getElementById('last-bosses-val').innerText = lastBosses;
+
+  // 2. All-Time Records
+  const bestTime = localStorage.getItem('whorse_best_str') || '00:00';
+  const bestLevel = localStorage.getItem('whorse_best_level') || '1';
+  const bestKills = localStorage.getItem('whorse_best_kills') || '0';
+  const bestDist = parseFloat(localStorage.getItem('whorse_best_distance') || '0').toFixed(0);
+  const bestBosses = localStorage.getItem('whorse_best_bosses') || '0';
+
+  document.getElementById('best-time-val').innerText = bestTime;
+  document.getElementById('best-level-val').innerText = bestLevel;
+  document.getElementById('best-kills-val').innerText = bestKills;
+  document.getElementById('best-dist-val').innerText = `${bestDist}m`;
+  document.getElementById('best-bosses-val').innerText = bestBosses;
 }
 
 // Bind Button actions
@@ -452,5 +511,9 @@ pauseDialog.addEventListener('cancel', (e) => {
 // Bootstrap Game on load
 window.addEventListener('DOMContentLoaded', () => {
   initThree();
+  // Create the initial Game instance instantly so it renders the blurred forest background in the start screen!
+  activeGame = new Game(scene, camera, triggerLevelUp, triggerGameOver);
+  gameState = 'START';
+  updateHighScoreDisplay();
   animate();
 });

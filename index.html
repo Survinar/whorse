@@ -31,8 +31,34 @@
     </div>
 
     <div class="start-card glass-panel">
-      <div class="high-score-container">
-        BEST SURVIVAL TIME: <span id="best-time-val">00:00</span>
+      <!-- High-fidelity Stats Board -->
+      <div class="stats-board">
+        <!-- Last Run Statistics -->
+        <div class="stats-col">
+          <h3 class="stats-title">LAST RUN METRICS</h3>
+          <div class="stats-grid">
+            <div class="stat-row"><span>Time:</span><strong id="last-time-val">00:00</strong></div>
+            <div class="stat-row"><span>Level:</span><strong id="last-level-val">1</strong></div>
+            <div class="stat-row"><span>Kills:</span><strong id="last-kills-val">0</strong></div>
+            <div class="stat-row"><span>Distance:</span><strong id="last-dist-val">0m</strong></div>
+            <div class="stat-row"><span>Bosses:</span><strong id="last-bosses-val">0</strong></div>
+          </div>
+        </div>
+        
+        <!-- vertical divider line -->
+        <div class="stats-col-divider"></div>
+        
+        <!-- All-Time Records -->
+        <div class="stats-col">
+          <h3 class="stats-title">ALL-TIME RECORDS</h3>
+          <div class="stats-grid">
+            <div class="stat-row"><span>Best Time:</span><strong id="best-time-val">00:00</strong></div>
+            <div class="stat-row"><span>Max Level:</span><strong id="best-level-val">1</strong></div>
+            <div class="stat-row"><span>Most Kills:</span><strong id="best-kills-val">0</strong></div>
+            <div class="stat-row"><span>Max Distance:</span><strong id="best-dist-val">0m</strong></div>
+            <div class="stat-row"><span>Bosses Slain:</span><strong id="best-bosses-val">0</strong></div>
+          </div>
+        </div>
       </div>
 
       <button id="start-btn" class="btn primary-btn pulse-glow">

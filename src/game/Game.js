@@ -24,6 +24,8 @@ export class Game {
     this.time = 0.0;
     this.kills = 0;
     this.xpCollected = 0;
+    this.distanceRun = 0.0;
+    this.bossesKilled = 0;
 
     // Difficulty scaling & spawn timer
     this.spawnTimer = 1.0;
@@ -77,6 +79,9 @@ export class Game {
     this.time += delta;
     this.updateHUD();
 
+    // Keep track of horse position prior to movement to accumulate distance run
+    const prevPos = this.horse.mesh.position.clone();
+
     // 2. Resolve Player Controls (WASD / Arrows)
     let dx = 0;
     let dz = 0;
@@ -86,6 +91,11 @@ export class Game {
     if (keys['d'] || keys['arrowright']) dx += 1;
 
     this.horse.move(dx, dz, delta, this.forest);
+
+    // Accumulate horizontal distance run (excluding bounce animations)
+    const distanceMoved = new THREE.Vector2(this.horse.mesh.position.x, this.horse.mesh.position.z)
+      .distanceTo(new THREE.Vector2(prevPos.x, prevPos.z));
+    this.distanceRun += distanceMoved;
 
     // 3. Smooth Camera tracking
     this.updateCamera(delta);
@@ -648,6 +658,9 @@ export class Game {
   banishEnemy(enemy) {
     enemy.alive = false;
     this.kills++;
+    if (enemy.type === 'boss') {
+      this.bossesKilled++;
+    }
     
     // Play banish/kill sound synth
     Sound.playKill();
@@ -968,8 +981,37 @@ export class Game {
       time: this.time,
       kills: this.kills,
       level: this.horse.level,
-      xp: this.horse.xp + this.xpCollected
+      xp: this.horse.xp + this.xpCollected,
+      distanceRun: this.distanceRun,
+      bossesKilled: this.bossesKilled
     });
+  }
+
+  /**
+   * Run a peaceful, golden firefly forest showcase preview
+   */
+  updatePreview(delta) {
+    // 1. Accumulate angle for slow orbital panning
+    this.previewAngle = (this.previewAngle || 0.0) + delta * 0.08;
+
+    // 2. Position camera orbiting around player horse
+    const radius = 13.5;
+    const playerPos = this.horse.mesh.position;
+    this.camera.position.x = playerPos.x + Math.cos(this.previewAngle) * radius;
+    this.camera.position.z = playerPos.z + Math.sin(this.previewAngle) * radius;
+    this.camera.position.y = 8.5; // elevated showcase height
+    
+    // Look at player horse torso
+    this.camera.lookAt(playerPos.x, 0.8, playerPos.z);
+
+    // 3. Animate fireflies drifting
+    this.particles.update(delta, playerPos);
+
+    // 4. Wind sway forest trees
+    this.forest.update(playerPos);
+
+    // 5. Calm leg breathing animations for idling horse
+    this.horse.animate(delta, false);
   }
 
   /**
