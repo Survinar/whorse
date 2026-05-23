@@ -174,6 +174,25 @@ function setupInputListeners() {
       return;
     }
 
+    // Intercept '-' key during gameplay to advance time by 1 minute (Debug feature)
+    if (e.key === '-' && gameState === 'PLAYING' && activeGame) {
+      activeGame.time += 60;
+      activeGame.updateHUD();
+
+      // Show temporary golden screen alert
+      const alert = document.createElement('div');
+      alert.className = 'chest-banner';
+      alert.innerText = `⚡ DEBUG: TIME ADVANCED BY 1 MINUTE! ⚡`;
+      document.body.appendChild(alert);
+      setTimeout(() => alert.remove(), 2000);
+
+      // Play selection blip
+      Sound.playXP();
+
+      e.preventDefault();
+      return;
+    }
+
     keysPressed[key] = true;
   });
 
