@@ -5,6 +5,7 @@ import { ParticleEngine } from '../entities/Particle.js';
 import { Bullet } from '../entities/Bullet.js';
 import { Enemy } from '../entities/Enemy.js';
 import { XPOrb } from '../entities/XPOrb.js';
+import { Chest } from '../entities/Chest.js';
 import { Sound } from './Sound.js';
 
 /**
@@ -33,6 +34,8 @@ export class Game {
     this.bullets = [];
     this.enemies = [];
     this.xpOrbs = [];
+    this.chests = [];
+    this.bossTimer = 45.0; // Spawns a Boss Archon every 45s
 
     // Arrays for skills
     this.orbiters = [];
@@ -108,6 +111,7 @@ export class Game {
     // 6. Update Transitory entities
     this.bullets.forEach(b => b.update(delta));
     this.xpOrbs.forEach(xp => xp.update(delta, this.horse));
+    this.chests.forEach(chest => chest.update(delta));
     this.enemies.forEach(e => e.update(delta, this.horse.mesh.position, this.forest, this.enemies));
     this.particles.update(delta, this.horse.mesh.position);
 
@@ -122,6 +126,29 @@ export class Game {
 
     // 9. Spawner progression engine
     this.spawnEngine(delta);
+
+    // 9.5. Boss Spawner progression
+    this.bossTimer -= delta;
+    if (this.bossTimer <= 0) {
+      this.bossTimer = 45.0; // reset
+      
+      // Trigger gold/red warning banner
+      const banner = document.createElement('div');
+      banner.className = 'boss-banner';
+      banner.innerText = '⚠️ BOSS ARCHON INCOMING! ⚠️';
+      document.body.appendChild(banner);
+      setTimeout(() => banner.remove(), 3500);
+
+      // Play warning alert chime
+      Sound.playLevelUp();
+
+      // Instantiate boss off-screen
+      const scaleMultiplier = 1.0 + this.time * 0.005; // boss gets tankier over time
+      const boss = new Enemy(this.scene, 'boss', this.horse.mesh.position);
+      boss.hp = Math.round(boss.hp * scaleMultiplier);
+      boss.maxHp = boss.hp;
+      this.enemies.push(boss);
+    }
 
     // 10. Check Level Up triggers
     if (this.horse.pendingLevelUp) {
@@ -441,6 +468,19 @@ export class Game {
         }
       }
     }
+
+    // 3. Horse vs Chests (Collect legendary upgrade chest)
+    for (const chest of this.chests) {
+      if (!chest.alive) continue;
+      const dx = playerPos.x - chest.mesh.position.x;
+      const dz = playerPos.z - chest.mesh.position.z;
+      const distSq = dx * dx + dz * dz;
+
+      const minDist = horseRadius + chest.radius;
+      if (distSq < minDist * minDist) {
+        this.collectChest(chest);
+      }
+    }
   }
 
   /**
@@ -456,21 +496,55 @@ export class Game {
     // Trigger death particle explosion
     this.particles.spawnDeathBurst(enemy.mesh.position);
 
-    // Spawn collectible XP gems
-    const gemsCount = enemy.xpValue;
-    for (let i = 0; i < gemsCount; i++) {
-      // Offset slightly to spread gems around
-      const offset = new THREE.Vector3(
-        (Math.random() - 0.5) * 1.2,
-        0,
-        (Math.random() - 0.5) * 1.2
-      );
-      const spawnPos = enemy.mesh.position.clone().add(offset);
-      const orb = new XPOrb(this.scene, spawnPos, 1);
-      this.xpOrbs.push(orb);
+    // Spawn collectible XP gems (if not a boss) or the legendary chest
+    if (enemy.type === 'boss') {
+      const chest = new Chest(this.scene, enemy.mesh.position.clone());
+      this.chests.push(chest);
+    } else {
+      const gemsCount = enemy.xpValue;
+      for (let i = 0; i < gemsCount; i++) {
+        // Offset slightly to spread gems around
+        const offset = new THREE.Vector3(
+          (Math.random() - 0.5) * 1.2,
+          0,
+          (Math.random() - 0.5) * 1.2
+        );
+        const spawnPos = enemy.mesh.position.clone().add(offset);
+        const orb = new XPOrb(this.scene, spawnPos, 1);
+        this.xpOrbs.push(orb);
+      }
     }
 
     enemy.destroy();
+  }
+
+  /**
+   * Triggers instant level up, projects visual sparkle feedback,
+   * and opens the level-up cards screen forcing Legendary upgrades.
+   */
+  collectChest(chest) {
+    chest.alive = false;
+    chest.destroy();
+
+    // 1. Instant Level Up stats change
+    this.horse.instantLevelUp();
+    this.updateHUD(); // Sync HUD level
+
+    // 2. Play triumphant visual sparkles and pause
+    this.pauseGame();
+    this.particles.spawnLevelUpHalo(this.horse.mesh.position);
+    for (let i = 0; i < 5; i++) {
+      const offset = new THREE.Vector3((Math.random() - 0.5) * 2, 0, (Math.random() - 0.5) * 2);
+      this.particles.spawnHitSparks(this.horse.mesh.position.clone().add(offset));
+    }
+
+    // 3. Play level-up sound
+    Sound.playLevelUp();
+
+    // 4. Open playing cards select overlay forcing Legendary
+    setTimeout(() => {
+      this.onLevelUpCallback(true); // forceLegendary = true
+    }, 400);
   }
 
   /**
@@ -549,6 +623,14 @@ export class Game {
     this.xpOrbs = this.xpOrbs.filter(xp => {
       if (!xp.alive) {
         xp.destroy();
+        return false;
+      }
+      return true;
+    });
+
+    this.chests = this.chests.filter(c => {
+      if (!c.alive) {
+        c.destroy();
         return false;
       }
       return true;
@@ -663,6 +745,11 @@ export class Game {
     this.bullets = [];
     this.enemies = [];
     this.xpOrbs = [];
+
+    // Dispose Chests
+    this.chests.forEach(c => c.destroy());
+    this.chests = [];
+    this.bossTimer = 45.0; // reset boss timer
 
     // Dispose Orbiters
     this.orbiters.forEach(orbiter => {

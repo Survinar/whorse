@@ -446,6 +446,21 @@ export class Horse {
   }
 
   /**
+   * Instantly levels up the player from picking up a chest,
+   * resetting XP and fully healing back to max HP.
+   */
+  instantLevelUp() {
+    this.level++;
+    this.xp = 0;
+    this.maxXp = Math.floor(10 + this.level * 4.5);
+    this.hp = this.maxHp;
+    
+    // Remove low health UI pulse if fully healed
+    const overlay = document.querySelector('.damage-overlay');
+    if (overlay) overlay.classList.remove('low-hp');
+  }
+
+  /**
    * Apply permanent stat upgrades based on selected blessings
    */
   applyUpgrade(type, rarity = 'common') {

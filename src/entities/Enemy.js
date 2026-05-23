@@ -80,6 +80,14 @@ export class Enemy {
         this.collisionRadius = 0.75;
         this.xpValue = 2;
         break;
+      case 'boss':
+        this.hp = 300;
+        this.maxHp = 300;
+        this.speed = 3.8;
+        this.damage = 40;
+        this.collisionRadius = 1.6;
+        this.xpValue = 0; // Drops Treasure Chest instead of XP gems
+        break;
     }
   }
 
@@ -381,6 +389,147 @@ export class Enemy {
         this.mesh.add(leg);
         this.legs.push(leg);
       });
+    } else if (this.type === 'boss') {
+      // Towering Gilded Shadow Archon Behemoth
+      // Materials
+      const bossWoodMat = new THREE.MeshStandardMaterial({
+        color: 0x110c08, // Dark ash black bark
+        roughness: 0.9
+      });
+      const bossGoldMat = new THREE.MeshStandardMaterial({
+        color: 0xd4af37, // Gleaming solar gold plate
+        roughness: 0.15,
+        metalness: 0.95
+      });
+      const bossEyeMat = new THREE.MeshStandardMaterial({
+        color: 0xff003c, // High intensity glowing red crimson runes
+        emissive: 0xff0000,
+        emissiveIntensity: 3.0
+      });
+
+      // 1. Massive Torso Trunk
+      const torso = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.75, 1.6), bossWoodMat);
+      torso.position.y = 0.55;
+      torso.castShadow = true;
+      torso.receiveShadow = true;
+      this.mesh.add(torso);
+
+      // Gold shoulder plates
+      const lShoulder = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.6, 0.6), bossGoldMat);
+      lShoulder.position.set(-0.48, 0.6, 0.3);
+      lShoulder.castShadow = true;
+      this.mesh.add(lShoulder);
+
+      const rShoulder = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.6, 0.6), bossGoldMat);
+      rShoulder.position.set(0.48, 0.6, 0.3);
+      rShoulder.castShadow = true;
+      this.mesh.add(rShoulder);
+
+      // Gold flank armor
+      const lFlank = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.45, 0.7), bossGoldMat);
+      lFlank.position.set(-0.46, 0.5, -0.4);
+      lFlank.castShadow = true;
+      this.mesh.add(lFlank);
+
+      const rFlank = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.45, 0.7), bossGoldMat);
+      rFlank.position.set(0.46, 0.5, -0.4);
+      rFlank.castShadow = true;
+      this.mesh.add(rFlank);
+
+      // 2. Heavy Neck and head
+      const neck = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.65, 0.35), bossWoodMat);
+      neck.position.set(0, 0.95, 0.65);
+      neck.rotation.x = -Math.PI / 6;
+      neck.castShadow = true;
+      this.mesh.add(neck);
+
+      const headGroup = new THREE.Group();
+      headGroup.position.set(0, 1.25, 0.85);
+      this.mesh.add(headGroup);
+
+      const head = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.42, 0.65), bossWoodMat);
+      head.position.set(0, 0.05, 0.15);
+      head.rotation.x = Math.PI / 6;
+      head.castShadow = true;
+      headGroup.add(head);
+
+      // Tapered gold face mask
+      const mask = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.2, 0.48), bossGoldMat);
+      mask.position.set(0, 0.12, 0.3);
+      mask.rotation.x = Math.PI / 6;
+      mask.castShadow = true;
+      headGroup.add(mask);
+
+      // Massive glowing gold horned antlers (Left & Right)
+      const antlerGeo = new THREE.BoxGeometry(0.06, 0.55, 0.06);
+      
+      const lAntler1 = new THREE.Mesh(antlerGeo, bossGoldMat);
+      lAntler1.position.set(-0.25, 0.4, 0.05);
+      lAntler1.rotation.z = 0.45; // angle out
+      lAntler1.rotation.y = 0.2;
+      lAntler1.castShadow = true;
+      headGroup.add(lAntler1);
+
+      const lAntler2 = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.3, 0.05), bossGoldMat);
+      lAntler2.position.set(-0.35, 0.55, 0.1);
+      lAntler2.rotation.z = -0.3; // bend back
+      lAntler2.castShadow = true;
+      headGroup.add(lAntler2);
+
+      const rAntler1 = new THREE.Mesh(antlerGeo, bossGoldMat);
+      rAntler1.position.set(0.25, 0.4, 0.05);
+      rAntler1.rotation.z = -0.45; // angle out
+      rAntler1.rotation.y = -0.2;
+      rAntler1.castShadow = true;
+      headGroup.add(rAntler1);
+
+      const rAntler2 = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.3, 0.05), bossGoldMat);
+      rAntler2.position.set(0.35, 0.55, 0.1);
+      rAntler2.rotation.z = 0.3; // bend back
+      rAntler2.castShadow = true;
+      headGroup.add(rAntler2);
+
+      // 4 Glowing crimson eyes on mask
+      const eyeGeo = new THREE.SphereGeometry(0.045, 4, 4);
+      const eyeOffsets = [
+        { x: -0.16, y: 0.15, z: 0.35 },
+        { x: 0.16, y: 0.15, z: 0.35 },
+        { x: -0.2, y: 0.06, z: 0.25 },
+        { x: 0.2, y: 0.06, z: 0.25 },
+      ];
+      eyeOffsets.forEach(pos => {
+        const eye = new THREE.Mesh(eyeGeo, bossEyeMat);
+        eye.position.set(pos.x, pos.y, pos.z);
+        headGroup.add(eye);
+      });
+
+      // 3. Sturdy Gilded Legs
+      this.legs = [];
+      const legSpacingX = 0.35;
+      const legSpacingZ = 0.55;
+      
+      const legPositions = [
+        { x: -legSpacingX, z: legSpacingZ },
+        { x: legSpacingX, z: legSpacingZ },
+        { x: -legSpacingX, z: -legSpacingZ },
+        { x: legSpacingX, z: -legSpacingZ },
+      ];
+
+      legPositions.forEach(pos => {
+        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.4, 0.25), bossWoodMat);
+        leg.position.set(pos.x, 0.2, pos.z);
+        leg.castShadow = true;
+        this.mesh.add(leg);
+        this.legs.push(leg);
+
+        const shin = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.3, 0.2), bossGoldMat);
+        shin.position.set(pos.x, -0.1, pos.z);
+        shin.castShadow = true;
+        this.mesh.add(shin);
+      });
+
+      // Scale the entire mesh to 2.2x to make it huge!
+      this.mesh.scale.set(2.2, 2.2, 2.2);
     }
   }
 
@@ -523,17 +672,17 @@ export class Enemy {
         leg.pivot.rotation.x = Math.sin(this.time * freq + leg.phase) * swing;
         leg.pivot.rotation.z = Math.abs(Math.cos(this.time * freq * 0.5 + leg.phase)) * 0.15 * dir;
       });
-    } else if (this.type === 'boar') {
+    } else if (this.type === 'boar' || this.type === 'boss') {
       // Heavy stumpy trot
       const swing = 0.55;
-      const freq = 9.0;
+      const freq = this.type === 'boss' ? 6.5 : 9.0;
       this.legs[0].rotation.x = Math.sin(this.time * freq) * swing;
       this.legs[3].rotation.x = Math.sin(this.time * freq) * swing;
       this.legs[1].rotation.x = -Math.sin(this.time * freq) * swing;
       this.legs[2].rotation.x = -Math.sin(this.time * freq) * swing;
       
-      // Charge head bobbing
-      this.mesh.position.y = Math.abs(Math.sin(this.time * freq)) * 0.08;
+      // Charge head bobbing (massive Behemoth bobs heavier!)
+      this.mesh.position.y = Math.abs(Math.sin(this.time * freq)) * (this.type === 'boss' ? 0.14 : 0.08);
     }
   }
 

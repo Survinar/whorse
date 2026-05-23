@@ -1060,3 +1060,48 @@ kbd {
     margin-bottom: 15px;
   }
 }
+
+/* Boss Spawning Notification Banner */
+.boss-banner {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: #ff3300;
+  text-shadow: 0 0 10px rgba(255, 51, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.8);
+  font-weight: bold;
+  letter-spacing: 0.15rem;
+  background: linear-gradient(90deg, rgba(36, 23, 15, 0) 0%, rgba(36, 23, 15, 0.95) 20%, rgba(36, 23, 15, 0.95) 80%, rgba(36, 23, 15, 0) 100%);
+  border-top: 3px solid var(--accent-gold);
+  border-bottom: 3px solid var(--accent-gold);
+  padding: 14px 70px;
+  animation: bossFadeInOut 3.5s forwards ease-in-out;
+  pointer-events: none;
+  text-align: center;
+  white-space: nowrap;
+}
+
+@keyframes bossFadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -70%) scale(0.9);
+  }
+  12% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  22% {
+    transform: translate(-50%, -50%) scale(1.0);
+  }
+  78% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -35%) scale(0.95);
+  }
+}

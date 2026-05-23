@@ -209,7 +209,7 @@ function startGame() {
 /**
  * Level-Up Upgrade Cards Builder
  */
-function triggerLevelUp() {
+function triggerLevelUp(forceLegendary = false) {
   gameState = 'LEVEL_UP';
 
   // Play leveling chime
@@ -226,17 +226,22 @@ function triggerLevelUp() {
     // Generate card element
     const card = document.createElement('div');
 
-    // Choose rarity randomly for aesthetic richness
-    const roll = Math.random();
+    // Choose rarity (forced legendary or rolled)
     let rarity = 'common';
     let rarityLabel = 'COMMON';
 
-    if (roll > 0.88) {
+    if (forceLegendary) {
       rarity = 'legendary';
       rarityLabel = 'LEGENDARY';
-    } else if (roll > 0.65) {
-      rarity = 'rare';
-      rarityLabel = 'RARE';
+    } else {
+      const roll = Math.random();
+      if (roll > 0.88) {
+        rarity = 'legendary';
+        rarityLabel = 'LEGENDARY';
+      } else if (roll > 0.65) {
+        rarity = 'rare';
+        rarityLabel = 'RARE';
+      }
     }
 
     const isRedSuit = (upgrade.suit === '♥' || upgrade.suit === '♦');
