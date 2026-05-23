@@ -406,6 +406,158 @@ body {
   font-size: 1.1rem;
 }
 
+/* Username Input Row */
+.username-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 4px;
+}
+
+.username-label {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent-gold);
+  white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+.username-input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1.5px solid #5a3c26;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: #fff3cd;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.username-input::placeholder {
+  color: rgba(202, 191, 168, 0.4);
+  font-style: italic;
+}
+
+.username-input:focus {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.25),
+              inset 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Global Leaderboard Section */
+.leaderboard-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.leaderboard-scroll {
+  max-height: 240px;
+  overflow-y: auto;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(90, 60, 38, 0.4);
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.leaderboard-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.leaderboard-table thead tr {
+  background: linear-gradient(135deg, rgba(80, 49, 31, 0.98) 0%, rgba(58, 34, 20, 0.98) 100%);
+}
+
+.leaderboard-table th {
+  padding: 8px 10px;
+  color: var(--accent-gold);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-align: left;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.leaderboard-table th:first-child {
+  text-align: center;
+  width: 32px;
+}
+
+.leaderboard-table td {
+  padding: 7px 10px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(90, 60, 38, 0.2);
+  transition: background 0.2s ease;
+}
+
+.leaderboard-table td:first-child {
+  text-align: center;
+  font-weight: 700;
+}
+
+.leaderboard-table tbody tr:hover {
+  background: rgba(212, 175, 55, 0.06);
+}
+
+/* Medal Rank Styling */
+.leaderboard-table tbody tr:nth-child(1) td:first-child {
+  color: #ffd700;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
+}
+
+.leaderboard-table tbody tr:nth-child(2) td:first-child {
+  color: var(--accent-silver);
+  text-shadow: 0 0 6px rgba(192, 192, 192, 0.4);
+}
+
+.leaderboard-table tbody tr:nth-child(3) td:first-child {
+  color: var(--accent-bronze);
+  text-shadow: 0 0 6px rgba(205, 127, 50, 0.4);
+}
+
+.lb-loading {
+  text-align: center;
+  color: rgba(202, 191, 168, 0.5);
+  font-style: italic;
+  padding: 20px 10px;
+}
+
+.lb-rider-name {
+  color: #fff3cd;
+  font-weight: 700;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lb-you {
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.lb-you .lb-rider-name {
+  color: var(--accent-gold);
+}
+
+
 /* ==========================================================================
    2. Heads-Up Display (HUD)
    ========================================================================== */

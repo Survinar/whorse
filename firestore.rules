@@ -1,0 +1,30 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Leaderboard collection
+    match /leaderboard/{entry} {
+      // Anyone can read the leaderboard
+      allow read: if true;
+      
+      // Anyone can create new entries with validated fields
+      allow create: if request.resource.data.keys().hasAll(['username', 'time', 'level', 'kills', 'distance', 'bosses', 'timestamp'])
+        && request.resource.data.username is string
+        && request.resource.data.username.size() >= 1
+        && request.resource.data.username.size() <= 16
+        && request.resource.data.time is number
+        && request.resource.data.level is number
+        && request.resource.data.kills is number
+        && request.resource.data.distance is number
+        && request.resource.data.bosses is number;
+      
+      // No updates or deletes allowed (immutable entries)
+      allow update, delete: if false;
+    }
+    
+    // Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

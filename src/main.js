@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { Game } from './game/Game.js';
 import { Sound } from './game/Sound.js';
+import { submitScore, fetchTopScores } from './game/Leaderboard.js';
 
 // Global Game Variables
 let scene, camera, renderer, clock;
@@ -74,6 +75,8 @@ const levelUpDialog = document.getElementById('level-up-dialog');
 const gameOverDialog = document.getElementById('game-over-dialog');
 const cardContainer = document.getElementById('upgrade-cards-container');
 const bestTimeVal = document.getElementById('best-time-val');
+const usernameInput = document.getElementById('username-input');
+const leaderboardBody = document.getElementById('leaderboard-body');
 
 // Pause menu DOM hooks
 const pauseDialog = document.getElementById('pause-dialog');
@@ -81,6 +84,14 @@ const resumeBtn = document.getElementById('resume-btn');
 const pauseRestartBtn = document.getElementById('pause-restart-btn');
 const pauseTime = document.getElementById('pause-time');
 const pauseKills = document.getElementById('pause-kills');
+
+// Load saved username
+usernameInput.value = localStorage.getItem('whorse_username') || '';
+
+// Save username when changed
+usernameInput.addEventListener('input', () => {
+  localStorage.setItem('whorse_username', usernameInput.value.trim());
+});
 
 // Load best score on startup
 updateHighScoreDisplay();
@@ -422,6 +433,13 @@ function triggerGameOver(stats) {
   // Trigger defeat modal
   gameOverDialog.showModal();
   updateHighScoreDisplay();
+
+  // 3. Submit score to global leaderboard
+  const username = (usernameInput.value.trim()) || 'Anonymous';
+  submitScore(username, stats).then(() => {
+    // Refresh leaderboard after submission
+    refreshLeaderboard();
+  });
 }
 
 /**
@@ -508,6 +526,50 @@ pauseDialog.addEventListener('cancel', (e) => {
   }
 });
 
+/**
+ * Fetch and render global leaderboard
+ */
+function refreshLeaderboard() {
+  const currentUsername = (usernameInput.value.trim()) || 'Anonymous';
+
+  fetchTopScores(10).then(scores => {
+    if (scores.length === 0) {
+      leaderboardBody.innerHTML = '<tr><td colspan="5" class="lb-loading">No runs yet — be the first!</td></tr>';
+      return;
+    }
+
+    leaderboardBody.innerHTML = '';
+    scores.forEach((entry, index) => {
+      const rank = index + 1;
+      const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+      const mins = Math.floor((entry.time || 0) / 60);
+      const secs = Math.floor((entry.time || 0) % 60);
+      const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      const isYou = entry.username === currentUsername;
+
+      const tr = document.createElement('tr');
+      if (isYou) tr.classList.add('lb-you');
+      tr.innerHTML = `
+        <td>${medal}</td>
+        <td class="lb-rider-name">${escapeHTML(entry.username || 'Anonymous')}</td>
+        <td>${timeStr}</td>
+        <td>${entry.level || 1}</td>
+        <td>${entry.kills || 0}</td>
+      `;
+      leaderboardBody.appendChild(tr);
+    });
+  }).catch(() => {
+    leaderboardBody.innerHTML = '<tr><td colspan="5" class="lb-loading">Failed to load leaderboard</td></tr>';
+  });
+}
+
+/** Escape HTML to prevent XSS from usernames */
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 // Bootstrap Game on load
 window.addEventListener('DOMContentLoaded', () => {
   initThree();
@@ -515,5 +577,6 @@ window.addEventListener('DOMContentLoaded', () => {
   activeGame = new Game(scene, camera, triggerLevelUp, triggerGameOver);
   gameState = 'START';
   updateHighScoreDisplay();
+  refreshLeaderboard();
   animate();
 });

@@ -31,11 +31,17 @@
     </div>
 
     <div class="start-card glass-panel">
+      <!-- Username Input -->
+      <div class="username-row">
+        <label for="username-input" class="username-label">RIDER NAME</label>
+        <input type="text" id="username-input" class="username-input" maxlength="16" placeholder="Anonymous" autocomplete="off" spellcheck="false">
+      </div>
+
       <!-- High-fidelity Stats Board -->
       <div class="stats-board">
         <!-- Last Run Statistics -->
         <div class="stats-col">
-          <h3 class="stats-title">LAST RUN METRICS</h3>
+          <h3 class="stats-title">LAST RUN</h3>
           <div class="stats-grid">
             <div class="stat-row"><span>Time:</span><strong id="last-time-val">00:00</strong></div>
             <div class="stat-row"><span>Level:</span><strong id="last-level-val">1</strong></div>
@@ -50,14 +56,35 @@
         
         <!-- All-Time Records -->
         <div class="stats-col">
-          <h3 class="stats-title">ALL-TIME RECORDS</h3>
+          <h3 class="stats-title">ALL-TIME</h3>
           <div class="stats-grid">
             <div class="stat-row"><span>Best Time:</span><strong id="best-time-val">00:00</strong></div>
             <div class="stat-row"><span>Max Level:</span><strong id="best-level-val">1</strong></div>
             <div class="stat-row"><span>Most Kills:</span><strong id="best-kills-val">0</strong></div>
-            <div class="stat-row"><span>Max Distance:</span><strong id="best-dist-val">0m</strong></div>
-            <div class="stat-row"><span>Bosses Slain:</span><strong id="best-bosses-val">0</strong></div>
+            <div class="stat-row"><span>Max Dist:</span><strong id="best-dist-val">0m</strong></div>
+            <div class="stat-row"><span>Bosses:</span><strong id="best-bosses-val">0</strong></div>
           </div>
+        </div>
+      </div>
+
+      <!-- Global Leaderboard -->
+      <div class="leaderboard-section">
+        <h3 class="stats-title">🏆 GLOBAL LEADERBOARD</h3>
+        <div class="leaderboard-scroll">
+          <table id="leaderboard-table" class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Rider</th>
+                <th>Time</th>
+                <th>Lvl</th>
+                <th>Kills</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+              <tr><td colspan="5" class="lb-loading">Loading...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
