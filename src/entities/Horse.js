@@ -32,6 +32,17 @@ export class Horse {
     this.stompRadius = 4.5;
     this.stompCooldown = 4.5;
     
+    // Newly Added Skills
+    this.regenRate = 0.0;
+    this.lightningCooldown = 3.5;
+    this.lightningTimer = 0.0;
+    this.lightningDamage = 0;
+    this.shieldCooldown = 12.0;
+    this.shieldTimer = 0.0;
+    this.hasShield = false;
+    this.ricochetBounces = 0;
+    this.pendingFrostNova = false;
+    
     // Auto-Shooting Cooldown Timer (in seconds)
     this.shootCooldown = 0.0;
     
@@ -47,6 +58,10 @@ export class Horse {
       orbiter: 0,
       trail: 0,
       stomp: 0,
+      regen: 0,
+      lightning: 0,
+      shield: 0,
+      bounce: 0,
     };
     
     // Construct the 3D Procedural Mesh Group
@@ -359,6 +374,19 @@ export class Horse {
    * Handle weapon auto-targeting and automatic fire
    */
   shoot(delta, enemies, spawnBulletCallback) {
+    // 1. Tick regeneration
+    if (this.regenRate && this.regenRate > 0 && this.hp < this.maxHp) {
+      this.hp = Math.min(this.maxHp, this.hp + this.regenRate * delta);
+    }
+
+    // 2. Tick frost shield recharges
+    if (this.activeUpgrades.shield > 0 && !this.hasShield) {
+      this.shieldTimer -= delta;
+      if (this.shieldTimer <= 0) {
+        this.hasShield = true;
+      }
+    }
+
     // Progress firing cooldown
     if (this.shootCooldown > 0) {
       this.shootCooldown -= delta;
@@ -407,6 +435,21 @@ export class Horse {
    * Apply health changes
    */
   takeDamage(amount) {
+    // If shield is active, completely block damage and trigger Frost Nova shockwave
+    if (this.hasShield) {
+      this.hasShield = false;
+      this.shieldTimer = this.shieldCooldown;
+      this.pendingFrostNova = true;
+
+      // Visual flash indicator for block on HUD damage overlay
+      const overlay = document.querySelector('.damage-overlay');
+      if (overlay) {
+        overlay.classList.add('block-flash');
+        setTimeout(() => overlay.classList.remove('block-flash'), 150);
+      }
+      return false; // Did not die
+    }
+
     this.hp = Math.max(0, this.hp - amount);
     
     // Add visual damage vignette flash on UI
@@ -515,6 +558,23 @@ export class Horse {
         this.stompDamage = (this.stompDamage || 0) + Math.round(30 * mult);
         this.stompRadius = (this.stompRadius || 4.5) + 1.2 * mult;
         this.stompCooldown = Math.max(1.5, (this.stompCooldown || 4.5) - 0.5 * mult);
+        break;
+      case 'regen':
+        this.activeUpgrades.regen++;
+        this.regenRate = (this.regenRate || 0.0) + 1.0 * mult;
+        break;
+      case 'lightning':
+        this.activeUpgrades.lightning++;
+        this.lightningDamage = (this.lightningDamage || 0) + Math.round(25 * mult);
+        this.lightningCooldown = Math.max(1.0, (this.lightningCooldown || 3.5) - 0.4 * mult);
+        break;
+      case 'shield':
+        this.activeUpgrades.shield++;
+        this.shieldCooldown = Math.max(3.5, (this.shieldCooldown || 12.0) - 1.5 * mult);
+        break;
+      case 'bounce':
+        this.activeUpgrades.bounce++;
+        this.ricochetBounces += Math.round(1 * mult);
         break;
     }
   }

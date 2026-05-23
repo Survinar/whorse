@@ -388,6 +388,133 @@ export class Game {
         return true;
       });
     }
+
+    // --- Tectonic Bolt (Lightning) ---
+    const activeLightning = this.horse.activeUpgrades.lightning || 0;
+    if (activeLightning > 0) {
+      this.horse.lightningTimer -= delta;
+      if (this.horse.lightningTimer <= 0) {
+        this.horse.lightningTimer = this.horse.lightningCooldown;
+
+        const range = 14.0;
+        const damage = this.horse.lightningDamage;
+
+        // Target a random active enemy in range
+        const candidates = this.enemies.filter(e => e.alive && playerPos.distanceTo(e.mesh.position) < range);
+        if (candidates.length > 0) {
+          const target = candidates[Math.floor(Math.random() * candidates.length)];
+          const targetPos = target.mesh.position.clone();
+
+          // Deal lightning bolt damage
+          const isDead = target.takeDamage(damage);
+          if (isDead) {
+            this.banishEnemy(target);
+          }
+
+          // Spawn electrical cyan vertical cylinder beam
+          const beamGeo = new THREE.CylinderGeometry(0.12, 0.42, 12, 8);
+          const beamMat = new THREE.MeshBasicMaterial({
+            color: 0x00e5ff, // electrical cyan ice glow
+            transparent: true,
+            opacity: 0.9,
+            depthWrite: false
+          });
+          const beamMesh = new THREE.Mesh(beamGeo, beamMat);
+          beamMesh.position.copy(targetPos);
+          beamMesh.position.y = 6.0;
+          this.scene.add(beamMesh);
+
+          // Sound and spark indicators
+          Sound.playXP();
+          this.particles.spawnHitSparks(targetPos);
+
+          this.lightningEffects = this.lightningEffects || [];
+          this.lightningEffects.push({
+            mesh: beamMesh,
+            geometry: beamGeo,
+            material: beamMat,
+            maxDuration: 0.22,
+            elapsed: 0.0
+          });
+        }
+      }
+    }
+
+    // Update active lightning effects
+    if (this.lightningEffects && this.lightningEffects.length > 0) {
+      this.lightningEffects.forEach(effect => {
+        effect.elapsed += delta;
+        const ratio = Math.min(1.0, effect.elapsed / effect.maxDuration);
+        effect.mesh.scale.x = 1.0 - ratio;
+        effect.mesh.scale.z = 1.0 - ratio;
+        effect.material.opacity = (1.0 - ratio) * 0.9;
+      });
+
+      this.lightningEffects = this.lightningEffects.filter(effect => {
+        if (effect.elapsed >= effect.maxDuration) {
+          this.scene.remove(effect.mesh);
+          effect.geometry.dispose();
+          effect.material.dispose();
+          return false;
+        }
+        return true;
+      });
+    }
+
+    // --- Frost Shield Nova Shockwave ---
+    if (this.horse.pendingFrostNova) {
+      this.horse.pendingFrostNova = false;
+
+      // Freeze all surrounding active beasts within 7 units for 2.5s!
+      const freezeRadius = 7.0;
+      for (const enemy of this.enemies) {
+        if (!enemy.alive) continue;
+        const edx = playerPos.x - enemy.mesh.position.x;
+        const edz = playerPos.z - enemy.mesh.position.z;
+        const distSq = edx * edx + edz * edz;
+
+        if (distSq < freezeRadius * freezeRadius) {
+          const originalSpeed = enemy.speed;
+          enemy.speed = 0.0;
+          enemy.flashWhite();
+          enemy.flashTimer = 2.5;
+
+          // Unfreeze after timer
+          setTimeout(() => {
+            if (enemy.alive) {
+              enemy.speed = originalSpeed;
+              enemy.resetColors();
+            }
+          }, 2500);
+        }
+      }
+
+      // Frost Ring Shockwave expansion ring visual
+      const frostRingGeo = new THREE.RingGeometry(0.1, freezeRadius, 32);
+      const frostRingMat = new THREE.MeshBasicMaterial({
+        color: 0x00e5ff,
+        transparent: true,
+        opacity: 0.85,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+      const frostMesh = new THREE.Mesh(frostRingGeo, frostRingMat);
+      frostMesh.rotation.x = -Math.PI / 2;
+      frostMesh.position.copy(playerPos);
+      frostMesh.position.y = 0.04;
+      this.scene.add(frostMesh);
+
+      // Play sound chime
+      Sound.playLevelUp();
+
+      this.stompEffects.push({
+        mesh: frostMesh,
+        geometry: frostRingGeo,
+        material: frostRingMat,
+        maxDuration: 0.45,
+        elapsed: 0.0
+      });
+    }
   }
 
   /**
@@ -467,8 +594,31 @@ export class Game {
           // Bullet pierce reduction
           bullet.pierce--;
           if (bullet.pierce <= 0) {
-            bullet.alive = false;
-            bullet.destroy();
+            // Check for Bouncing Ricochet Powerup
+            if (this.horse.activeUpgrades.bounce > 0 && (!bullet.bounces || bullet.bounces < this.horse.ricochetBounces)) {
+              bullet.bounces = (bullet.bounces || 0) + 1;
+              
+              const startPos = bullet.mesh.position.clone();
+              const candidates = this.enemies.filter(e => e !== enemy && e.alive && startPos.distanceTo(e.mesh.position) < 7.0);
+              if (candidates.length > 0) {
+                // Find nearest candidate
+                candidates.sort((a, b) => startPos.distanceToSquared(a.mesh.position) - startPos.distanceToSquared(b.mesh.position));
+                const nextTarget = candidates[0];
+                const direction = new THREE.Vector3().subVectors(nextTarget.mesh.position, startPos);
+                direction.y = 0;
+                direction.normalize();
+                
+                bullet.velocity.copy(direction).multiplyScalar(bullet.speed);
+                bullet.pierce = 1; // Reset pierce for the bounced hit
+                bullet.distanceTraveled = Math.max(0, bullet.distanceTraveled - 7.0); // Extend range slightly
+              } else {
+                bullet.alive = false;
+                bullet.destroy();
+              }
+            } else {
+              bullet.alive = false;
+              bullet.destroy();
+            }
           }
 
           // Handle Beast Banishment
@@ -772,6 +922,10 @@ export class Game {
       orbiter: '☀️ HALO',
       trail: '🔥 TRAIL',
       stomp: '👣 STMP',
+      regen: '🌿 REG',
+      lightning: '⚡ BOLT',
+      shield: '❄️ SHLD',
+      bounce: '☄️ BNC',
     };
 
     for (const [key, val] of Object.entries(this.horse.activeUpgrades)) {

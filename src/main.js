@@ -20,6 +20,10 @@ const UPGRADE_POOL = [
   { type: 'orbiter', title: 'SUN HALO', icon: '☀️', suit: '♦', rank: 'A' },
   { type: 'trail', title: 'EMBER TRAIL', icon: '🔥', suit: '♣', rank: 'Q' },
   { type: 'stomp', title: 'EARTH STOMP', icon: '👣', suit: '♠', rank: 'K' },
+  { type: 'regen', title: 'SPRING OF LIFE', icon: '🌿', suit: '♥', rank: 'Q' },
+  { type: 'lightning', title: 'TECTONIC BOLT', icon: '⚡', suit: '♠', rank: 'K' },
+  { type: 'shield', title: 'FROST GUARD', icon: '❄️', suit: '♣', rank: 'A' },
+  { type: 'bounce', title: 'RICOCHET', icon: '☄️', suit: '♦', rank: '10' },
 ];
 
 /**
@@ -48,6 +52,14 @@ function getUpgradeDescription(type, rarity) {
       return `Leaves a burning path that deals ${Math.round(12 * mult)}/s damage for ${Math.round((2.0 + 0.5 * mult) * 10) / 10}s.`;
     case 'stomp':
       return `Periodic ground stomp dealing ${Math.round(30 * mult)} AoE damage inside a ${Math.round((4.5 + 1.2 * mult) * 10) / 10}m radius.`;
+    case 'regen':
+      return `Restores ${Math.round(1.0 * mult * 10) / 10} HP every second passively.`;
+    case 'lightning':
+      return `Strikes random nearby beast with lightnings every ${Math.round(Math.max(1.0, 3.5 - 0.4 * mult) * 10) / 10}s dealing ${Math.round(25 * mult)} damage.`;
+    case 'shield':
+      return `Blocks the next hit and freezes all nearby beasts for 2.5s. Recharges in ${Math.round(Math.max(3.5, 12.0 - 1.5 * mult) * 10) / 10}s.`;
+    case 'bounce':
+      return `Main bullets bounce on impact up to ${Math.round(1 * mult)} time(s) seeking nearby targets.`;
     default:
       return '';
   }
