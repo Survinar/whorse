@@ -67,6 +67,7 @@ export class Game {
     // Initial camera placement - set instantly to avoid clipping inside the horse or ground!
     this.camera.position.set(this.horse.mesh.position.x, 22.0, this.horse.mesh.position.z + 11.5);
     this.camera.lookAt(this.horse.mesh.position.x, 0.4, this.horse.mesh.position.z);
+    this.camera.updateMatrixWorld(true);
   }
 
   /**

@@ -297,6 +297,9 @@ function startGame() {
   activeGame = new Game(scene, camera, triggerLevelUp, triggerGameOver);
   gameState = 'PLAYING';
   clock.getElapsedTime(); // Reset clock elapsed
+  
+  // Force instant WebGL render to spawn the horse instantly on screen!
+  renderer.render(scene, camera);
 }
 
 /**
@@ -472,6 +475,9 @@ function restartGame() {
   hudOverlay.classList.add('active');
   activeGame = new Game(scene, camera, triggerLevelUp, triggerGameOver);
   gameState = 'PLAYING';
+  
+  // Force instant WebGL render to spawn the horse instantly on screen!
+  renderer.render(scene, camera);
 
   // Play rebirth chime and start ambient background drone
   Sound.playLevelUp();
