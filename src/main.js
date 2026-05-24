@@ -88,7 +88,8 @@ const fullLeaderboardBody = document.getElementById('full-leaderboard-body');
 // Pause menu DOM hooks
 const pauseDialog = document.getElementById('pause-dialog');
 const resumeBtn = document.getElementById('resume-btn');
-const pauseRestartBtn = document.getElementById('pause-restart-btn');
+const pauseEndBtn = document.getElementById('pause-end-btn');
+const pauseMenuBtn = document.getElementById('pause-menu-btn');
 const pauseTime = document.getElementById('pause-time');
 const pauseKills = document.getElementById('pause-kills');
 
@@ -516,11 +517,28 @@ resumeBtn.addEventListener('click', () => {
     togglePause();
   }
 });
-pauseRestartBtn.addEventListener('click', () => {
+pauseEndBtn.addEventListener('click', () => {
   if (activeGame) {
     pauseDialog.close();
-    restartGame();
+    activeGame.gameOver(); // Ends run and submits score
   }
+});
+
+pauseMenuBtn.addEventListener('click', () => {
+  if (activeGame) {
+    activeGame.clear();
+    activeGame = null;
+  }
+  pauseDialog.close();
+  Sound.stopAmbientDrone();
+  gameState = 'START';
+  hudOverlay.classList.remove('active');
+  startScreen.classList.add('active');
+
+  // Relaunch the blurred forest preview game
+  activeGame = new Game(scene, camera, triggerLevelUp, triggerGameOver);
+  updateHighScoreDisplay();
+  refreshLeaderboard();
 });
 
 // Protect dialog components from native Escape desynchronizations

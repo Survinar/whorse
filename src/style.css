@@ -855,6 +855,12 @@ body {
   animation: dialogReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+.game-dialog::backdrop {
+  background: rgba(20, 14, 9, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
 .dialog-header {
   text-align: center;
   margin-bottom: 30px;
@@ -1132,11 +1138,34 @@ body {
   text-shadow: 0 0 5px rgba(212,175,55,0.4);
 }
 
+#pause-dialog {
+  padding: 30px 40px;
+}
+
+#pause-dialog .dialog-header {
+  margin-bottom: 14px;
+}
+
+#pause-dialog .dialog-subtitle {
+  margin-bottom: 10px;
+}
+
+#pause-dialog .pause-stats {
+  margin-bottom: 16px;
+}
+
 .pause-actions {
   display: flex;
   gap: 20px;
   width: 100%;
   justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .pause-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
 }
 
 /* ==========================================================================
