@@ -723,18 +723,18 @@ body {
   box-shadow: 0 0 12px rgba(255, 23, 68, 0.4), inset 0 1px 2px rgba(255,255,255,0.4);
 }
 
-/* Shimmering sunstone golden XP fill */
+/* Shimmering celestial blue XP fill */
 .xp-fill {
-  background: linear-gradient(90deg, #ff9800 0%, #ffc107 100%);
-  box-shadow: 0 0 12px rgba(255, 152, 0, 0.4), inset 0 1px 2px rgba(255,255,255,0.4);
+  background: linear-gradient(90deg, #0091ea 0%, #00e5ff 100%);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.4), inset 0 1px 2px rgba(255,255,255,0.4);
 }
 
-/* Gilded Level Badge inside XP HUD */
+/* Glowing Blue Level Badge inside XP HUD */
 #level-val {
-  color: var(--accent-gold);
+  color: #00e5ff;
   font-family: var(--font-display);
   font-weight: 700;
-  text-shadow: 0 0 5px rgba(212,175,55,0.6);
+  text-shadow: 0 0 6px rgba(0, 229, 255, 0.7);
 }
 
 /* Damage red warning vignettes */
