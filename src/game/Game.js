@@ -38,6 +38,7 @@ export class Game {
     this.xpOrbs = [];
     this.chests = [];
     this.bossTimer = 45.0; // Spawns a Boss Archon every 45s
+    this.bossesSpawned = 0; // Track total bosses spawned for early-game limiting
     this.explorationChestTimer = 25.0; // Spawns an exploration chest every 25s
 
     // Arrays for skills
@@ -148,20 +149,27 @@ export class Game {
     this.bossTimer -= delta;
     if (this.bossTimer <= 0) {
       this.bossTimer = 45.0; // reset
-      
-      // Instantiate boss off-screen first to access its procedurally generated name and scale it with time
-      const boss = new Enemy(this.scene, 'boss', this.horse.mesh.position, this.time);
-      this.enemies.push(boss);
 
-      // Trigger gold/red warning banner with procedural boss name
-      const banner = document.createElement('div');
-      banner.className = 'boss-banner';
-      banner.innerText = `⚠️ BOSS: ${boss.bossName.toUpperCase()} INCOMING! ⚠️`;
-      document.body.appendChild(banner);
-      setTimeout(() => banner.remove(), 3500);
+      // During the first 2 minutes, only allow 1 boss to spawn total
+      if (this.time < 120 && this.bossesSpawned >= 1) {
+        // Skip this spawn — too early for a second boss
+      } else {
+        this.bossesSpawned++;
 
-      // Play warning alert chime
-      Sound.playLevelUp();
+        // Instantiate boss off-screen first to access its procedurally generated name and scale it with time
+        const boss = new Enemy(this.scene, 'boss', this.horse.mesh.position, this.time);
+        this.enemies.push(boss);
+
+        // Trigger gold/red warning banner with procedural boss name
+        const banner = document.createElement('div');
+        banner.className = 'boss-banner';
+        banner.innerText = `⚠️ BOSS: ${boss.bossName.toUpperCase()} INCOMING! ⚠️`;
+        document.body.appendChild(banner);
+        setTimeout(() => banner.remove(), 3500);
+
+        // Play warning alert chime
+        Sound.playLevelUp();
+      }
     }
 
     // 9.6. Exploration Chest Spawner progression
