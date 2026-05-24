@@ -265,6 +265,30 @@
     </button>
   </dialog>
 
+  <!-- Upgrades Overview Modal Dialog -->
+  <dialog id="upgrades-overview-dialog" class="game-dialog glass-panel">
+    <div class="dialog-header">
+      <h2 class="dialog-title animate-neon">ACTIVE BLESSINGS</h2>
+      <p class="dialog-subtitle">Select a blessing card to view detail</p>
+    </div>
+
+    <div class="upgrades-overview-content">
+      <!-- Grid/List of active upgrades -->
+      <div id="active-upgrades-grid" class="upgrades-grid-container">
+        <!-- Dynamically populated with active upgrades -->
+      </div>
+      
+      <!-- Upgrade details block -->
+      <div id="upgrade-detail-view" class="upgrade-detail-box glass-panel-sm">
+        <p class="detail-placeholder">Select a blessing above to view description</p>
+      </div>
+    </div>
+
+    <button id="close-upgrades-btn" class="btn primary-btn pulse-glow" style="margin-top: 20px;">
+      CLOSE OVERVIEW
+    </button>
+  </dialog>
+
   <!-- Main JS entry script -->
   <script type="module" src="/src/main.js"></script>
 </body>

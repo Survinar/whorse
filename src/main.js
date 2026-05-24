@@ -93,6 +93,12 @@ const pauseMenuBtn = document.getElementById('pause-menu-btn');
 const pauseTime = document.getElementById('pause-time');
 const pauseKills = document.getElementById('pause-kills');
 
+// Active Upgrades Overview DOM Hooks
+const upgradesOverviewDialog = document.getElementById('upgrades-overview-dialog');
+const closeUpgradesBtn = document.getElementById('close-upgrades-btn');
+const activeUpgradesGrid = document.getElementById('active-upgrades-grid');
+const upgradeDetailView = document.getElementById('upgrade-detail-view');
+
 // Load saved username
 usernameInput.value = localStorage.getItem('whorse_username') || '';
 
@@ -545,6 +551,84 @@ pauseMenuBtn.addEventListener('click', () => {
   activeGame = new Game(scene, camera, triggerLevelUp, triggerGameOver);
   updateHighScoreDisplay();
   refreshLeaderboard();
+});
+
+// Active Upgrades Overview Controller functions
+function openUpgradesOverview() {
+  if (!activeGame || activeGame.isPaused) return;
+
+  // Pause active gameplay
+  activeGame.pauseGame();
+  Sound.stopAmbientDrone();
+
+  // Reset grid & detail views
+  activeUpgradesGrid.innerHTML = '';
+  upgradeDetailView.innerHTML = '<p class="detail-placeholder">Select a blessing card above to view detail</p>';
+
+  const upgradeMetadata = {
+    speed: { title: 'DAI TALPA', icon: '🏇', desc: 'NIGGA HORSE NEVER STOPS!! Increases maximum movement speed.' },
+    damage: { title: 'BILE GRELE', icon: '🔥', desc: 'Raises your bullet collision damage.' },
+    fireRate: { title: 'BINE AZI', icon: '🏹', desc: 'Shoots sparks faster by decreasing weapon cooldowns.' },
+    pierce: { title: 'SHARP FLINT', icon: '☄', desc: 'Projectiles pierce through additional shadow beasts.' },
+    magnet: { title: 'GOLDEN RESONANCE', icon: '🧲', desc: 'Extends your magnet resonance pull radius to collect XP orbs further away.' },
+    vitality: { title: 'BEER', icon: '♥', desc: 'Raises maximum horse health and fully heals HP.' },
+    nova: { title: 'SPLIT EMBER', icon: '🌀', desc: 'Fires an additional bullet backwards at partial damage.' },
+    orbiter: { title: 'SUN HALO', icon: '☀️', desc: 'Summons spinning fire embers dealing continuous burn damage.' },
+    trail: { title: 'EMBER TRAIL', icon: '🔥', desc: 'Leaves a burning trail path behind that burns traversing beasts.' },
+    stomp: { title: 'EARTH STOMP', icon: '👣', desc: 'Triggers periodic ground stomps dealing AoE force damage.' },
+    regen: { title: 'SPRING OF LIFE', icon: '🌿', desc: 'Restores health points passively every second.' },
+    lightning: { title: 'TECTONIC BOLT', icon: '⚡', desc: 'Strikes random nearby shadow beasts with lightnings.' },
+    shield: { title: 'FROST GUARD', icon: '❄️', desc: 'Frost guard blocks the next hit and freezes nearby enemies on rupture.' },
+    bounce: { title: 'RICOCHET', icon: '☄️', desc: 'Main sparks bounce on impact, seeking nearby targets.' },
+  };
+
+  for (const [key, val] of Object.entries(activeGame.horse.activeUpgrades)) {
+    const meta = upgradeMetadata[key];
+    if (meta) {
+      const tile = document.createElement('div');
+      tile.className = 'upgrade-tile';
+      tile.innerHTML = `
+        <div class="upgrade-tile-left">
+          <span class="upgrade-tile-icon">${meta.icon}</span>
+          <span class="upgrade-tile-name">${meta.title}</span>
+        </div>
+        <span class="upgrade-tile-count">x${val}</span>
+      `;
+      tile.addEventListener('click', () => {
+        // Mark selected tile
+        document.querySelectorAll('.upgrade-tile').forEach(t => t.classList.remove('selected'));
+        tile.classList.add('selected');
+
+        // Show detailed description
+        upgradeDetailView.innerHTML = `
+          <div style="text-align: center; width: 100%;">
+            <strong style="color: var(--accent-gold); letter-spacing: 0.05em; font-family: var(--font-display); font-size: 1.05rem; display: block; margin-bottom: 6px;">${meta.icon} ${meta.title} (Level ${val})</strong>
+            <p style="color: var(--text-primary); font-size: 0.85rem; line-height: 1.45; margin: 0;">${meta.desc}</p>
+          </div>
+        `;
+      });
+      activeUpgradesGrid.appendChild(tile);
+    }
+  }
+
+  upgradesOverviewDialog.showModal();
+}
+
+function closeUpgradesOverview() {
+  upgradesOverviewDialog.close();
+
+  if (activeGame) {
+    activeGame.resumeGame();
+    Sound.startAmbientDrone();
+  }
+}
+
+// Bind active upgrades overview action listeners
+closeUpgradesBtn.addEventListener('click', closeUpgradesOverview);
+window.addEventListener('open-upgrades-overview', openUpgradesOverview);
+upgradesOverviewDialog.addEventListener('cancel', (e) => {
+  e.preventDefault();
+  closeUpgradesOverview();
 });
 
 // Protect dialog components from native Escape desynchronizations

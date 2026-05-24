@@ -796,8 +796,11 @@ body {
 /* Active Upgrades HUD row */
 .active-upgrades-list {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 6px;
   padding-bottom: 6px;
+  max-width: 65%;
 }
 
 /* Active Upgrades HUD Badges */
@@ -1307,4 +1310,108 @@ body {
 }
 .damage-overlay.block-flash {
   animation: blockFlash 0.15s ease-out forwards;
+}
+
+/* Active Upgrades Overview Dialog Layout */
+.upgrades-overview-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 440px;
+  max-width: 90vw;
+}
+
+.upgrades-grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.upgrade-tile {
+  background: rgba(44, 26, 17, 0.88);
+  border: 1.5px solid #5a3c26;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.upgrade-tile:hover, .upgrade-tile.selected {
+  border-color: var(--accent-gold);
+  background: rgba(138, 92, 56, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(212, 175, 55, 0.25);
+}
+
+.upgrade-tile-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-grow: 1;
+}
+
+.upgrade-tile-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.upgrade-tile-name {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upgrade-tile-count {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--accent-gold);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  flex-shrink: 0;
+}
+
+.upgrade-detail-box {
+  width: 100%;
+  padding: 16px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  border: 1px dashed rgba(212, 175, 55, 0.25);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.detail-placeholder {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .upgrades-grid-container {
+    grid-template-columns: 1fr;
+  }
 }
