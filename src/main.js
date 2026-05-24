@@ -540,8 +540,10 @@ closeFullLbBtn.addEventListener('click', () => {
   fullLeaderboardDialog.close();
 });
 
-// Live Client-Side Leaderboard Search Filter
+// Live Client-Side Leaderboard Search Filter & Interactive Sorting
 let allLeaderboardScores = [];
+let currentSortKey = 'time';
+
 lbSearchInput.addEventListener('input', () => {
   const query = lbSearchInput.value.trim().toLowerCase();
   if (!query) {
@@ -554,13 +556,69 @@ lbSearchInput.addEventListener('input', () => {
   renderFullLeaderboard(filtered);
 });
 
+// Configure Click Sorting Event Listeners
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#full-lb-header-row th.sortable').forEach(header => {
+    header.addEventListener('click', () => {
+      const key = header.getAttribute('data-sort-key');
+      if (!key) return;
+      
+      currentSortKey = key;
+      
+      // Sort cached list descending by selected metric
+      allLeaderboardScores.sort((a, b) => {
+        const valA = a[key] || 0;
+        const valB = b[key] || 0;
+        return valB - valA;
+      });
+
+      // Update header highlighting & icons
+      document.querySelectorAll('#full-lb-header-row th.sortable').forEach(h => {
+        h.classList.remove('active-sort');
+        const icon = h.querySelector('.sort-icon');
+        if (icon) icon.textContent = '';
+      });
+      
+      header.classList.add('active-sort');
+      const icon = header.querySelector('.sort-icon');
+      if (icon) icon.textContent = '▼';
+
+      // Re-render, respecting current search query
+      const query = lbSearchInput.value.trim().toLowerCase();
+      if (!query) {
+        renderFullLeaderboard(allLeaderboardScores);
+      } else {
+        const filtered = allLeaderboardScores.filter(entry => 
+          (entry.username || 'Anonymous').toLowerCase().includes(query)
+        );
+        renderFullLeaderboard(filtered);
+      }
+    });
+  });
+});
+
 /**
  * Open the full leaderboard modal and fetch the top 100 runs.
  */
 function openFullLeaderboard() {
-  // Clear search and show loading state
+  // Clear search and reset sort indicators back to default 'time'
   lbSearchInput.value = '';
-  fullLeaderboardBody.innerHTML = '<tr><td colspan="5" class="lb-loading">Loading top 100 runs...</td></tr>';
+  currentSortKey = 'time';
+  
+  document.querySelectorAll('#full-lb-header-row th.sortable').forEach(h => {
+    h.classList.remove('active-sort');
+    const icon = h.querySelector('.sort-icon');
+    if (icon) icon.textContent = '';
+  });
+  
+  const timeHeader = document.querySelector('#full-lb-header-row th[data-sort-key="time"]');
+  if (timeHeader) {
+    timeHeader.classList.add('active-sort');
+    const icon = timeHeader.querySelector('.sort-icon');
+    if (icon) icon.textContent = '▼';
+  }
+
+  fullLeaderboardBody.innerHTML = '<tr><td colspan="7" class="lb-loading">Loading top 100 runs...</td></tr>';
   
   fullLeaderboardDialog.showModal();
 
@@ -568,7 +626,7 @@ function openFullLeaderboard() {
     allLeaderboardScores = scores;
     renderFullLeaderboard(scores);
   }).catch(() => {
-    fullLeaderboardBody.innerHTML = '<tr><td colspan="5" class="lb-loading">Failed to load leaderboard</td></tr>';
+    fullLeaderboardBody.innerHTML = '<tr><td colspan="7" class="lb-loading">Failed to load leaderboard</td></tr>';
   });
 }
 
@@ -580,13 +638,13 @@ function renderFullLeaderboard(scores) {
   const currentUsername = (usernameInput.value.trim()) || 'Anonymous';
   
   if (scores.length === 0) {
-    fullLeaderboardBody.innerHTML = '<tr><td colspan="5" class="lb-loading">No matching runs found</td></tr>';
+    fullLeaderboardBody.innerHTML = '<tr><td colspan="7" class="lb-loading">No matching runs found</td></tr>';
     return;
   }
 
   fullLeaderboardBody.innerHTML = '';
   scores.forEach((entry) => {
-    // Find absolute rank in the overall leaderboard
+    // Find absolute rank in the currently sorted overall leaderboard
     const absoluteIndex = allLeaderboardScores.findIndex(s => s.id === entry.id);
     const rank = absoluteIndex !== -1 ? absoluteIndex + 1 : '?';
     const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
@@ -603,6 +661,8 @@ function renderFullLeaderboard(scores) {
       <td>${timeStr}</td>
       <td>${entry.level || 1}</td>
       <td>${entry.kills || 0}</td>
+      <td>${Math.round(entry.distance || 0)}m</td>
+      <td>${entry.bosses || 0}</td>
     `;
     fullLeaderboardBody.appendChild(tr);
   });
@@ -616,7 +676,7 @@ function refreshLeaderboard() {
 
   fetchTopScores(3).then(scores => {
     if (scores.length === 0) {
-      leaderboardBody.innerHTML = '<tr><td colspan="5" class="lb-loading">No runs yet — be the first!</td></tr>';
+      leaderboardBody.innerHTML = '<tr><td colspan="7" class="lb-loading">No runs yet — be the first!</td></tr>';
       return;
     }
 
@@ -637,11 +697,13 @@ function refreshLeaderboard() {
         <td>${timeStr}</td>
         <td>${entry.level || 1}</td>
         <td>${entry.kills || 0}</td>
+        <td>${Math.round(entry.distance || 0)}m</td>
+        <td>${entry.bosses || 0}</td>
       `;
       leaderboardBody.appendChild(tr);
     });
   }).catch(() => {
-    leaderboardBody.innerHTML = '<tr><td colspan="5" class="lb-loading">Failed to load leaderboard</td></tr>';
+    leaderboardBody.innerHTML = '<tr><td colspan="7" class="lb-loading">Failed to load leaderboard</td></tr>';
   });
 }
 

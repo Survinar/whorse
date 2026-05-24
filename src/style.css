@@ -487,15 +487,38 @@ body {
 }
 
 .leaderboard-table th {
-  padding: 8px 10px;
+  padding: 8px 6px;
   color: var(--accent-gold);
   font-family: var(--font-display);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   text-align: left;
   border-bottom: 2px solid rgba(212, 175, 55, 0.3);
   text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  transition: all 0.2s ease;
+}
+
+.leaderboard-table th.sortable {
+  cursor: pointer;
+}
+
+.leaderboard-table th.sortable:hover {
+  color: #ffffff;
+  background: rgba(212, 175, 55, 0.15);
+}
+
+.leaderboard-table th.active-sort {
+  color: #ffffff;
+  border-bottom: 2px solid var(--accent-gold);
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.sort-icon {
+  font-size: 0.55rem;
+  margin-left: 2px;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .leaderboard-table th:first-child {
@@ -504,7 +527,7 @@ body {
 }
 
 .leaderboard-table td {
-  padding: 7px 10px;
+  padding: 7px 6px;
   color: var(--text-secondary);
   border-bottom: 1px solid rgba(90, 60, 38, 0.2);
   transition: background 0.2s ease;

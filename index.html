@@ -34,7 +34,8 @@
       <!-- Username Input -->
       <div class="username-row">
         <label for="username-input" class="username-label">RIDER NAME</label>
-        <input type="text" id="username-input" class="username-input" maxlength="16" placeholder="Anonymous" autocomplete="off" spellcheck="false">
+        <input type="text" id="username-input" class="username-input" maxlength="16" placeholder="Anonymous"
+          autocomplete="off" spellcheck="false">
       </div>
 
       <!-- High-fidelity Stats Board -->
@@ -50,10 +51,10 @@
             <div class="stat-row"><span>Bosses:</span><strong id="last-bosses-val">0</strong></div>
           </div>
         </div>
-        
+
         <!-- vertical divider line -->
         <div class="stats-col-divider"></div>
-        
+
         <!-- All-Time Records -->
         <div class="stats-col">
           <h3 class="stats-title">ALL-TIME</h3>
@@ -84,10 +85,14 @@
                 <th>Time</th>
                 <th>Lvl</th>
                 <th>Kills</th>
+                <th>Dist</th>
+                <th>Bosses</th>
               </tr>
             </thead>
             <tbody id="leaderboard-body">
-              <tr><td colspan="5" class="lb-loading">Loading...</td></tr>
+              <tr>
+                <td colspan="7" class="lb-loading">Loading...</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -220,29 +225,34 @@
   <!-- Full Leaderboard Modal Dialog -->
   <dialog id="full-leaderboard-dialog" class="game-dialog glass-panel large-dialog">
     <div class="dialog-header">
-      <h2 class="dialog-title animate-neon">🏆 GLOBAL LEADERBOARD</h2>
-      <p class="dialog-subtitle">All-time top runs by elite riders</p>
+      <h2 class="dialog-title animate-neon">GLOBAL LEADERBOARD</h2>
+      <p class="dialog-subtitle">All-time top runs</p>
     </div>
 
     <!-- Search Input Row -->
     <div class="search-row">
-      <input type="text" id="lb-search-input" class="username-input search-input" placeholder="🔍 Search Rider Name..." autocomplete="off" spellcheck="false">
+      <input type="text" id="lb-search-input" class="username-input search-input" placeholder="Search Rider..."
+        autocomplete="off" spellcheck="false">
     </div>
 
     <!-- Scrolling Table -->
     <div class="leaderboard-scroll large-scroll">
       <table class="leaderboard-table">
         <thead>
-          <tr>
+          <tr id="full-lb-header-row">
             <th>#</th>
             <th>Rider</th>
-            <th>Time</th>
-            <th>Lvl</th>
-            <th>Kills</th>
+            <th data-sort-key="time" class="sortable active-sort">Time <span class="sort-icon">▼</span></th>
+            <th data-sort-key="level" class="sortable">Lvl <span class="sort-icon"></span></th>
+            <th data-sort-key="kills" class="sortable">Kills <span class="sort-icon"></span></th>
+            <th data-sort-key="distance" class="sortable">Dist <span class="sort-icon"></span></th>
+            <th data-sort-key="bosses" class="sortable">Bosses <span class="sort-icon"></span></th>
           </tr>
         </thead>
         <tbody id="full-leaderboard-body">
-          <tr><td colspan="5" class="lb-loading">Loading...</td></tr>
+          <tr>
+            <td colspan="7" class="lb-loading">Loading...</td>
+          </tr>
         </tbody>
       </table>
     </div>
