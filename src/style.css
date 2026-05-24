@@ -30,9 +30,11 @@
   --card-text-red: #9e1b1b; /* Royal red wax seal ink */
   
   /* Typography */
-  --font-display: 'Cinzel', 'Georgia', serif; /* Ornate serif headers */
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; /* Ultra clean body */
-  --font-mono: 'Special Elite', 'Courier New', monospace; /* Typewriter stat counters */
+  --font-display: 'Cinzel Decorative', 'Cinzel', 'Georgia', serif; /* Ornate display headers */
+  --font-subdisplay: 'Cinzel', 'Georgia', serif; /* Clean Roman-serif headers */
+  --font-body: 'Cormorant Garamond', 'Georgia', serif; /* Rich calligraphic vintage card & story text */
+  --font-ui: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif; /* Ultra-clean premium modern UI elements */
+  --font-mono: 'Courier Prime', 'Courier New', monospace; /* Sharp typewriter stat counters */
 }
 
 /* Base Resets */
@@ -47,7 +49,7 @@
 body {
   background-color: var(--bg-color);
   color: var(--text-primary);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   overflow: hidden;
   width: 100vw;
   height: 100vh;
@@ -586,7 +588,7 @@ body {
   background: rgba(0, 0, 0, 0.4);
   border: 1px dashed rgba(202, 191, 168, 0.3);
   color: var(--text-primary);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
 }
 
 .search-input:focus {
