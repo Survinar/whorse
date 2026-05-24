@@ -90,6 +90,7 @@ const pauseDialog = document.getElementById('pause-dialog');
 const resumeBtn = document.getElementById('resume-btn');
 const pauseEndBtn = document.getElementById('pause-end-btn');
 const pauseMenuBtn = document.getElementById('pause-menu-btn');
+const pauseBlessingsBtn = document.getElementById('pause-blessings-btn');
 const pauseTime = document.getElementById('pause-time');
 const pauseKills = document.getElementById('pause-kills');
 
@@ -555,12 +556,18 @@ pauseMenuBtn.addEventListener('click', () => {
 });
 
 // Active Upgrades Overview Controller functions
-function openUpgradesOverview() {
-  if (!activeGame || activeGame.isPaused) return;
+let openedOverviewFromPause = false;
 
-  // Pause active gameplay
-  activeGame.pauseGame();
-  Sound.stopAmbientDrone();
+function openUpgradesOverview(fromPause = false) {
+  if (!activeGame) return;
+  // If not already paused (i.e. opened from HUD button), pause now
+  if (!activeGame.isPaused) {
+    activeGame.pauseGame();
+    Sound.stopAmbientDrone();
+  }
+  openedOverviewFromPause = fromPause;
+
+
 
   // Reset grid & detail views
   activeUpgradesGrid.innerHTML = '';
@@ -618,7 +625,11 @@ function openUpgradesOverview() {
 function closeUpgradesOverview() {
   upgradesOverviewDialog.close();
 
-  if (activeGame) {
+  if (openedOverviewFromPause) {
+    // Return to the pause menu instead of resuming gameplay
+    openedOverviewFromPause = false;
+    pauseDialog.showModal();
+  } else if (activeGame) {
     activeGame.resumeGame();
     Sound.startAmbientDrone();
   }
@@ -626,7 +637,11 @@ function closeUpgradesOverview() {
 
 // Bind active upgrades overview action listeners
 closeUpgradesBtn.addEventListener('click', closeUpgradesOverview);
-window.addEventListener('open-upgrades-overview', openUpgradesOverview);
+window.addEventListener('open-upgrades-overview', () => openUpgradesOverview(false));
+pauseBlessingsBtn.addEventListener('click', () => {
+  pauseDialog.close();
+  openUpgradesOverview(true);
+});
 upgradesOverviewDialog.addEventListener('cancel', (e) => {
   e.preventDefault();
   closeUpgradesOverview();
