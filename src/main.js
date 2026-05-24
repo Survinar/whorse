@@ -598,6 +598,16 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
+ * Helper to wrap any promise with a timeout.
+ */
+function withTimeout(promise, ms = 5000) {
+  const timeout = new Promise((_, reject) => 
+    setTimeout(() => reject(new Error('Network query timeout')), ms)
+  );
+  return Promise.race([promise, timeout]);
+}
+
+/**
  * Open the full leaderboard modal and fetch the top 100 runs.
  */
 function openFullLeaderboard() {
@@ -618,15 +628,32 @@ function openFullLeaderboard() {
     if (icon) icon.textContent = '▼';
   }
 
-  fullLeaderboardBody.innerHTML = '<tr><td colspan="7" class="lb-loading">Loading top 100 runs...</td></tr>';
+  // OPTIMISTIC RENDER: If we already have cached scores, render them immediately
+  // to avoid showing a blank loading table on reopen.
+  if (allLeaderboardScores && allLeaderboardScores.length > 0) {
+    allLeaderboardScores.sort((a, b) => (b.time || 0) - (a.time || 0));
+    renderFullLeaderboard(allLeaderboardScores);
+  } else {
+    fullLeaderboardBody.innerHTML = '<tr><td colspan="7" class="lb-loading">Loading top 100 runs...</td></tr>';
+  }
   
   fullLeaderboardDialog.showModal();
 
-  fetchTopScores(100).then(scores => {
+  // Background fetch with 5-second safety timeout
+  withTimeout(fetchTopScores(100), 5000).then(scores => {
     allLeaderboardScores = scores;
-    renderFullLeaderboard(scores);
-  }).catch(() => {
-    fullLeaderboardBody.innerHTML = '<tr><td colspan="7" class="lb-loading">Failed to load leaderboard</td></tr>';
+    
+    // Only re-render if the user hasn't started searching or sorted by a custom column in the meantime
+    const query = lbSearchInput.value.trim().toLowerCase();
+    if (!query && currentSortKey === 'time') {
+      renderFullLeaderboard(scores);
+    }
+  }).catch((err) => {
+    console.warn('[Leaderboard] Background refresh failed or timed out:', err);
+    // Show network timeout error only if we don't have any cached scores on screen
+    if (!allLeaderboardScores || allLeaderboardScores.length === 0) {
+      fullLeaderboardBody.innerHTML = '<tr><td colspan="7" class="lb-loading">Failed to load leaderboard (network timeout)</td></tr>';
+    }
   });
 }
 
