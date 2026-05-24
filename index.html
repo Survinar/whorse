@@ -69,7 +69,12 @@
 
       <!-- Global Leaderboard -->
       <div class="leaderboard-section">
-        <h3 class="stats-title">🏆 GLOBAL LEADERBOARD</h3>
+        <div class="leaderboard-header-row">
+          <h3 class="stats-title lb-title">GLOBAL LEADERBOARD</h3>
+          <button id="view-full-lb-btn" class="btn secondary-btn lb-btn">
+            VIEW FULL LEADERBOARD
+          </button>
+        </div>
         <div class="leaderboard-scroll">
           <table id="leaderboard-table" class="leaderboard-table">
             <thead>
@@ -86,9 +91,6 @@
             </tbody>
           </table>
         </div>
-        <button id="view-full-lb-btn" class="btn secondary-btn lb-btn">
-          VIEW FULL LEADERBOARD
-        </button>
       </div>
 
       <button id="start-btn" class="btn primary-btn pulse-glow">
