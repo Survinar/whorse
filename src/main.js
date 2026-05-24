@@ -176,7 +176,8 @@ function setupInputListeners() {
       
       activeGame.horse.hp = activeGame.horse.maxHp;
       activeGame.horse.xp = 0;
-      activeGame.horse.maxXp = Math.floor(10 + activeGame.horse.level * 4.5);
+      const scaleFactor = activeGame.horse.level < 20 ? 1.5 : 4.5;
+      activeGame.horse.maxXp = Math.floor(10 + activeGame.horse.level * scaleFactor);
       activeGame.updateHUD();
       activeGame.refreshUpgradeHUD();
 

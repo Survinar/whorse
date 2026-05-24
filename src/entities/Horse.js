@@ -481,7 +481,9 @@ export class Horse {
       this.level++;
       
       // Scale XP cap per level to maintain progression difficulty
-      this.maxXp = Math.floor(10 + this.level * 4.5);
+      // Below level 20, the scale factor is only 1.5 to make early leveling smoother and easier
+      const scaleFactor = this.level < 20 ? 1.5 : 4.5;
+      this.maxXp = Math.floor(10 + this.level * scaleFactor);
       
       return true; // Leveled up!
     }
@@ -495,7 +497,8 @@ export class Horse {
   instantLevelUp() {
     this.level++;
     this.xp = 0;
-    this.maxXp = Math.floor(10 + this.level * 4.5);
+    const scaleFactor = this.level < 20 ? 1.5 : 4.5;
+    this.maxXp = Math.floor(10 + this.level * scaleFactor);
     this.hp = this.maxHp;
     
     // Remove low health UI pulse if fully healed
