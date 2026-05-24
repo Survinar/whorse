@@ -30,11 +30,11 @@
   --card-text-red: #9e1b1b; /* Royal red wax seal ink */
   
   /* Typography */
-  --font-display: 'Cinzel Decorative', 'Cinzel', 'Georgia', serif; /* Ornate display headers */
-  --font-subdisplay: 'Cinzel', 'Georgia', serif; /* Clean Roman-serif headers */
-  --font-body: 'Cormorant Garamond', 'Georgia', serif; /* Rich calligraphic vintage card & story text */
-  --font-ui: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif; /* Ultra-clean premium modern UI elements */
-  --font-mono: 'Courier Prime', 'Courier New', monospace; /* Sharp typewriter stat counters */
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif; /* Clean readable geometric headers */
+  --font-subdisplay: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif; /* Clean readable geometric subheaders */
+  --font-body: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif; /* Clean highly readable body text */
+  --font-ui: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif; /* Clean readable modern UI elements */
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace; /* Sharp modern readable stats counters */
 }
 
 /* Base Resets */
