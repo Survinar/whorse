@@ -210,6 +210,17 @@ export class Forest {
       this.moonLight.target.updateMatrixWorld();
     }
 
+    // Infinite wrapping ground plane and grid helper (modular 10-unit stepping)
+    // Spaced at 10 units so it snaps and overlaps perfectly, keeping world coordinates looking static
+    if (this.groundMesh) {
+      this.groundMesh.position.x = Math.round(playerPosition.x / 10) * 10;
+      this.groundMesh.position.z = Math.round(playerPosition.z / 10) * 10;
+    }
+    if (this.gridHelper) {
+      this.gridHelper.position.x = Math.round(playerPosition.x / 10) * 10;
+      this.gridHelper.position.z = Math.round(playerPosition.z / 10) * 10;
+    }
+
     // Wrapping check for trees
     for (const tree of this.trees) {
       const dx = tree.mesh.position.x - playerPosition.x;
