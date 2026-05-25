@@ -901,5 +901,34 @@ window.addEventListener('DOMContentLoaded', () => {
   gameState = 'START';
   updateHighScoreDisplay();
   refreshLeaderboard();
+  loadVersionTag(); // Fetch and render dynamic build number from GitHub Pages deployments
   animate();
 });
+
+/**
+ * Fetch and display the dynamic GitHub Pages deployment version number
+ */
+async function loadVersionTag() {
+  const versionTag = document.getElementById('version-tag');
+  if (!versionTag) return;
+
+  try {
+    const response = await fetch('https://api.github.com/repos/Survinar/whorse/deployments?per_page=1');
+    const linkHeader = response.headers.get('Link');
+    let count = 121; // Current deployment baseline count
+    if (linkHeader) {
+      const match = linkHeader.match(/page=(\d+)>; rel="last"/);
+      if (match) {
+        count = parseInt(match[1], 10);
+      }
+    } else {
+      const data = await response.json();
+      if (Array.isArray(data) && data.length > 0) {
+        count = data.length;
+      }
+    }
+    versionTag.innerText = `Build #${count}`;
+  } catch (e) {
+    versionTag.innerText = 'Build #121'; // Graceful offline/rate-limited fallback
+  }
+}
