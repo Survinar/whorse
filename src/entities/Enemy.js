@@ -68,8 +68,8 @@ export class Enemy {
       case 'wolf':
         this.hp = 20;
         this.maxHp = 20;
-        this.speed = 4.8;
-        this.damage = 10;
+        this.speed = 4.2;
+        this.damage = 7;
         this.collisionRadius = 0.6;
         this.xpValue = 1;
         break;
@@ -84,24 +84,24 @@ export class Enemy {
       case 'wisp':
         this.hp = 12;
         this.maxHp = 12;
-        this.speed = 3.6;
-        this.damage = 15;
+        this.speed = 3.3;
+        this.damage = 10;
         this.collisionRadius = 0.5;
         this.xpValue = 1;
         break;
       case 'spider':
         this.hp = 8;
         this.maxHp = 8;
-        this.speed = 5.2;
-        this.damage = 8;
+        this.speed = 4.6;
+        this.damage = 5;
         this.collisionRadius = 0.45;
         this.xpValue = 1;
         break;
       case 'boar':
         this.hp = 45;
         this.maxHp = 45;
-        this.speed = 4.2;
-        this.damage = 18;
+        this.speed = 3.8;
+        this.damage = 12;
         this.collisionRadius = 0.75;
         this.xpValue = 2;
         break;
@@ -109,7 +109,7 @@ export class Enemy {
         this.hp = 300;
         this.maxHp = 300;
         this.speed = this.bossShape === 'wisp' ? 4.3 : (this.bossShape === 'golem' ? 3.0 : 3.8);
-        this.damage = this.bossShape === 'golem' ? 50 : 38;
+        this.damage = this.bossShape === 'golem' ? 40 : 30;
         this.collisionRadius = this.bossShape === 'golem' ? 1.8 : (this.bossShape === 'beast' ? 1.6 : 1.4);
         this.xpValue = 0; // Drops Treasure Chest instead of XP gems
         break;
@@ -117,13 +117,13 @@ export class Enemy {
 
     // Infinite scaling over time:
     if (gameTime > 0) {
-      // HP increases by 1.8% per second infinitely (+108% per minute)
-      const hpMultiplier = 1.0 + gameTime * 0.018;
+      // HP increases by 0.8% per second infinitely (+48% per minute, was 1.8%/sec)
+      const hpMultiplier = 1.0 + gameTime * 0.008;
       this.maxHp = Math.round(this.maxHp * hpMultiplier);
       this.hp = this.maxHp;
 
-      // Damage increases by 1.0% per second infinitely (+60% per minute)
-      const dmgMultiplier = 1.0 + gameTime * 0.01;
+      // Damage increases by 0.5% per second infinitely (+30% per minute, was 1.0%/sec)
+      const dmgMultiplier = 1.0 + gameTime * 0.005;
       this.damage = Math.round(this.damage * dmgMultiplier);
 
       // Speed increases by 0.1% per second infinitely, capped at a playable 9.0

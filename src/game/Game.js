@@ -29,7 +29,7 @@ export class Game {
 
     // Difficulty scaling & spawn timer
     this.spawnTimer = 1.0;
-    this.baseSpawnInterval = 2.4; // Seconds between spawns
+    this.baseSpawnInterval = 2.8; // Seconds between spawns (was 2.4s)
     this.spawnInterval = this.baseSpawnInterval;
     
     // Arrays for entities
@@ -716,8 +716,8 @@ export class Game {
     chest.destroy();
 
     if (chest.type === 'exploration') {
-      // 1. Exploration Chest Reward: 40% health restoration + 60% level XP boost
-      const healAmount = Math.round(this.horse.maxHp * 0.4);
+      // 1. Exploration Chest Reward: 50% health restoration + 60% level XP boost
+      const healAmount = Math.round(this.horse.maxHp * 0.5);
       this.horse.hp = Math.min(this.horse.maxHp, this.horse.hp + healAmount);
       
       const xpReward = Math.round(this.horse.maxXp * 0.6);
@@ -809,13 +809,13 @@ export class Game {
     this.spawnTimer -= delta;
 
     if (this.spawnTimer <= 0) {
-      // 1. Determine spawn count (group size) based on survival time
+      // 1. Determine spawn count (group size) based on survival time (tuned to scale slower)
       let spawnCount = 1;
-      if (this.time < 30) {
+      if (this.time < 45) {
         spawnCount = 1;
-      } else if (this.time < 60) {
+      } else if (this.time < 90) {
         spawnCount = Math.floor(Math.random() * 2) + 1; // 1 to 2 enemies
-      } else if (this.time < 120) {
+      } else if (this.time < 150) {
         spawnCount = Math.floor(Math.random() * 2) + 2; // 2 to 3 enemies
       } else {
         spawnCount = Math.floor(Math.random() * 3) + 2; // 2 to 4 enemies
@@ -826,17 +826,17 @@ export class Game {
         let type = 'wolf';
         const roll = Math.random();
 
-        if (this.time < 30) {
-          // Phase 1 (0-30s): Quick Wolves and creepy Spiders
+        if (this.time < 45) {
+          // Phase 1 (0-45s): Quick Wolves and creepy Spiders
           type = roll > 0.5 ? 'spider' : 'wolf';
-        } else if (this.time < 75) {
-          // Phase 2 (30-75s): Wolves, Spiders, Wisps, and charging Boars
+        } else if (this.time < 105) {
+          // Phase 2 (45-105s): Wolves, Spiders, Wisps, and charging Boars
           if (roll > 0.9) type = 'boar';
           else if (roll > 0.7) type = 'wisp';
           else if (roll > 0.35) type = 'spider';
           else type = 'wolf';
         } else {
-          // Phase 3 (75s+): Heavy Ent tanks, Boars, Wisps, Spiders, and Wolves swarming
+          // Phase 3 (105s+): Heavy Ent tanks, Boars, Wisps, Spiders, and Wolves swarming
           if (roll > 0.85) type = 'ent';
           else if (roll > 0.65) type = 'boar';
           else if (roll > 0.5) type = 'wisp';
@@ -849,8 +849,8 @@ export class Game {
         this.enemies.push(beast);
       }
 
-      // 3. Scale spawn frequency down aggressively over time (max 0.4s spawn interval)
-      this.spawnInterval = Math.max(0.4, this.baseSpawnInterval - this.time * 0.016);
+      // 3. Scale spawn frequency down gentler over time (max 0.4s spawn interval, scaled at 0.010 instead of 0.016)
+      this.spawnInterval = Math.max(0.4, this.baseSpawnInterval - this.time * 0.010);
       this.spawnTimer = this.spawnInterval;
     }
   }

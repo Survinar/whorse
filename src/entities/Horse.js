@@ -10,16 +10,16 @@ export class Horse {
     this.scene = scene;
     
     // Core Gameplay Stats
-    this.hp = 100;
-    this.maxHp = 100;
+    this.hp = 120;
+    this.maxHp = 120;
     this.level = 1;
     this.xp = 0;
     this.maxXp = 10;
-    this.speed = 6.0;
-    this.damage = 15;
+    this.speed = 6.2;
+    this.damage = 20;
     this.fireRate = 1.0; // Shots per second
     this.range = 22.0;
-    this.pierce = 1;
+    this.pierce = 2;
     this.magnetRange = 5.5;
     
     // Skill backing statistics
