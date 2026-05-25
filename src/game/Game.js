@@ -7,6 +7,7 @@ import { Enemy } from '../entities/Enemy.js';
 import { XPOrb } from '../entities/XPOrb.js';
 import { Chest } from '../entities/Chest.js';
 import { Sound } from './Sound.js';
+import { Portal } from '../entities/Portal.js';
 
 /**
  * Game.js - Core State Coordinator
@@ -41,6 +42,12 @@ export class Game {
     this.bossesSpawned = 0; // Track total bosses spawned for early-game limiting
     this.explorationChestTimer = 25.0; // Spawns an exploration chest every 25s
     this.lastMinuteLeveled = 10; // Post 10-minute scaling minute tracker
+    
+    // Level 2 Portal states
+    this.portal = null;
+    this.isInHellLandscape = false;
+    this.portalDelayTime = 0.0;
+    this.lastPortalDelayTens = 0;
 
     // Arrays for skills
     this.orbiters = [];
@@ -82,8 +89,13 @@ export class Game {
   update(delta, keys) {
     if (this.isPaused || this.isGameOver) return;
 
-    // 1. Advance timers
-    this.time += delta;
+    // 1. Advance timers (stop survival timer if portal is active and player hasn't crossed it)
+    const isTimerStopped = this.portal && !this.isInHellLandscape;
+    if (!isTimerStopped) {
+      this.time += delta;
+    } else {
+      this.portalDelayTime += delta;
+    }
     this.updateHUD();
 
     // Keep track of horse position prior to movement to accumulate distance run
@@ -133,6 +145,58 @@ export class Game {
     this.chests.forEach(chest => chest.update(delta));
     this.enemies.forEach(e => e.update(delta, this.horse.mesh.position, this.forest, this.enemies));
     this.particles.update(delta, this.horse.mesh.position);
+
+    // Update Volcanic Rift Portal if active
+    if (this.portal && !this.isInHellLandscape) {
+      this.portal.update(delta);
+      
+      // Update portal indicator screen-space pointer
+      const pointer = document.getElementById('portal-pointer');
+      const arrowWrap = document.getElementById('portal-arrow-wrap');
+      const distVal = document.getElementById('portal-dist');
+      if (pointer && arrowWrap && distVal) {
+        pointer.classList.remove('hidden');
+        const dx = this.portal.position.x - this.horse.mesh.position.x;
+        const dz = this.portal.position.z - this.horse.mesh.position.z;
+        const distance = Math.round(Math.sqrt(dx * dx + dz * dz));
+        distVal.innerText = `${distance}m`;
+
+        const angleRad = Math.atan2(dz, dx);
+        const angleDeg = angleRad * (180 / Math.PI);
+        arrowWrap.style.transform = `rotate(${angleDeg}deg)`;
+      }
+
+      // Check collision to trigger volcanic landscape transition
+      if (this.portal.checkCollision(this.horse.mesh.position, this.horse.collisionRadius)) {
+        this.enterPortal();
+      }
+
+      // Check aggressive scaling waves every 10s of delay
+      const delayTens = Math.floor(this.portalDelayTime / 10);
+      if (delayTens > this.lastPortalDelayTens) {
+        this.lastPortalDelayTens = delayTens;
+        
+        // Synthesizer warning chime
+        Sound.playLevelUp();
+
+        // Warning banner alert
+        const banner = document.createElement('div');
+        banner.className = 'boss-banner';
+        banner.style.background = 'linear-gradient(to right, rgba(230, 81, 0, 0.95), rgba(183, 28, 28, 0.95))';
+        banner.style.borderColor = '#ff1744';
+        banner.style.boxShadow = '0 0 20px #ff1744';
+        banner.innerText = `🚨 RIFT INTRUSION THREAT LEVEL ${delayTens} DETECTED! 🚨`;
+        document.body.appendChild(banner);
+        setTimeout(() => banner.remove(), 2500);
+
+        // Screen ripple flash
+        const flash = document.getElementById('screen-flash');
+        if (flash) {
+          flash.classList.add('flash-active');
+          setTimeout(() => flash.classList.remove('flash-active'), 100);
+        }
+      }
+    }
 
     // 6.5. Update Skills (Orbiters, Trails, and Stomps)
     this.updateSkills(delta, dx, dz);
@@ -201,6 +265,21 @@ export class Game {
         // Play warning alert chime
         Sound.playLevelUp();
       }
+    }
+
+    // Spawn Level 2 portal once survival time exceeds 10 minutes (600s)
+    if (this.time >= 600.0 && !this.portal && !this.isInHellLandscape) {
+      this.portal = new Portal(this.scene, this.horse.mesh.position);
+
+      // Warning alert banner
+      const banner = document.createElement('div');
+      banner.className = 'boss-banner';
+      banner.innerText = `🚨 VOLCANIC RIFT DETECTED: FIND THE PORTAL! 🚨`;
+      document.body.appendChild(banner);
+      setTimeout(() => banner.remove(), 4000);
+
+      // Play alert chime
+      Sound.playLevelUp();
     }
 
     // 10. Check Level Up triggers
@@ -908,6 +987,12 @@ export class Game {
         spawnCount += extraSpawns;
       }
 
+      // Aggressive spawning increase during portal delay phase
+      if (this.portal && !this.isInHellLandscape) {
+        const delayTens = Math.floor(this.portalDelayTime / 10);
+        spawnCount += delayTens * 2; // Swarms swell rapidly
+      }
+
       // 2. Spawn the group of shadow beasts
       for (let i = 0; i < spawnCount; i++) {
         let type = 'wolf';
@@ -931,8 +1016,15 @@ export class Game {
           else type = 'wolf';
         }
 
-        // Instantiate off-screen with infinite time scaling
-        const beast = new Enemy(this.scene, type, this.horse.mesh.position, this.time);
+        // Determine aggressive difficulty scaling factor if active
+        let portalScaling = 1.0;
+        if (this.portal && !this.isInHellLandscape) {
+          const delayTens = Math.floor(this.portalDelayTime / 10);
+          portalScaling = Math.pow(1.25, delayTens); // Compounding +25% every 10s
+        }
+
+        // Instantiate off-screen with infinite time scaling and portal scaling
+        const beast = new Enemy(this.scene, type, this.horse.mesh.position, this.time, portalScaling);
         this.enemies.push(beast);
       }
 
@@ -943,6 +1035,13 @@ export class Game {
         minInterval = Math.max(0.12, 0.4 - minutesPast10 * 0.05); // Drop limit by -0.05s per minute down to 0.12s
       }
       this.spawnInterval = Math.max(minInterval, this.baseSpawnInterval - this.time * 0.010);
+      
+      // Aggressive spawner frequency acceleration during portal delay
+      if (this.portal && !this.isInHellLandscape) {
+        const delayTens = Math.floor(this.portalDelayTime / 10);
+        this.spawnInterval = Math.max(0.08, this.spawnInterval * Math.pow(0.75, delayTens)); // Accelerate down to 0.08s limit
+      }
+
       this.spawnTimer = this.spawnInterval;
     }
   }
@@ -1023,7 +1122,11 @@ export class Game {
     let threatText = 'STABLE';
     let threatClass = 'threat-level-low';
     
-    if (this.time < 120) {
+    if (this.isInHellLandscape) {
+      const currentMinute = Math.floor(this.time / 60);
+      threatText = `HELL (LVL ${currentMinute})`;
+      threatClass = 'threat-level-critical'; // Pulse red in hell!
+    } else if (this.time < 120) {
       threatText = 'STABLE';
       threatClass = 'threat-level-low';
     } else if (this.time < 240) {
@@ -1173,6 +1276,20 @@ export class Game {
    */
   clear() {
     this.isGameOver = true;
+
+    // Clean up level 2 portal
+    if (this.portal) {
+      this.portal.destroy();
+      this.portal = null;
+    }
+    this.isInHellLandscape = false;
+    this.portalDelayTime = 0.0;
+    this.lastPortalDelayTens = 0;
+
+    const pointer = document.getElementById('portal-pointer');
+    if (pointer) {
+      pointer.classList.add('hidden');
+    }
     
     // Dispose entities
     this.bullets.forEach(b => b.destroy());
@@ -1240,5 +1357,60 @@ export class Game {
         }
       });
     }
+  }
+
+  /**
+   * Enter the Level 2 Portal and transition to the chaotic hell landscape
+   */
+  enterPortal() {
+    this.isInHellLandscape = true;
+
+    // 1. Play dramatic procedural whoosh sound effect
+    Sound.playPortalHellTransition();
+
+    // 2. Trigger gorgeous full screen flash overlay
+    const flash = document.getElementById('screen-flash');
+    if (flash) {
+      flash.classList.add('flash-active');
+      setTimeout(() => {
+        flash.classList.remove('flash-active');
+      }, 50);
+    }
+
+    // 3. Welcome Alert Banner
+    const banner = document.createElement('div');
+    banner.className = 'boss-banner';
+    banner.style.background = 'linear-gradient(to right, rgba(211, 47, 47, 0.95), rgba(120, 10, 10, 0.95))';
+    banner.style.borderColor = '#ff3300';
+    banner.style.boxShadow = '0 0 25px #ff3300';
+    banner.innerText = `🔥 WELCOME TO HELL 🔥`;
+    document.body.appendChild(banner);
+    setTimeout(() => banner.remove(), 4000);
+
+    // 4. Transition Environment
+    this.forest.transitionToHell();
+
+    // 5. Transition ambient fireflies to upward rising embers
+    this.particles.transitionToHell();
+
+    // 6. Banish all active forest beasts in visual sparkles
+    this.enemies.forEach(e => {
+      this.particles.spawnHitSparks(e.mesh.position);
+      e.destroy();
+    });
+    this.enemies = [];
+
+    // 7. Hide portal pointing pointer UI
+    const pointer = document.getElementById('portal-pointer');
+    if (pointer) {
+      pointer.classList.add('hidden');
+    }
+
+    // 8. Clean up portal mesh
+    if (this.portal) {
+      this.portal.destroy();
+      this.portal = null;
+    }
+    this.portalDelayTime = 0.0;
   }
 }

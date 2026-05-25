@@ -327,6 +327,59 @@ class SoundManager {
   }
 
   /**
+   * Play portal hell transition sound - low volcanic explosion coupled with howling wind synth WHOOSH
+   */
+  playPortalHellTransition() {
+    if (!this.initialized || this.muted) return;
+    const ctx = this.ctx;
+    if (ctx.state === 'suspended') ctx.resume();
+
+    const time = ctx.currentTime;
+    
+    // 1. Deep rumbling volcanic explosion sweep (low-frequency sawtooth)
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(120, time);
+    osc.frequency.exponentialRampToValueAtTime(15, time + 1.2);
+    
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(250, time);
+    filter.frequency.exponentialRampToValueAtTime(30, time + 1.2);
+    
+    gain.gain.setValueAtTime(0.35, time);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 1.2);
+    
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.start(time);
+    osc.stop(time + 1.25);
+
+    // 2. High-pitched screaming howling wind sweep (triangle sweep up & down)
+    const windOsc = ctx.createOscillator();
+    const windGain = ctx.createGain();
+    
+    windOsc.type = 'triangle';
+    windOsc.frequency.setValueAtTime(350, time);
+    windOsc.frequency.exponentialRampToValueAtTime(1400, time + 0.6);
+    windOsc.frequency.exponentialRampToValueAtTime(180, time + 1.2);
+    
+    windGain.gain.setValueAtTime(0.0, time);
+    windGain.gain.linearRampToValueAtTime(0.18, time + 0.45);
+    windGain.gain.exponentialRampToValueAtTime(0.001, time + 1.25);
+    
+    windOsc.connect(windGain);
+    windGain.connect(ctx.destination);
+    
+    windOsc.start(time);
+    windOsc.stop(time + 1.25);
+  }
+
+  /**
    * Stop ambient drone (e.g. for pause or mute)
    */
   stopAmbientDrone() {

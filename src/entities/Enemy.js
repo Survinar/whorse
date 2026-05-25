@@ -6,7 +6,7 @@ import * as THREE from 'three';
  * with flocking repulsions, pathfinding, and hit-flash states.
  */
 export class Enemy {
-  constructor(scene, type, playerPosition, gameTime = 0) {
+  constructor(scene, type, playerPosition, gameTime = 0, portalScaling = 1.0) {
     this.scene = scene;
     this.type = type;
     this.alive = true;
@@ -38,7 +38,7 @@ export class Enemy {
     }
 
     // Set type-specific attributes
-    this.setupStats(gameTime);
+    this.setupStats(gameTime, portalScaling);
     
     // Spawns in a random ring just outside the camera viewport (28-32 units away)
     const spawnAngle = Math.random() * Math.PI * 2;
@@ -63,7 +63,7 @@ export class Enemy {
   /**
    * Set specific archetype attributes
    */
-  setupStats(gameTime = 0) {
+  setupStats(gameTime = 0, portalScaling = 1.0) {
     switch (this.type) {
       case 'wolf':
         this.hp = 20;
@@ -149,6 +149,18 @@ export class Enemy {
       }
     } else {
       this.sizeScale = 1.0;
+    }
+
+    // Apply aggressive portal delay scaling if active
+    if (portalScaling > 1.0) {
+      this.maxHp = Math.round(this.maxHp * portalScaling);
+      this.hp = this.maxHp;
+      this.damage = Math.round(this.damage * portalScaling);
+      
+      // Visually grow delayed portal-intrusion beasts to look massive
+      const sizeBoost = (portalScaling - 1.0) * 0.45;
+      this.sizeScale = Math.min(3.2, this.sizeScale + sizeBoost);
+      this.collisionRadius *= (1.0 + sizeBoost);
     }
   }
 

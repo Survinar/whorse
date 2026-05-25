@@ -222,10 +222,19 @@ export class ParticleEngine {
     for (const f of this.fireflies) {
       f.time += delta;
       
-      // Gentle floating sine wave drift
-      f.mesh.position.y = f.baseY + Math.sin(f.time * f.speed) * 0.5;
-      f.mesh.position.x += Math.cos(f.time * f.wobbleSpeed) * 0.02;
-      f.mesh.position.z += Math.sin(f.time * f.wobbleSpeed) * 0.02;
+      // Gentle floating sine wave drift or upward volcanic ember draft
+      if (this.isHell) {
+        f.mesh.position.y += delta * f.speed * 1.6;
+        if (f.mesh.position.y > f.baseY + 5.0) {
+          f.mesh.position.y = 0.5; // Loop back near ground
+        }
+        f.mesh.position.x += Math.cos(f.time * f.wobbleSpeed) * 0.04;
+        f.mesh.position.z += Math.sin(f.time * f.wobbleSpeed) * 0.04;
+      } else {
+        f.mesh.position.y = f.baseY + Math.sin(f.time * f.speed) * 0.5;
+        f.mesh.position.x += Math.cos(f.time * f.wobbleSpeed) * 0.02;
+        f.mesh.position.z += Math.sin(f.time * f.wobbleSpeed) * 0.02;
+      }
 
       // Glow pulse blinking
       f.mesh.material.opacity = 0.3 + Math.abs(Math.sin(f.time * f.blinkSpeed)) * 0.6;
@@ -271,6 +280,50 @@ export class ParticleEngine {
       const ratio = p.life / p.maxLife;
       p.mesh.scale.set(ratio, ratio, ratio);
       p.mesh.material.opacity = ratio;
+    }
+  }
+
+  /**
+   * Transition fireflies into glowing volcanic embers
+   */
+  transitionToHell() {
+    this.isHell = true;
+
+    // Remove green forest fireflies
+    this.fireflies.forEach(f => {
+      this.scene.remove(f.mesh);
+      f.mesh.geometry.dispose();
+      f.mesh.material.dispose();
+    });
+    this.fireflies = [];
+
+    // Spawn 60 bright volcanic orange-red embers
+    const emberCount = 60;
+    const emberMat = new THREE.MeshBasicMaterial({
+      color: 0xff4400, // Fiery orange-red
+      transparent: true,
+      opacity: 0.95
+    });
+
+    for (let i = 0; i < emberCount; i++) {
+      const mesh = new THREE.Mesh(this.fireflyGeo, emberMat.clone());
+      
+      const x = (Math.random() - 0.5) * 100;
+      const y = 0.5 + Math.random() * 5.0;
+      const z = (Math.random() - 0.5) * 100;
+      
+      mesh.position.set(x, y, z);
+      this.scene.add(mesh);
+
+      this.fireflies.push({
+        mesh,
+        baseY: y,
+        speed: 0.5 + Math.random() * 0.7, // Drift faster upward
+        wobbleSpeed: 0.9 + Math.random() * 1.4,
+        wobbleRadius: 0.4 + Math.random() * 0.8,
+        time: Math.random() * 100,
+        blinkSpeed: 2.2 + Math.random() * 2.0, // Blinks faster/chaotic
+      });
     }
   }
 

@@ -272,6 +272,176 @@ export class Forest {
   }
 
   /**
+   * Transition the environment into a chaotic hell landscape
+   */
+  transitionToHell() {
+    this.isHell = true;
+
+    // 1. Ground color becomes fiery dark-black/red volcanic rock
+    if (this.groundMesh) {
+      this.groundMesh.material.color.setHex(0x150b0b); // Pitch-black volcanic ash
+      this.groundMesh.material.roughness = 0.98;
+      this.groundMesh.material.metalness = 0.45;
+      this.groundMesh.material.emissive.setHex(0x380505); // Fiery cracks underglow
+      this.groundMesh.material.needsUpdate = true;
+    }
+
+    // 2. Re-create GridHelper with glowing lava red-orange gridlines
+    if (this.gridHelper) {
+      this.scene.remove(this.gridHelper);
+      this.gridHelper.geometry.dispose();
+      this.gridHelper.material.dispose();
+
+      this.gridHelper = new THREE.GridHelper(300, 30, 0xff3300, 0xaa2200);
+      this.gridHelper.position.y = 0.01;
+      this.gridHelper.material.opacity = 0.38; // Glowing lava appearance
+      this.gridHelper.material.transparent = true;
+      
+      // Align to current ground mesh position
+      if (this.groundMesh) {
+        this.gridHelper.position.x = this.groundMesh.position.x;
+        this.gridHelper.position.z = this.groundMesh.position.z;
+      }
+      
+      this.scene.add(this.gridHelper);
+    }
+
+    // 3. Shift lighting to dramatic volcanic parameters
+    if (this.ambientLight) {
+      this.ambientLight.color.setHex(0xff1a1a); // Intense deep red
+      this.ambientLight.intensity = 1.6;
+    }
+
+    if (this.skyLight) {
+      this.skyLight.color.setHex(0xff5500); // Lava orange
+      this.skyLight.intensity = 1.0;
+    }
+
+    if (this.sunLight) {
+      this.sunLight.color.setHex(0xffaa00); // Glowing yellow-orange
+      this.sunLight.intensity = 2.0;
+    }
+
+    // 4. Dispose green trees and generate hell spires/dead crooked trees
+    this.trees.forEach(tree => {
+      this.scene.remove(tree.mesh);
+      tree.mesh.traverse(child => {
+        if (child.isMesh) {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) child.material.dispose();
+        }
+      });
+    });
+    this.trees = [];
+
+    // Re-generate hell landscape objects: dead spires and volcanic monoliths
+    this.generateHellTrees(75);
+  }
+
+  /**
+   * Spawns multiple procedural hell spires/trunks randomly
+   */
+  generateHellTrees(count) {
+    for (let i = 0; i < count; i++) {
+      const type = Math.random() > 0.45 ? 'charred_trunk' : 'obsidian_spire';
+      const spire = this.createProceduralHellTree(type);
+      
+      let x, z;
+      let attempts = 0;
+      do {
+        x = (Math.random() - 0.5) * this.gridSize;
+        z = (Math.random() - 0.5) * this.gridSize;
+        attempts++;
+      } while (Math.sqrt(x * x + z * z) < 8.0 && attempts < 100);
+      
+      spire.position.set(x, 0, z);
+      this.scene.add(spire);
+      
+      this.trees.push({
+        mesh: spire,
+        radius: type === 'charred_trunk' ? 1.0 : 1.5, // collision radius bounds
+      });
+    }
+  }
+
+  /**
+   * Procedurally build detailed hell trunks and obsidian spires
+   */
+  createProceduralHellTree(type) {
+    const group = new THREE.Group();
+
+    if (type === 'charred_trunk') {
+      // Crooked, burnt charred dead trunk
+      const height = 3.2 + Math.random() * 2.8;
+      const radius = 0.22 + Math.random() * 0.15;
+      const trunkGeo = new THREE.CylinderGeometry(radius * 0.5, radius, height, 5);
+      const trunkMat = new THREE.MeshStandardMaterial({
+        color: 0x141414, // Burnt carbon black
+        roughness: 0.98,
+        metalness: 0.1,
+      });
+      const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+      trunk.position.y = height / 2;
+      trunk.castShadow = true;
+      trunk.receiveShadow = true;
+      group.add(trunk);
+
+      // Crooked dead branches
+      const branchCount = 2 + Math.floor(Math.random() * 3);
+      for (let b = 0; b < branchCount; b++) {
+        const bh = 1.0 + Math.random() * 1.5;
+        const br = radius * 0.45;
+        const branchGeo = new THREE.CylinderGeometry(br * 0.5, br, bh, 4);
+        const branch = new THREE.Mesh(branchGeo, trunkMat);
+        
+        branch.position.y = height * 0.4 + Math.random() * (height * 0.35);
+        branch.rotation.x = (Math.random() - 0.5) * 1.3;
+        branch.rotation.z = (Math.random() - 0.5) * 1.3;
+        
+        branch.geometry.translate(0, bh / 2, 0); // Correct pivot offset
+        branch.castShadow = true;
+        group.add(branch);
+      }
+    } else {
+      // Obsidian volcanic crystal spire
+      const height = 4.2 + Math.random() * 3.8;
+      const baseRadius = 0.45 + Math.random() * 0.55;
+      
+      const spireGeo = new THREE.ConeGeometry(baseRadius, height, 4);
+      const spireMat = new THREE.MeshStandardMaterial({
+        color: 0x130a17, // Shiny volcanic obsidian
+        roughness: 0.12,
+        metalness: 0.92,
+        emissive: 0x3d0808, // Inner volcanic flame reflection
+        emissiveIntensity: 1.6,
+      });
+      const spire = new THREE.Mesh(spireGeo, spireMat);
+      spire.position.y = height / 2;
+      spire.castShadow = true;
+      spire.receiveShadow = true;
+      group.add(spire);
+
+      // Secondary smaller crystal node next to base
+      if (Math.random() > 0.35) {
+        const sideHeight = height * 0.5;
+        const sideRadius = baseRadius * 0.55;
+        const sideSpire = new THREE.Mesh(new THREE.ConeGeometry(sideRadius, sideHeight, 4), spireMat);
+        sideSpire.position.set(baseRadius * 0.8, sideHeight / 2, baseRadius * 0.35);
+        sideSpire.rotation.z = -0.35 - Math.random() * 0.3;
+        sideSpire.rotation.x = (Math.random() - 0.5) * 0.2;
+        sideSpire.castShadow = true;
+        group.add(sideSpire);
+      }
+    }
+
+    // Apply minor scale fluctuations to look organic
+    const scale = 0.85 + Math.random() * 0.3;
+    group.scale.set(scale, scale, scale);
+
+    return group;
+  }
+
+  /**
    * Destroys the forest meshes, ground, grid helper, and lights to prevent memory leaks on restart.
    */
   destroy() {

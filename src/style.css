@@ -1455,3 +1455,95 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   6. Level 2 Hell Portal & Flash Transitions
+   ========================================================================== */
+
+.portal-pointer {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px;
+  background: rgba(18, 5, 5, 0.85);
+  border: 1.5px solid #ff1744;
+  border-radius: 30px;
+  box-shadow: inset 0 0 12px rgba(255, 23, 68, 0.3), 0 0 25px rgba(255, 23, 68, 0.4);
+  color: #ff8a80;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  z-index: 100;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.portal-pointer.hidden {
+  opacity: 0;
+  transform: translateX(-50%) scale(0.85) translateY(10px);
+  pointer-events: none;
+}
+
+.arrow-wrap {
+  display: inline-block;
+  transform-origin: center;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+}
+
+.pointer-arrow {
+  font-size: 1.4rem;
+  color: #ff1744;
+  text-shadow: 0 0 8px #ff1744;
+  display: inline-block;
+  transform-origin: center;
+  animation: arrow-bounce 0.6s infinite alternate ease-in-out;
+}
+
+.pointer-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pointer-text span {
+  font-family: 'JetBrains Mono', monospace;
+  color: #ff5252;
+  font-weight: 700;
+}
+
+.screen-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #ff1744;
+  opacity: 0;
+  z-index: 99999;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+.screen-flash.flash-active {
+  opacity: 1;
+  transition: none;
+}
+
+@keyframes arrow-bounce {
+  0% {
+    transform: scale(0.9);
+    filter: drop-shadow(0 0 2px #ff1744);
+  }
+  100% {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 10px #ff5252);
+  }
+}
