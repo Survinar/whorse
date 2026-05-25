@@ -357,8 +357,16 @@ export class Game {
           const distSq = edx * edx + edz * edz;
 
           if (distSq < stompRadius * stompRadius) {
-            const isDead = enemy.takeDamage(stompDamage);
-            this.particles.spawnHitSparks(enemy.mesh.position.clone());
+            const dmgRoll = this.rollDamage(stompDamage);
+            const isDead = enemy.takeDamage(dmgRoll.damage);
+            if (dmgRoll.isCrit) {
+              // Spawn triple spark particles for high-impact critical feedback
+              for (let i = 0; i < 3; i++) {
+                this.particles.spawnHitSparks(enemy.mesh.position.clone());
+              }
+            } else {
+              this.particles.spawnHitSparks(enemy.mesh.position.clone());
+            }
             if (isDead) {
               this.banishEnemy(enemy);
             }
@@ -426,8 +434,16 @@ export class Game {
           const target = candidates[Math.floor(Math.random() * candidates.length)];
           const targetPos = target.mesh.position.clone();
 
-          // Deal lightning bolt damage
-          const isDead = target.takeDamage(damage);
+          // Deal lightning bolt damage with critical strike checking
+          const dmgRoll = this.rollDamage(damage);
+          const isDead = target.takeDamage(dmgRoll.damage);
+          if (dmgRoll.isCrit) {
+            for (let i = 0; i < 3; i++) {
+              this.particles.spawnHitSparks(target.mesh.position.clone());
+            }
+          } else {
+            this.particles.spawnHitSparks(target.mesh.position.clone());
+          }
           if (isDead) {
             this.banishEnemy(target);
           }
@@ -605,12 +621,19 @@ export class Game {
 
         const minDist = bullet.radius + enemy.collisionRadius;
         if (distSq < minDist * minDist) {
-          // Resolve hit
-          const isDead = enemy.takeDamage(bullet.damage);
+          // Resolve hit with critical strike checking
+          const dmgRoll = this.rollDamage(bullet.damage);
+          const isDead = enemy.takeDamage(dmgRoll.damage);
           
-          // Spawn sparks on contact point
+          // Spawn sparks on contact point (extra if crit)
           const hitPoint = bullet.mesh.position.clone();
-          this.particles.spawnHitSparks(hitPoint);
+          if (dmgRoll.isCrit) {
+            for (let i = 0; i < 3; i++) {
+              this.particles.spawnHitSparks(hitPoint);
+            }
+          } else {
+            this.particles.spawnHitSparks(hitPoint);
+          }
 
           // Bullet pierce reduction
           bullet.pierce--;
@@ -794,6 +817,16 @@ export class Game {
         this.onLevelUpCallback(true); // forceLegendary = true
       }, 400);
     }
+  }
+
+  /**
+   * Helper to roll critical strikes for player damage
+   */
+  rollDamage(baseDamage) {
+    if (this.horse.critChance && Math.random() < this.horse.critChance) {
+      return { damage: Math.round(baseDamage * (this.horse.critMultiplier || 2.0)), isCrit: true };
+    }
+    return { damage: baseDamage, isCrit: false };
   }
 
   /**

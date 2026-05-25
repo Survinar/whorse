@@ -25,6 +25,8 @@ const UPGRADE_POOL = [
   { type: 'lightning', title: 'TECTONIC BOLT', icon: '⚡', suit: '♠', rank: 'K' },
   { type: 'shield', title: 'FROST GUARD', icon: '❄️', suit: '♣', rank: 'A' },
   { type: 'bounce', title: 'RICOCHET', icon: '☄️', suit: '♦', rank: '10' },
+  { type: 'critical', title: 'SHARP HOOF', icon: '🎯', suit: '♦', rank: '9' },
+  { type: 'growth', title: 'SACRED HORN', icon: '🦄', suit: '♥', rank: '9' },
 ];
 
 /**
@@ -61,6 +63,10 @@ function getUpgradeDescription(type, rarity) {
       return `Blocks the next hit and freezes all nearby beasts for 2.5s. Recharges in ${Math.round(Math.max(3.5, 12.0 - 1.5 * mult) * 10) / 10}s.`;
     case 'bounce':
       return `Main bullets bounce on impact up to ${Math.round(1 * mult)} time(s) seeking nearby targets.`;
+    case 'critical':
+      return `Gives attacks and skills a ${Math.round(10 * mult)}% chance to deal double damage.`;
+    case 'growth':
+      return `Raises all experience points gained by ${Math.round(20 * mult)}%.`;
     default:
       return '';
   }
@@ -588,6 +594,8 @@ function openUpgradesOverview(fromPause = false) {
     lightning: { title: 'TECTONIC BOLT', icon: '⚡', desc: 'Strikes random nearby shadow beasts with lightnings.' },
     shield: { title: 'FROST GUARD', icon: '❄️', desc: 'Frost guard blocks the next hit and freezes nearby enemies on rupture.' },
     bounce: { title: 'RICOCHET', icon: '☄️', desc: 'Main sparks bounce on impact, seeking nearby targets.' },
+    critical: { title: 'SHARP HOOF', icon: '🎯', desc: 'Allows your attacks and skills to land critical hits for double damage.' },
+    growth: { title: 'SACRED HORN', icon: '🦄', desc: 'Multiplies all experience gathered, accelerating your progression.' },
   };
 
   for (const [key, val] of Object.entries(activeGame.horse.activeUpgrades)) {

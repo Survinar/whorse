@@ -43,6 +43,11 @@ export class Horse {
     this.ricochetBounces = 0;
     this.pendingFrostNova = false;
     
+    // Critical strike and XP growth variables
+    this.xpMult = 1.0;
+    this.critChance = 0.05; // 5% base crit chance for all players
+    this.critMultiplier = 2.0;
+    
     // Auto-Shooting Cooldown Timer (in seconds)
     this.shootCooldown = 0.0;
     
@@ -62,6 +67,8 @@ export class Horse {
       lightning: 0,
       shield: 0,
       bounce: 0,
+      critical: 0,
+      growth: 0,
     };
     
     // Construct the 3D Procedural Mesh Group
@@ -474,7 +481,8 @@ export class Horse {
    * Leveling mechanics
    */
   addXp(amount) {
-    this.xp += amount;
+    const gained = Math.round(amount * (this.xpMult || 1.0));
+    this.xp += gained;
     
     if (this.xp >= this.maxXp) {
       this.xp -= this.maxXp;
@@ -578,6 +586,14 @@ export class Horse {
       case 'bounce':
         this.activeUpgrades.bounce++;
         this.ricochetBounces += Math.round(1 * mult);
+        break;
+      case 'critical':
+        this.activeUpgrades.critical++;
+        this.critChance += 0.10 * mult;
+        break;
+      case 'growth':
+        this.activeUpgrades.growth++;
+        this.xpMult += 0.20 * mult;
         break;
     }
   }
