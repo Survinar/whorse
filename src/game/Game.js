@@ -1018,6 +1018,35 @@ export class Game {
 
     // 4. Kills counter
     document.getElementById('kill-val').innerText = this.kills;
+
+    // 5. Threat Level indicator
+    let threatText = 'STABLE';
+    let threatClass = 'threat-level-low';
+    
+    if (this.time < 120) {
+      threatText = 'STABLE';
+      threatClass = 'threat-level-low';
+    } else if (this.time < 240) {
+      threatText = 'CAUTION';
+      threatClass = 'threat-level-medium';
+    } else if (this.time < 420) {
+      threatText = 'HOSTILE';
+      threatClass = 'threat-level-high';
+    } else if (this.time < 600) {
+      threatText = 'HAZARDOUS';
+      threatClass = 'threat-level-extreme';
+    } else {
+      const currentMinute = Math.floor(this.time / 60);
+      threatText = `CRITICAL (LVL ${currentMinute})`;
+      threatClass = 'threat-level-critical';
+    }
+
+    const threatBadge = document.getElementById('threat-badge');
+    const threatVal = document.getElementById('threat-val');
+    if (threatBadge && threatVal) {
+      threatVal.innerText = threatText;
+      threatBadge.className = 'stat-badge glass-panel-sm ' + threatClass;
+    }
   }
 
   /**
