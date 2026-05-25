@@ -162,7 +162,7 @@ export class Game {
         distVal.innerText = `${distance}m`;
 
         const angleRad = Math.atan2(dz, dx);
-        const angleDeg = angleRad * (180 / Math.PI);
+        const angleDeg = angleRad * (180 / Math.PI) + 90; // Add 90 degrees offset to align up-pointing triangle ▲
         arrowWrap.style.transform = `rotate(${angleDeg}deg)`;
       }
 

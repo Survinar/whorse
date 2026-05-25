@@ -49,6 +49,7 @@ export class Horse {
     this.critMultiplier = 2.0;
     
     // Auto-Shooting Cooldown Timer (in seconds)
+    this.collisionRadius = 0.7;
     this.shootCooldown = 0.0;
     
     // Track count of active upgrades
