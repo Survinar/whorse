@@ -1156,54 +1156,7 @@ export class Game {
    * Refreshes the active upgrade badges list on the HUD bottom-right
    */
   refreshUpgradeHUD() {
-    const hudContainer = document.getElementById('active-upgrades-hud');
-    hudContainer.innerHTML = ''; // clear
-
-    const totalUniqueUpgrades = Object.values(this.horse.activeUpgrades).filter(val => val > 0).length;
-    const hasAllPowerups = totalUniqueUpgrades === 14;
-
-    const labels = {
-      speed: '⚡ SPD',
-      damage: '🗡️ DMG',
-      fireRate: '🔥 RATE',
-      pierce: '🏹 PRC',
-      magnet: '🧲 MAG',
-      vitality: '❤️ VIT',
-      nova: '🌀 NOVA',
-      orbiter: '☀️ HALO',
-      trail: '🔥 TRAIL',
-      stomp: '👣 STMP',
-      regen: '🌿 REG',
-      lightning: '⚡ BOLT',
-      shield: '❄️ SHLD',
-      bounce: '☄️ BNC',
-    };
-
-    if (hasAllPowerups) {
-      const overviewBtn = document.createElement('button');
-      overviewBtn.id = 'view-upgrades-btn';
-      overviewBtn.className = 'btn secondary-btn';
-      overviewBtn.style.padding = '6px 12px';
-      overviewBtn.style.fontSize = '0.75rem';
-      overviewBtn.style.letterSpacing = '0.08em';
-      overviewBtn.style.margin = '0';
-      overviewBtn.innerText = 'VIEW BLESSINGS';
-      hudContainer.appendChild(overviewBtn);
-
-      overviewBtn.addEventListener('click', () => {
-        const event = new CustomEvent('open-upgrades-overview');
-        window.dispatchEvent(event);
-      });
-    } else {
-      for (const [key, val] of Object.entries(this.horse.activeUpgrades)) {
-        if (val > 0) {
-          const badge = document.createElement('div');
-          badge.className = 'upgrade-badge';
-          badge.innerHTML = `${labels[key]} <span class="upgrade-count">x${val}</span>`;
-          hudContainer.appendChild(badge);
-        }
-      }
-    }
+    // Upgrades HUD is now a permanent button that opens the blessings list modal.
   }
 
   /**

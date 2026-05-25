@@ -175,7 +175,11 @@ function setupInputListeners() {
     if (e.key === '=' && gameState === 'PLAYING' && activeGame) {
       for (let i = 0; i < 10; i++) {
         activeGame.horse.level++;
-        const randomUpgrade = UPGRADE_POOL[Math.floor(Math.random() * UPGRADE_POOL.length)];
+        let availablePool = [...UPGRADE_POOL];
+        if (activeGame.horse.activeUpgrades.speed >= 5) {
+          availablePool = availablePool.filter(u => u.type !== 'speed');
+        }
+        const randomUpgrade = availablePool[Math.floor(Math.random() * availablePool.length)];
         const roll = Math.random();
         const rarity = roll > 0.88 ? 'legendary' : (roll > 0.65 ? 'rare' : 'common');
         activeGame.horse.applyUpgrade(randomUpgrade.type, rarity);
@@ -328,8 +332,14 @@ function triggerLevelUp(forceLegendary = false) {
   // Clear card slots
   cardContainer.innerHTML = '';
 
+  // Filter out speed if it has reached its maximum level (5)
+  let availablePool = [...UPGRADE_POOL];
+  if (activeGame && activeGame.horse.activeUpgrades.speed >= 5) {
+    availablePool = availablePool.filter(u => u.type !== 'speed');
+  }
+
   // Select 3 random unique upgrades from the pool
-  const shuffled = [...UPGRADE_POOL].sort(() => 0.5 - Math.random());
+  const shuffled = availablePool.sort(() => 0.5 - Math.random());
   const selectedChoices = shuffled.slice(0, 3);
 
   selectedChoices.forEach((upgrade) => {
@@ -646,6 +656,16 @@ function closeUpgradesOverview() {
 // Bind active upgrades overview action listeners
 closeUpgradesBtn.addEventListener('click', closeUpgradesOverview);
 window.addEventListener('open-upgrades-overview', () => openUpgradesOverview(false));
+
+const hudBlessingsBtn = document.getElementById('view-upgrades-btn');
+if (hudBlessingsBtn) {
+  hudBlessingsBtn.addEventListener('click', () => {
+    if (gameState === 'PLAYING' && activeGame) {
+      openUpgradesOverview(false);
+    }
+  });
+}
+
 pauseBlessingsBtn.addEventListener('click', () => {
   pauseDialog.close();
   openUpgradesOverview(true);

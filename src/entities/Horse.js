@@ -522,8 +522,10 @@ export class Horse {
     
     switch(type) {
       case 'speed':
-        this.activeUpgrades.speed++;
-        this.speed *= (1.0 + 0.10 * mult);
+        if (this.activeUpgrades.speed < 5) {
+          this.activeUpgrades.speed++;
+          this.speed = Math.min(15.0, this.speed * (1.0 + 0.10 * mult));
+        }
         break;
       case 'damage':
         this.activeUpgrades.damage++;

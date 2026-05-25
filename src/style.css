@@ -1547,3 +1547,26 @@ body {
     filter: drop-shadow(0 0 10px #ff5252);
   }
 }
+
+.view-blessings-hud-btn {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  padding: 8px 16px;
+  background: rgba(44, 26, 17, 0.85) !important;
+  border: 1.5px solid #5a3c26 !important;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+  color: var(--text-primary) !important;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.view-blessings-hud-btn:hover {
+  border-color: var(--accent-gold) !important;
+  background: rgba(138, 92, 56, 0.25) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(212, 175, 55, 0.25);
+  color: var(--accent-gold) !important;
+}
