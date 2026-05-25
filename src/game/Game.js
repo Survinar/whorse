@@ -40,6 +40,7 @@ export class Game {
     this.bossTimer = 45.0; // Spawns a Boss Archon every 45s
     this.bossesSpawned = 0; // Track total bosses spawned for early-game limiting
     this.explorationChestTimer = 25.0; // Spawns an exploration chest every 25s
+    this.lastMinuteLeveled = 10; // Post 10-minute scaling minute tracker
 
     // Arrays for skills
     this.orbiters = [];
@@ -179,6 +180,26 @@ export class Game {
       const activeExplorationChests = this.chests.filter(c => c.type === 'exploration').length;
       if (activeExplorationChests < 4) {
         this.spawnExplorationChest();
+      }
+    }
+
+    // 9.7. Post-10-Minute Extreme Scaling Alarm Checks
+    if (this.time > 600) {
+      const currentMinute = Math.floor(this.time / 60);
+      if (currentMinute > this.lastMinuteLeveled) {
+        this.lastMinuteLeveled = currentMinute;
+
+        // Trigger gorgeous crimson warning banner with deep crimson danger gradient
+        const banner = document.createElement('div');
+        banner.className = 'boss-banner';
+        banner.style.background = 'linear-gradient(to right, rgba(230, 81, 0, 0.95), rgba(183, 28, 28, 0.95))';
+        banner.style.borderColor = '#ff3d00';
+        banner.innerText = `🚨 ENEMY LEVEL UP: MINUTE ${currentMinute} DETECTED! 🚨`;
+        document.body.appendChild(banner);
+        setTimeout(() => banner.remove(), 4000);
+
+        // Play warning alert chime
+        Sound.playLevelUp();
       }
     }
 
@@ -881,6 +902,12 @@ export class Game {
         spawnCount = Math.floor(Math.random() * 3) + 2; // 2 to 4 enemies
       }
 
+      // Add extra spawned enemies for each minute survived past 10 minutes
+      if (this.time > 600) {
+        const extraSpawns = Math.floor((this.time - 600) / 60);
+        spawnCount += extraSpawns;
+      }
+
       // 2. Spawn the group of shadow beasts
       for (let i = 0; i < spawnCount; i++) {
         let type = 'wolf';
@@ -909,8 +936,13 @@ export class Game {
         this.enemies.push(beast);
       }
 
-      // 3. Scale spawn frequency down gentler over time (max 0.4s spawn interval, scaled at 0.010 instead of 0.016)
-      this.spawnInterval = Math.max(0.4, this.baseSpawnInterval - this.time * 0.010);
+      // 3. Scale spawn frequency down gentler over time, reducing below 0.4s limit past 10 minutes
+      let minInterval = 0.4;
+      if (this.time > 600) {
+        const minutesPast10 = Math.floor((this.time - 600) / 60);
+        minInterval = Math.max(0.12, 0.4 - minutesPast10 * 0.05); // Drop limit by -0.05s per minute down to 0.12s
+      }
+      this.spawnInterval = Math.max(minInterval, this.baseSpawnInterval - this.time * 0.010);
       this.spawnTimer = this.spawnInterval;
     }
   }

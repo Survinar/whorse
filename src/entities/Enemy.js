@@ -133,6 +133,20 @@ export class Enemy {
       // Scale model visual size and collision boundaries over time (+0.12% per second, capped at 2.2x base size)
       this.sizeScale = Math.min(2.2, 1.0 + gameTime * 0.0012);
       this.collisionRadius *= this.sizeScale;
+
+      // Each minute after 10 minutes (600s) triggers an extra compounding +15% HP & Damage level-up, plus physical size growth!
+      if (gameTime > 600) {
+        const minutesPast10 = Math.floor((gameTime - 600) / 60);
+        if (minutesPast10 > 0) {
+          const levelMultiplier = 1.0 + minutesPast10 * 0.15;
+          this.maxHp = Math.round(this.maxHp * levelMultiplier);
+          this.hp = this.maxHp;
+          this.damage = Math.round(this.damage * levelMultiplier);
+
+          this.sizeScale = Math.min(2.5, this.sizeScale + minutesPast10 * 0.05);
+          this.collisionRadius *= (1.0 + minutesPast10 * 0.05);
+        }
+      }
     } else {
       this.sizeScale = 1.0;
     }
