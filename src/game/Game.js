@@ -684,8 +684,16 @@ export class Game {
 
     // Spawn collectible XP gems (if not a boss) or the legendary chest
     if (enemy.type === 'boss') {
-      const chest = new Chest(this.scene, enemy.mesh.position.clone());
+      const chest = new Chest(this.scene, enemy.mesh.position.clone(), 'boss');
       this.chests.push(chest);
+
+      // 50% chance to also drop a board-cleansing XP Magnet collectible!
+      if (Math.random() < 0.50) {
+        const offset = new THREE.Vector3((Math.random() - 0.5) * 1.5, 0, (Math.random() - 0.5) * 1.5);
+        const magnetPos = enemy.mesh.position.clone().add(offset);
+        const magnet = new Chest(this.scene, magnetPos, 'magnet');
+        this.chests.push(magnet);
+      }
     } else {
       const gemsCount = enemy.xpValue;
       for (let i = 0; i < gemsCount; i++) {
@@ -746,6 +754,24 @@ export class Game {
           this.onLevelUpCallback(false); // forceLegendary = false (standard odds)
         }, 400);
       }
+    } else if (chest.type === 'magnet') {
+      // 1. XP Magnet: Mark all active XP gems as attracted so they fly to the player!
+      this.xpOrbs.forEach(orb => {
+        orb.isAttracted = true;
+      });
+
+      // 2. Play beautiful neon blue/cyan particles
+      this.particles.spawnExplorationChestHalo(this.horse.mesh.position);
+      for (let i = 0; i < 6; i++) {
+        const offset = new THREE.Vector3((Math.random() - 0.5) * 2, 0, (Math.random() - 0.5) * 2);
+        this.particles.spawnHitSparks(this.horse.mesh.position.clone().add(offset));
+      }
+
+      // 3. Play magnetized synth sound
+      Sound.playChestOpen();
+
+      // 4. Show gorgeous floating notification
+      this.showExplorationMessage("XP MAGNET ACTIVATED!");
     } else {
       // Boss chest (original behavior)
       // 1. Instant Level Up stats change
