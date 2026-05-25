@@ -420,7 +420,7 @@ export class Horse {
         targetPos.y = 1.0; 
 
         // Fire bullet
-        spawnBulletCallback(spawnPos, targetPos, this.damage, this.pierce);
+        spawnBulletCallback(spawnPos, targetPos, this.damage, this.pierce, nearestEnemy);
         
         // Play laser SFX
         Sound.playShoot();

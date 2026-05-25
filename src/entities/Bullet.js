@@ -5,10 +5,11 @@ import * as THREE from 'three';
  * Shoots toward target coordinates, handles piercing mechanics, and self-cleanses.
  */
 export class Bullet {
-  constructor(scene, startPosition, targetPosition, damage = 15, pierce = 1) {
+  constructor(scene, startPosition, targetPosition, damage = 15, pierce = 1, targetEnemy = null) {
     this.scene = scene;
     this.damage = damage;
     this.pierce = pierce;
+    this.targetEnemy = targetEnemy;
     
     this.speed = 24.0; // Rapid travel speed
     this.maxRange = 25.0; // Distance limit
@@ -46,6 +47,16 @@ export class Bullet {
    */
   update(delta) {
     if (!this.alive) return;
+
+    // Active Homing Logic: dynamically adjust direction toward target enemy
+    if (this.targetEnemy && this.targetEnemy.alive) {
+      const targetPos = this.targetEnemy.mesh.position.clone();
+      targetPos.y = 1.0;
+      const direction = new THREE.Vector3().subVectors(targetPos, this.mesh.position);
+      direction.y = 0;
+      direction.normalize();
+      this.velocity.copy(direction).multiplyScalar(this.speed);
+    }
 
     // Movement integration
     const movement = this.velocity.clone().multiplyScalar(delta);

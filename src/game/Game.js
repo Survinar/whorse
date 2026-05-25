@@ -110,9 +110,9 @@ export class Game {
     this.forest.update(this.horse.mesh.position);
 
     // 5. Weapon Auto-Targeting & Fire
-    this.horse.shoot(delta, this.enemies, (start, target, dmg, pierce) => {
+    this.horse.shoot(delta, this.enemies, (start, target, dmg, pierce, targetEnemy) => {
       // Bullet spawner callback
-      const bullet = new Bullet(this.scene, start, target, dmg, pierce);
+      const bullet = new Bullet(this.scene, start, target, dmg, pierce, targetEnemy);
       this.bullets.push(bullet);
 
       // Upgrade "Chaos Nova" checks (fires opposite bullet)
@@ -620,7 +620,7 @@ export class Game {
               bullet.bounces = (bullet.bounces || 0) + 1;
               
               const startPos = bullet.mesh.position.clone();
-              const candidates = this.enemies.filter(e => e !== enemy && e.alive && startPos.distanceTo(e.mesh.position) < 7.0);
+              const candidates = this.enemies.filter(e => e !== enemy && e.alive && startPos.distanceTo(e.mesh.position) < 20.0);
               if (candidates.length > 0) {
                 // Find nearest candidate
                 candidates.sort((a, b) => startPos.distanceToSquared(a.mesh.position) - startPos.distanceToSquared(b.mesh.position));
@@ -630,8 +630,9 @@ export class Game {
                 direction.normalize();
                 
                 bullet.velocity.copy(direction).multiplyScalar(bullet.speed);
+                bullet.targetEnemy = nextTarget; // Re-assign target so the bounce homing steers accurately
                 bullet.pierce = 1; // Reset pierce for the bounced hit
-                bullet.distanceTraveled = Math.max(0, bullet.distanceTraveled - 7.0); // Extend range slightly
+                bullet.distanceTraveled = Math.max(0, bullet.distanceTraveled - 12.0); // Extend range to reach the far candidate
               } else {
                 bullet.alive = false;
                 bullet.destroy();
