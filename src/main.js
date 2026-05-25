@@ -7,6 +7,7 @@ import { submitScore, fetchTopScores } from './game/Leaderboard.js';
 let scene, camera, renderer, clock;
 let activeGame = null;
 let gameState = 'START'; // 'START' | 'PLAYING' | 'LEVEL_UP' | 'GAME_OVER'
+let autoChooseBlessings = false;
 const keysPressed = {};
 
 // Upgrade Pool Definitions
@@ -321,17 +322,44 @@ function startGame() {
 }
 
 /**
+ * Renders a gorgeous non-disruptive auto-selected blessing toast
+ */
+function showAutoBlessingToast(title, icon, rarity, nextLevel) {
+  const toast = document.createElement('div');
+  toast.className = 'auto-blessing-toast';
+  
+  // Custom theme colors/borders for rarities
+  let gradient, borderColor, shadowColor;
+  if (rarity === 'legendary') {
+    gradient = 'linear-gradient(to right, rgba(20, 15, 5, 0.95), rgba(212, 175, 55, 0.95), rgba(20, 15, 5, 0.95))';
+    borderColor = '#ffd700';
+    shadowColor = 'rgba(255, 215, 0, 0.65)';
+  } else if (rarity === 'rare') {
+    gradient = 'linear-gradient(to right, rgba(5, 15, 30, 0.95), rgba(33, 150, 243, 0.95), rgba(5, 15, 30, 0.95))';
+    borderColor = '#2196f3';
+    shadowColor = 'rgba(33, 150, 243, 0.65)';
+  } else {
+    gradient = 'linear-gradient(to right, rgba(10, 10, 10, 0.95), rgba(158, 158, 158, 0.85), rgba(10, 10, 10, 0.95))';
+    borderColor = '#9e9e9e';
+    shadowColor = 'rgba(158, 158, 158, 0.4)';
+  }
+  
+  toast.style.background = gradient;
+  toast.style.borderColor = borderColor;
+  toast.style.boxShadow = `inset 0 0 8px rgba(0, 0, 0, 0.6), 0 0 20px ${shadowColor}`;
+  toast.style.color = rarity === 'common' ? '#e0e0e0' : (rarity === 'rare' ? '#bbdefb' : '#fff9c4');
+  toast.innerHTML = `✨ AUTO-CHOSEN: <span style="text-transform: uppercase; font-weight: 800; color: ${borderColor}">${rarity}</span> ${icon} ${title} (Level ${nextLevel}) ✨`;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.remove();
+  }, 2500);
+}
+
+/**
  * Level-Up Upgrade Cards Builder
  */
 function triggerLevelUp(forceLegendary = false) {
-  gameState = 'LEVEL_UP';
-
-  // Play leveling chime
-  Sound.playLevelUp();
-
-  // Clear card slots
-  cardContainer.innerHTML = '';
-
   // Filter out speed if it has reached its maximum level (5)
   let availablePool = [...UPGRADE_POOL];
   if (activeGame && activeGame.horse.activeUpgrades.speed >= 5) {
@@ -341,6 +369,50 @@ function triggerLevelUp(forceLegendary = false) {
   // Select 3 random unique upgrades from the pool
   const shuffled = availablePool.sort(() => 0.5 - Math.random());
   const selectedChoices = shuffled.slice(0, 3);
+
+  // If Auto-Choose is active, immediately select one random option and resume gameplay without opening modal!
+  if (autoChooseBlessings && activeGame) {
+    const chosenUpgrade = selectedChoices[Math.floor(Math.random() * selectedChoices.length)];
+    
+    // Choose rarity (forced legendary or rolled)
+    let rarity = 'common';
+    if (forceLegendary) {
+      rarity = 'legendary';
+    } else {
+      const roll = Math.random();
+      if (roll > 0.88) {
+        rarity = 'legendary';
+      } else if (roll > 0.65) {
+        rarity = 'rare';
+      }
+    }
+    
+    // Apply upgrade
+    activeGame.horse.applyUpgrade(chosenUpgrade.type, rarity);
+    
+    // Play XP selection sound
+    Sound.playXP();
+    
+    // Resume game play
+    activeGame.resumeGame();
+    gameState = 'PLAYING';
+    
+    // Sync HUD immediately
+    activeGame.updateHUD();
+    
+    // Render beautiful auto-choose toast
+    const nextLevel = activeGame.horse.activeUpgrades[chosenUpgrade.type];
+    showAutoBlessingToast(chosenUpgrade.title, chosenUpgrade.icon, rarity, nextLevel);
+    return;
+  }
+
+  gameState = 'LEVEL_UP';
+
+  // Play leveling chime
+  Sound.playLevelUp();
+
+  // Clear card slots
+  cardContainer.innerHTML = '';
 
   selectedChoices.forEach((upgrade) => {
     // Generate card element
@@ -637,6 +709,7 @@ function openUpgradesOverview(fromPause = false) {
     }
   }
 
+  updateAutoChooseBtnStyle();
   upgradesOverviewDialog.showModal();
 }
 
@@ -674,6 +747,35 @@ upgradesOverviewDialog.addEventListener('cancel', (e) => {
   e.preventDefault();
   closeUpgradesOverview();
 });
+
+function updateAutoChooseBtnStyle() {
+  const btn = document.getElementById('toggle-auto-choose-btn');
+  if (!btn) return;
+  if (autoChooseBlessings) {
+    btn.innerText = '⚡ AUTO-CHOOSE: ON';
+    btn.style.background = 'linear-gradient(to bottom, #1b5e20 0%, #0d5302 100%)';
+    btn.style.color = '#e8f5e9';
+    btn.style.borderColor = '#4caf50';
+    btn.style.boxShadow = '0 0 15px rgba(76, 175, 80, 0.65)';
+    btn.style.borderStyle = 'solid';
+  } else {
+    btn.innerText = '⚡ AUTO-CHOOSE: OFF';
+    btn.style.background = 'rgba(0, 0, 0, 0.4)';
+    btn.style.color = '#ffe599';
+    btn.style.borderColor = 'rgba(138, 92, 56, 0.6)';
+    btn.style.boxShadow = 'none';
+    btn.style.borderStyle = 'dashed';
+  }
+}
+
+const toggleAutoChooseBtn = document.getElementById('toggle-auto-choose-btn');
+if (toggleAutoChooseBtn) {
+  toggleAutoChooseBtn.addEventListener('click', () => {
+    autoChooseBlessings = !autoChooseBlessings;
+    Sound.playXP();
+    updateAutoChooseBtnStyle();
+  });
+}
 
 // Protect dialog components from native Escape desynchronizations
 levelUpDialog.addEventListener('cancel', (e) => e.preventDefault());

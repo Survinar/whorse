@@ -1584,3 +1584,47 @@ body {
   z-index: 10;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
+
+/* Auto-Blessing Toast Notification */
+.auto-blessing-toast {
+  position: fixed;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 10px 45px;
+  border-radius: 4px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: toastFadeInOut 2.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+@keyframes toastFadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -70%) scale(0.9);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1.0);
+  }
+  85% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -30%) scale(0.95);
+  }
+}
