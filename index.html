@@ -98,7 +98,10 @@
         </div>
       </div>
 
-      <button id="start-btn" class="btn primary-btn pulse-glow">
+      <button id="menu-blessings-btn" class="btn secondary-btn" style="width: 100%; margin-top: 15px;">
+        ✨ ALL BLESSINGS GUIDE
+      </button>
+      <button id="start-btn" class="btn primary-btn pulse-glow" style="margin-top: 15px;">
         PLAY
       </button>
     </div>
@@ -304,6 +307,30 @@
         CLOSE OVERVIEW
       </button>
     </div>
+  </dialog>
+
+  <!-- All Blessings Guide Modal Dialog -->
+  <dialog id="all-blessings-guide-dialog" class="game-dialog glass-panel">
+    <div class="dialog-header">
+      <h2 class="dialog-title animate-neon">BLESSINGS LIBRARY</h2>
+      <p class="dialog-subtitle">Browse all ancient card blessings in the game</p>
+    </div>
+
+    <div class="upgrades-overview-content">
+      <!-- Grid/List of all upgrades -->
+      <div id="all-upgrades-grid" class="upgrades-grid-container">
+        <!-- Dynamically populated with all upgrades in the pool -->
+      </div>
+      
+      <!-- Upgrade details block -->
+      <div id="all-upgrade-detail-view" class="upgrade-detail-box glass-panel-sm">
+        <p class="detail-placeholder">Select a blessing card above to view description</p>
+      </div>
+    </div>
+
+    <button id="close-guide-btn" class="btn primary-btn pulse-glow" style="margin-top: 25px;">
+      CLOSE GUIDE
+    </button>
   </dialog>
 
   <!-- Portal Pointer HUD Arrow -->

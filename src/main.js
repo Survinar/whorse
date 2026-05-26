@@ -30,6 +30,25 @@ const UPGRADE_POOL = [
   { type: 'growth', title: 'SACRED HORN', icon: '🦄', suit: '♥', rank: '9' },
 ];
 
+const UPGRADE_METADATA = {
+  speed: { title: 'DAI TALPA', icon: '🏇', desc: 'NIGGA HORSE NEVER STOPS!! Increases maximum movement speed.' },
+  damage: { title: 'BILE GRELE', icon: '🔥', desc: 'Raises your bullet collision damage.' },
+  fireRate: { title: 'BINE AZI', icon: '🏹', desc: 'Shoots sparks faster by decreasing weapon cooldowns.' },
+  pierce: { title: 'SHARP FLINT', icon: '☄', desc: 'Projectiles pierce through additional shadow beasts.' },
+  magnet: { title: 'GOLDEN RESONANCE', icon: '🧲', desc: 'Extends your magnet resonance pull radius to collect XP orbs further away.' },
+  vitality: { title: 'BEER', icon: '♥', desc: 'Raises maximum horse health and fully heals HP.' },
+  nova: { title: 'SPLIT EMBER', icon: '🌀', desc: 'Fires an additional bullet backwards at partial damage.' },
+  orbiter: { title: 'SUN HALO', icon: '☀️', desc: 'Summons spinning fire embers dealing continuous burn damage.' },
+  trail: { title: 'EMBER TRAIL', icon: '🔥', desc: 'Leaves a burning trail path behind that burns traversing beasts.' },
+  stomp: { title: 'EARTH STOMP', icon: '👣', desc: 'Triggers periodic ground stomps dealing AoE force damage.' },
+  regen: { title: 'SPRING OF LIFE', icon: '🌿', desc: 'Restores health points passively every second.' },
+  lightning: { title: 'TECTONIC BOLT', icon: '⚡', desc: 'Strikes random nearby shadow beasts with lightnings.' },
+  shield: { title: 'FROST GUARD', icon: '❄️', desc: 'Frost guard blocks the next hit and freezes nearby enemies on rupture.' },
+  bounce: { title: 'RICOCHET', icon: '☄️', desc: 'Main sparks bounce on impact, seeking nearby targets.' },
+  critical: { title: 'SHARP HOOF', icon: '🎯', desc: 'Allows your attacks and skills to land critical hits for double damage.' },
+  growth: { title: 'SACRED HORN', icon: '🦄', desc: 'Multiplies all experience gathered, accelerating your progression.' },
+};
+
 /**
  * Generates custom description text incorporating the rarity multipliers
  */
@@ -106,6 +125,13 @@ const upgradesOverviewDialog = document.getElementById('upgrades-overview-dialog
 const closeUpgradesBtn = document.getElementById('close-upgrades-btn');
 const activeUpgradesGrid = document.getElementById('active-upgrades-grid');
 const upgradeDetailView = document.getElementById('upgrade-detail-view');
+
+// Blessings Library (All Blessings Guide) DOM Hooks
+const allBlessingsGuideDialog = document.getElementById('all-blessings-guide-dialog');
+const closeGuideBtn = document.getElementById('close-guide-btn');
+const allUpgradesGrid = document.getElementById('all-upgrades-grid');
+const allUpgradeDetailView = document.getElementById('all-upgrade-detail-view');
+const menuBlessingsBtn = document.getElementById('menu-blessings-btn');
 
 // Load saved username
 usernameInput.value = localStorage.getItem('whorse_username') || '';
@@ -661,27 +687,8 @@ function openUpgradesOverview(fromPause = false) {
   activeUpgradesGrid.innerHTML = '';
   upgradeDetailView.innerHTML = '<p class="detail-placeholder">Select a blessing card above to view detail</p>';
 
-  const upgradeMetadata = {
-    speed: { title: 'DAI TALPA', icon: '🏇', desc: 'NIGGA HORSE NEVER STOPS!! Increases maximum movement speed.' },
-    damage: { title: 'BILE GRELE', icon: '🔥', desc: 'Raises your bullet collision damage.' },
-    fireRate: { title: 'BINE AZI', icon: '🏹', desc: 'Shoots sparks faster by decreasing weapon cooldowns.' },
-    pierce: { title: 'SHARP FLINT', icon: '☄', desc: 'Projectiles pierce through additional shadow beasts.' },
-    magnet: { title: 'GOLDEN RESONANCE', icon: '🧲', desc: 'Extends your magnet resonance pull radius to collect XP orbs further away.' },
-    vitality: { title: 'BEER', icon: '♥', desc: 'Raises maximum horse health and fully heals HP.' },
-    nova: { title: 'SPLIT EMBER', icon: '🌀', desc: 'Fires an additional bullet backwards at partial damage.' },
-    orbiter: { title: 'SUN HALO', icon: '☀️', desc: 'Summons spinning fire embers dealing continuous burn damage.' },
-    trail: { title: 'EMBER TRAIL', icon: '🔥', desc: 'Leaves a burning trail path behind that burns traversing beasts.' },
-    stomp: { title: 'EARTH STOMP', icon: '👣', desc: 'Triggers periodic ground stomps dealing AoE force damage.' },
-    regen: { title: 'SPRING OF LIFE', icon: '🌿', desc: 'Restores health points passively every second.' },
-    lightning: { title: 'TECTONIC BOLT', icon: '⚡', desc: 'Strikes random nearby shadow beasts with lightnings.' },
-    shield: { title: 'FROST GUARD', icon: '❄️', desc: 'Frost guard blocks the next hit and freezes nearby enemies on rupture.' },
-    bounce: { title: 'RICOCHET', icon: '☄️', desc: 'Main sparks bounce on impact, seeking nearby targets.' },
-    critical: { title: 'SHARP HOOF', icon: '🎯', desc: 'Allows your attacks and skills to land critical hits for double damage.' },
-    growth: { title: 'SACRED HORN', icon: '🦄', desc: 'Multiplies all experience gathered, accelerating your progression.' },
-  };
-
   for (const [key, val] of Object.entries(activeGame.horse.activeUpgrades)) {
-    const meta = upgradeMetadata[key];
+    const meta = UPGRADE_METADATA[key];
     if (meta) {
       const tile = document.createElement('div');
       tile.className = 'upgrade-tile';
@@ -774,6 +781,67 @@ if (toggleAutoChooseBtn) {
     autoChooseBlessings = !autoChooseBlessings;
     Sound.playXP();
     updateAutoChooseBtnStyle();
+  });
+}
+
+// Blessings Library (All Blessings Guide) Controller functions
+function openAllBlessingsGuide() {
+  allUpgradesGrid.innerHTML = '';
+  allUpgradeDetailView.innerHTML = '<p class="detail-placeholder">Select a blessing card above to view description</p>';
+
+  for (const [key, meta] of Object.entries(UPGRADE_METADATA)) {
+    const tile = document.createElement('div');
+    tile.className = 'upgrade-tile';
+    tile.innerHTML = `
+      <div class="upgrade-tile-left">
+        <span class="upgrade-tile-icon">${meta.icon}</span>
+        <span class="upgrade-tile-name">${meta.title}</span>
+      </div>
+    `;
+
+    tile.addEventListener('click', () => {
+      // Mark selected tile
+      allUpgradesGrid.querySelectorAll('.upgrade-tile').forEach(t => t.classList.remove('selected'));
+      tile.classList.add('selected');
+
+      allUpgradeDetailView.innerHTML = `
+        <div style="text-align: center; width: 100%;">
+          <strong style="color: var(--accent-gold); letter-spacing: 0.05em; font-family: var(--font-display); font-size: 1.05rem; display: block; margin-bottom: 6px;">${meta.icon} ${meta.title}</strong>
+          <p style="color: var(--text-primary); font-size: 0.85rem; line-height: 1.45; margin: 0;">${meta.desc}</p>
+        </div>
+      `;
+    });
+
+    allUpgradesGrid.appendChild(tile);
+  }
+
+  if (typeof Sound !== 'undefined') {
+    if (!Sound.initialized) {
+      Sound.init();
+      Sound.stopAmbientDrone();
+    }
+    Sound.playXP();
+  }
+  allBlessingsGuideDialog.showModal();
+}
+
+function closeAllBlessingsGuide() {
+  allBlessingsGuideDialog.close();
+  if (typeof Sound !== 'undefined') {
+    Sound.playXP();
+  }
+}
+
+if (menuBlessingsBtn) {
+  menuBlessingsBtn.addEventListener('click', openAllBlessingsGuide);
+}
+if (closeGuideBtn) {
+  closeGuideBtn.addEventListener('click', closeAllBlessingsGuide);
+}
+if (allBlessingsGuideDialog) {
+  allBlessingsGuideDialog.addEventListener('cancel', (e) => {
+    e.preventDefault();
+    closeAllBlessingsGuide();
   });
 }
 
